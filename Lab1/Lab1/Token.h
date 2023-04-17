@@ -4,10 +4,10 @@ class Token
 {
 public:
 	enum class TokenType {
-		OneLineComment,
+		/*OneLineComment,
 		MultiLineCommentOpening,
 		MultiLineCommentEnclosing,
-		WhiteSpace,
+		WhiteSpace,*/
 
 		Identifier,
 		Keyword,
@@ -43,7 +43,11 @@ public:
 		LeftSquareBracket,
 		RightSquareBracket,
 		LeftCurlyBracket,
-		RightCurlyBracket
+		RightCurlyBracket,
+
+		Error,
+		EndOfFile,
+		None
 	};
 private: 
 	TokenType token_type;
