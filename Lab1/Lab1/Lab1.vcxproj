@@ -139,10 +139,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="KeywordAutomata.cpp" />
+    <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="LowercaseAutomataState.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="Token.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KeywordAutomata.h" />
+    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="LowercaseAutomataState.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
