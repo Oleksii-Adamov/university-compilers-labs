@@ -3,59 +3,15 @@
 #include <vector>
 #include "Token.h"
 
-bool is_ascii(char c) {
-    return static_cast<unsigned char>(c) <= 127;
-}
-std::string retrive_string_limited_by_char() {
-    std::string s;
-    return s;
-}
-
-/*bool skip_to_char_seq(const std::string& s, int& pos, const std::string& stop_seq) {
-
-}*/
-
-/*void skip_whitespaces(const std::string& s, std::size_t& pos) {
-    while (pos < s.size() && (s[pos] == ' ' || s[pos] == '\t' || s[pos] == '\n' || s[pos] == '\r' || s[pos] == '\f')) pos++;
-}*/
 
 bool is_whitespace(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f';
 }
 
-/*bool skip_comments(const std::string& s, std::size_t& pos) {
-    if (pos < s.size() - 1) {
-        if (s[pos] == '/' && s[pos + 1] == '/') {
-            pos = pos + 2;
-            while (pos < s.size() && !(s[pos] == '\n'))
-            {
-                pos++;
-            }
-            if (pos < s.size()) {
-                pos++;
-            }
-            return true;
-        }
-        if (s[pos] == '/' && s[pos + 1] == '*') {
-            pos = pos + 2;
-            while (pos < s.size() && !(pos < s.size() - 1 && s[pos] == '*' && s[pos+1] == '/'))
-            {
-                pos++;
-            }
-            if (pos < s.size()) {
-                pos+=2;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    return true;
-}*/
-
+// if skipped comment also retrieves next token, if didn't returns None token or Error token
 Token skip_comments(std::istream& in, int& cur_c, int& next_c) {
     if (cur_c == '/' && next_c == '/') {
+        // transition to next state only by EOF or \n
         cur_c = in.get();
         while (cur_c != EOF && cur_c != '\n')
         {
@@ -64,32 +20,29 @@ Token skip_comments(std::istream& in, int& cur_c, int& next_c) {
         if (cur_c == EOF) {
             return Token(Token::TokenType::EndOfFile);
         }
-        
-        pos = pos + 2;
-        while (pos < s.size() && !(s[pos] == '\n'))
-        {
-            pos++;
-        }
-        if (pos < s.size()) {
-            pos++;
-        }
-        return true;
+        // state with transition by \n is starting state
+        return retrive_next_token(in);
     }
-    if (s[pos] == '/' && s[pos + 1] == '*') {
-        pos = pos + 2;
-        while (pos < s.size() && !(pos < s.size() - 1 && s[pos] == '*' && s[pos + 1] == '/'))
+    else if (cur_c == '/' && next_c == '*') {
+        // transition by seq */ to starting state, transition by EOF to error state, all other characters lead to this same state
+        cur_c = in.get();
+        cur_c = in.get();
+        next_c = in.peek();
+        while (cur_c != EOF && !(cur_c == '*' && next_c == '/'))
         {
-            pos++;
+            cur_c = in.get();
+            next_c = in.peek();
         }
-        if (pos < s.size()) {
-            pos += 2;
-            return true;
+        if (cur_c == EOF) {
+            return Token(Token::TokenType::Error);
         }
-        else {
-            return false;
-        }
+        cur_c = in.get();
+        return retrive_next_token(in);
     }
-    return true;
+    else {
+        // all transitions except above lead to starting state with no additional characters read
+        return Token(Token::TokenType::None);
+    }
 }
 
 Token handle_operators_and_punctuation(const std::string& s, std::size_t& pos) {
@@ -115,9 +68,13 @@ Token retrive_next_token(std::istream& in) {
     int cur_c = in.get();
     if (cur_c == EOF) return Token(Token::TokenType::EndOfFile);
     int next_c = in.peek();
+    // transition by whitespace to same starting state
     if (is_whitespace(cur_c)) {
         return retrive_next_token(in);
     }
+    // if skipped comment also retrives next token, if didn't returns None token or Error token
+    Token token_from_skip_comments = skip_comments(in, cur_c, next_c);
+    if (token_from_skip_comments.get_token_type() != Token::TokenType::None) return token_from_skip_comments;
     bool is_comments_ok = skip_comments(s, pos);
     if (!is_comments_ok) return Token(Token::TokenType::Error, "unterminated comment");
     return Token(Token::TokenType::LeftRoundBracket);
