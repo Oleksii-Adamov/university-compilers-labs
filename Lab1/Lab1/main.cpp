@@ -34,7 +34,7 @@ Token skip_comments(std::istream& in, int& cur_c, int& next_c) {
             next_c = in.peek();
         }
         if (cur_c == EOF) {
-            return Token(Token::TokenType::Error);
+            return Token(Token::TokenType::Error, "unterminated comment");
         }
         cur_c = in.get();
         return retrive_next_token(in);
@@ -53,17 +53,6 @@ Token handle_operators_and_punctuation(const std::string& s, std::size_t& pos) {
     }
 }
 
-Token retrive_next_token(const std::string& s, std::size_t& pos) {
-    if (pos )
-    if (is_whitespace(s[pos])) {
-        pos++;
-        return retrive_next_token(s, pos);
-    }
-    bool is_comments_ok = skip_comments(s, pos);
-    if (!is_comments_ok) return Token(Token::TokenType::Error, "unterminated comment");
-    return Token(Token::TokenType::LeftRoundBracket);
-}
-
 Token retrive_next_token(std::istream& in) {
     int cur_c = in.get();
     if (cur_c == EOF) return Token(Token::TokenType::EndOfFile);
@@ -72,11 +61,10 @@ Token retrive_next_token(std::istream& in) {
     if (is_whitespace(cur_c)) {
         return retrive_next_token(in);
     }
-    // if skipped comment also retrives next token, if didn't returns None token or Error token
+    // if skipped comment also retrieves next token, if didn't returns None token or Error token
     Token token_from_skip_comments = skip_comments(in, cur_c, next_c);
     if (token_from_skip_comments.get_token_type() != Token::TokenType::None) return token_from_skip_comments;
-    bool is_comments_ok = skip_comments(s, pos);
-    if (!is_comments_ok) return Token(Token::TokenType::Error, "unterminated comment");
+
     return Token(Token::TokenType::LeftRoundBracket);
 }
 
