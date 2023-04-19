@@ -1,6 +1,7 @@
 #pragma once
 #include "LowercaseAutomataState.h"
 
+// using automata for keywords in explicit form, because all other solutions I could think of was inefficient
 class KeywordAutomata
 {
 private:
@@ -30,6 +31,10 @@ public:
 	bool is_in_accepted_state() {
 		if (current_state != nullptr) return current_state->is_accepted_state();
 		else return false;
+	}
+
+	void reset_state() {
+		current_state = starting_state;
 	}
 };
 

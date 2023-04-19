@@ -6,7 +6,7 @@
 
 int main()
 {
-    char** keywords = [["hi"], ["hello"]];
+    
     std::cout << "Hello World!\n";
 }
 
