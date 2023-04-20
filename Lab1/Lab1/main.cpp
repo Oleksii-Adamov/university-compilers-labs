@@ -1,13 +1,16 @@
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <sstream>
-#include "Token.h"
+#include "Lexer.h"
 
 int main()
 {
-    
-    std::cout << "Hello World!\n";
+    Lexer lexer;
+    std::vector<Token> tokens;
+    bool success = lexer.tokenize_file("input.txt", tokens);
+    if (success) {
+        for (int i = 0; i < tokens.size(); i++) {
+            std::cout << tokens[i] << " ";
+        }
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

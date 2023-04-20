@@ -54,7 +54,10 @@ private:
 	std::string token_value;
 public:
 	Token(TokenType token_type, std::string token_value = "");
-	TokenType get_token_type();
-	std::string get_token_value();
+	TokenType get_token_type() const;
+	std::string get_token_value() const;
 };
+
+std::ostream& operator<<(std::ostream& out, const Token::TokenType& token_type);
+std::ostream& operator<<(std::ostream& out, Token const& token);
 

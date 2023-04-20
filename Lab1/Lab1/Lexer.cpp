@@ -45,12 +45,12 @@ bool Lexer::is_whitespace(char c)
 
 bool Lexer::is_digit(char c)
 {
-    return false;
+    return c >= '0' && c <= '9';
 }
 
 bool Lexer::is_letter_or_underscore(char c)
 {
-    return false;
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
 bool Lexer::is_legal_identifier_char(char c)
@@ -112,21 +112,21 @@ Token Lexer::handle_integer_and_real_literals(std::istream& in, int cur_c, int n
 
 Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c)
 {
-    // check for first character was done already, and variants of first character is subset of variants of other characters, so used generalized variant
+    // check for first character was done already, and variants of first character is subset of variants of other characters, so used is_legal_identifier_char
     std::stringstream read_string_stream;
     keyword_automata.reset_state();
     while (true) {
-        int c_i = in.get();
-        if (is_legal_identifier_char(c_i)) {
-            char c = static_cast<char>(c_i);
+        if (is_legal_identifier_char(cur_c)) {
+            char c = static_cast<char>(cur_c);
             read_string_stream << c;
             // using automata in explicit form, because all other solutions I could think of was inefficient
             keyword_automata.feed(c);
         }
         else {
-            in.putback(c_i);
+            in.putback(cur_c);
             break;
         }
+        cur_c = in.get();
     }
     std::string read_string = read_string_stream.str();
     if (keyword_automata.is_in_accepted_state()) {

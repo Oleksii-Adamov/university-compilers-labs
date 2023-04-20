@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
+#include "checks.h"
 
 class LowercaseAutomataState
 {
@@ -9,15 +10,16 @@ private:
 
 	// TODO: use smart pointers
 	LowercaseAutomataState* next_states[num_states];
-	bool is_accepted_state;
+
+	bool accepted_state;
 
 	std::size_t char_to_index(char c) {
-		if (!(c >= 'a' && c <= 'z')) throw std::invalid_argument("not lowercase char in LowercaseAutomataState");
+		if (!is_lowercase_letter(c)) throw std::invalid_argument("not lowercase char in LowercaseAutomataState");
 		return c - 'a';
 	}
 public:
-	LowercaseAutomataState(bool is_accepted_state = false) 
-		: is_accepted_state(is_accepted_state)
+	LowercaseAutomataState(bool accepted_state = false)
+		: accepted_state(accepted_state)
 	{
 		for (std::size_t i = 0; i < num_states; i++) {
 			next_states[i] = nullptr;
@@ -32,12 +34,25 @@ public:
 		return next_states[char_to_index(c)];
 	}
 
-	void set_accepted_state(bool is_accepted_state_) {
-		is_accepted_state = is_accepted_state_;
+	void set_accepted_state(bool accepted_state_) {
+		accepted_state = accepted_state_;
 	}
 
 	bool is_accepted_state() {
-		return is_accepted_state;
+		return accepted_state;
 	}
+
+/*	std::size_t char_to_index(char c);
+public:
+	LowercaseAutomataState(bool accepted_state = false);
+
+	void add_next_state(char c, LowercaseAutomataState* next_state);
+
+	LowercaseAutomataState* next(char c);
+
+	void set_accepted_state(bool accepted_state_);
+
+	bool is_accepted_state();
+	*/
 };
 

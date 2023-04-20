@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="checks.cpp" />
     <ClCompile Include="KeywordAutomata.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LowercaseAutomataState.cpp" />
@@ -150,6 +151,18 @@
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LowercaseAutomataState.h" />
     <ClInclude Include="Token.h" />
+    <ClInclude Include="checks.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="input2.txt">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Xsd>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

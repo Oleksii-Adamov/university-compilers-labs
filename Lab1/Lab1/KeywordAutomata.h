@@ -1,5 +1,6 @@
 #pragma once
 #include "LowercaseAutomataState.h"
+#include "checks.h"
 
 // using automata for keywords in explicit form, because all other solutions I could think of was inefficient
 class KeywordAutomata
@@ -8,29 +9,43 @@ private:
 	// TODO: use smart pointers
 	LowercaseAutomataState* starting_state = new LowercaseAutomataState();
 	LowercaseAutomataState* current_state = starting_state;
+	bool is_underline = false;
 public:
 	void add_keyword(std::string keyword) {
-		LowercaseAutomataState* add_cur_state = starting_state;
-		for (std::size_t i = 0; i < keyword.size(); i++) {
-			LowercaseAutomataState* next_state = add_cur_state->next(keyword[i]);
-			if (next_state == nullptr) {
-				next_state = new LowercaseAutomataState();
-				add_cur_state->add_next_state(keyword[i], next_state);
+		if (keyword != "_") {
+			LowercaseAutomataState* add_cur_state = starting_state;
+			for (std::size_t i = 0; i < keyword.size(); i++) {
+				LowercaseAutomataState* next_state = add_cur_state->next(keyword[i]);
+				if (next_state == nullptr) {
+					next_state = new LowercaseAutomataState();
+					add_cur_state->add_next_state(keyword[i], next_state);
+				}
+				add_cur_state = next_state;
 			}
-			add_cur_state = next_state;
+			add_cur_state->set_accepted_state(true);
 		}
-		add_cur_state->set_accepted_state(true);
 	}
 
 	void feed(char c) {
-		if (current_state != nullptr) {
-			current_state = current_state->next(c);
+		if (c == '_' && current_state == starting_state) {
+			is_underline = true;
+		}
+		else {
+			is_underline = false;
+			if (is_lowercase_letter(c)) {
+				if (current_state != nullptr) {
+					current_state = current_state->next(c);
+				}
+			}
+			else {
+				current_state = nullptr;
+			}
 		}
 	}
 
 	bool is_in_accepted_state() {
-		if (current_state != nullptr) return current_state->is_accepted_state();
-		else return false;
+		if (current_state != nullptr) return current_state->is_accepted_state() || is_underline;
+		else return false || is_underline;
 	}
 
 	void reset_state() {
