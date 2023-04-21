@@ -13,9 +13,22 @@ public:
 		Keyword,
 
 		BoolLiteral,
-		IntegerLiteral,
-		RealLiteral,
-		ImaginaryLiteral,
+
+		IntegerLiteralDecimal,
+		IntegerLiteralHexadecimal,
+		IntegerLiteralOctal,
+		IntegerLiteralBinary,
+
+		RealLiteralDecimal,
+		RealLiteralHexadecimal,
+
+		ImaginaryIntegerLiteralDecimal,
+		ImaginaryIntegerLiteralHexadecimal,
+		ImaginaryIntegerLiteralOctal,
+		ImaginaryIntegerLiteralBinary,
+		ImaginaryRealLiteralDecimal,
+		ImaginaryRealLiteralHexadecimal,
+
 		InterpretedStringLiteral,
 		UninterpretedStringLiteral,
 		InterpretedBytesLiteral,

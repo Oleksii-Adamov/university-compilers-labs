@@ -38,26 +38,6 @@ bool Lexer::tokenize_file(std::string file_name, std::vector<Token>& tokens)
     return tokenize_stream(in, tokens);
 }
 
-bool Lexer::is_whitespace(char c)
-{
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f';
-}
-
-bool Lexer::is_digit(char c)
-{
-    return c >= '0' && c <= '9';
-}
-
-bool Lexer::is_letter_or_underscore(char c)
-{
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-}
-
-bool Lexer::is_legal_identifier_char(char c)
-{
-    return is_letter_or_underscore(c) || is_digit(c) || c == '$';
-}
-
 Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
 {
     if (cur_c == '/' && next_c == '/') {
@@ -105,8 +85,73 @@ Token Lexer::handle_bytes_literal(std::istream& in, int cur_c, int next_c)
     return Token(Token::TokenType::Error);
 }
 
-Token Lexer::handle_integer_and_real_literals(std::istream& in, int cur_c, int next_c)
+
+
+Token Lexer::handle_number_literals_with_func(std::istream& in, int cur_c, int next_c, bool (*is_acceptable_digit)(char)) {
+    std::stringstream read_string_stream;
+    bool encountered_dot = false;
+    bool underscore_acceptable = false;
+    // handle exponents and imaginary
+    while (is_acceptable_digit(cur_c) || cur_c == '.' || cur_c == '_')
+    {
+        if (cur_c == '_' && !underscore_acceptable) {
+            break;
+        }
+        if (cur_c == '.') {
+            if (encountered_dot)
+            {
+                break;
+            }
+            else {
+                encountered_dot = true;
+                underscore_acceptable = false;
+            }
+        }
+        else {
+            underscore_acceptable = true;
+        }
+        read_string_stream << cur_c;
+    }
+    std::string read_string = read_string_stream.str();
+    Token return_token = Token(Token::TokenType::Error, "error in parsing number (shouldn't occur)");
+    if (read_string == "") {
+        return Token(Token::TokenType::None);
+    }
+    else if (encountered_dot) {
+        if (read_string[read_string.size() - 1] == '.') {
+            in.putback('.');
+            if (read_string.size() == 1) {
+                // just dot and no digits ahead, so that is operator
+                return_token = Token(Token::TokenType::MemberAccess);
+            }
+            else {
+                return_token = 
+            }
+        }
+        return Token(Token::TokenType::RealLiteral);
+    }
+    else {
+        return Token(Token::TokenType::IntegerLiteral);
+    }
+    in.putback(cur_c);
+}
+
+Token Lexer::handle_number_literals(std::istream& in, int cur_c, int next_c)
 {
+    if (cur_c == '0' && (next_c == 'x' || next_c == 'X')) {
+        // hexadecimal
+        cur_c = in.get();
+        cur_c = in.get();
+        next_c = in.peek();
+        Token token = handle_number_literals_with_func(in, cur_c, next_c, is_hexadecimal_digit);
+        if (token.get_token_type() == Token::TokenType::None) {
+            in.putback(cur_c);
+            return Token(Token::TokenType::IntegerLiteral, "0");
+        }
+    }
+    if (cur_c == '0' && (next_c == 'o' || next_c == 'O')) {
+        // octal
+    }
     return Token(Token::TokenType::Error);
 }
 

@@ -52,11 +52,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xsd Include="input2.txt">
-      <Filter>Resource Files</Filter>
-    </Xsd>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="input.txt">
       <Filter>Resource Files</Filter>
     </Text>

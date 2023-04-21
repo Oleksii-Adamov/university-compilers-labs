@@ -15,13 +15,6 @@ public:
 
     bool tokenize_file(std::string file_name, std::vector<Token>& tokens);
 private:
-    bool is_whitespace(char c);
-
-    bool is_digit(char c);
-
-    bool is_letter_or_underscore(char c);
-
-    bool is_legal_identifier_char(char c);
 
     // if skipped comment also retrieves next token, if didn't returns None token or Error token
     Token skip_comments(std::istream& in, int cur_c, int next_c);
@@ -30,7 +23,11 @@ private:
 
     Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
 
-    Token handle_integer_and_real_literals(std::istream& in, int cur_c, int next_c);
+    Token build_integer_token(const std::string& read_string, IntegerFormat integer_format);
+
+    Token handle_number_literals(std::istream& in, int cur_c, int next_c);
+
+    Token handle_number_literals_with_func(std::istream& in, int cur_c, int next_c, bool (*is_acceptable_digit)(char));
 
     Token handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c);
 
