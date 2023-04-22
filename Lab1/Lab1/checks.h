@@ -19,6 +19,18 @@ enum class IntegerFormat {
 	binary
 };
 
+bool is_sign(char c) {
+	return c == '+' || c == '-';
+}
+
+bool is_e_exponent(char c) {
+	return c == 'e' || c == 'E';
+}
+
+bool is_p_exponent(char c) {
+	return c == 'p' || c == 'P';
+}
+
 bool is_letter_or_underscore(char c);
 
 bool is_legal_identifier_char(char c);

@@ -25,9 +25,13 @@ private:
 
     Token build_integer_token(const std::string& read_string, IntegerFormat integer_format);
 
+    Token build_real_token(const std::string& read_string, IntegerFormat integer_format);
+
+    Token build_imaginary_token(const std::string& read_string, IntegerFormat integer_format, bool is_real);
+
     Token handle_number_literals(std::istream& in, int cur_c, int next_c);
 
-    Token handle_number_literals_with_func(std::istream& in, int cur_c, int next_c, bool (*is_acceptable_digit)(char));
+    Token handle_number_literals_with_func(std::istream& in, int cur_c, IntegerFormat integer_format);
 
     Token handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c);
 
