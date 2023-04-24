@@ -1,1 +1,11 @@
-if /* comment */ i _ i21
+// comment
+////
+///*
+/* comment2
+// 2
+*/
+// /*keywords*/ if
+// /*identifiers*/ i ifi _ i21 _12
+/*correct numbers*/ 123 1_2__3 3_4.5_5 23.5e+3 23.5e-3 23.5e3 .5_5 0x5f 0x5f.2 0x5f.2p+2 0x5f.2p-2 0
+/*incorrect numbers*/ 0x ._2 23.5p3 0x5f.2e2 23.5e_3 
+12x

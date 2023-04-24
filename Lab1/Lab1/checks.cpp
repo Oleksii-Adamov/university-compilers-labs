@@ -26,18 +26,18 @@ bool is_binary_digit(char c) {
     return c == '0' || c == '1';
 }
 
-bool (*get_check_digit_func(IntegerFormat integer_format))(char) {
+bool (*get_check_digit_func(NumberFormat integer_format))(char) {
     bool (*is_acceptable_digit)(char) = nullptr;
-    if (integer_format == IntegerFormat::binary) {
+    if (integer_format == NumberFormat::binary) {
         is_acceptable_digit = is_binary_digit;
     }
-    if (integer_format == IntegerFormat::octal) {
+    if (integer_format == NumberFormat::octal) {
         is_acceptable_digit = is_octal_digit;
     }
-    if (integer_format == IntegerFormat::hexadecimal) {
+    if (integer_format == NumberFormat::hexadecimal) {
         is_acceptable_digit = is_hexadecimal_digit;
     }
-    if (integer_format == IntegerFormat::decimal) {
+    if (integer_format == NumberFormat::decimal) {
         is_acceptable_digit = is_digit;
     }
     return is_acceptable_digit;

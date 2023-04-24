@@ -12,14 +12,14 @@ bool is_octal_digit(char c);
 
 bool is_binary_digit(char c);
 
-enum class IntegerFormat {
+enum class NumberFormat {
 	decimal,
 	hexadecimal,
 	octal,
 	binary
 };
 
-bool (*get_check_digit_func(IntegerFormat integer_format))(char);
+bool (*get_check_digit_func(NumberFormat integer_format))(char);
 
 bool is_sign(char c);
 

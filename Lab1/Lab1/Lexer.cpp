@@ -38,6 +38,26 @@ bool Lexer::tokenize_file(std::string file_name, std::vector<Token>& tokens)
     return tokenize_stream(in, tokens);
 }
 
+Token Lexer::handle_unambiguous_single_char_tokens(int cur_c) {
+    if (cur_c == '(') return Token(Token::TokenType::LeftRoundBracket);
+    if (cur_c == ')') return Token(Token::TokenType::RightRoundBracket);
+    if (cur_c == '{') return Token(Token::TokenType::LeftCurlyBracket);
+    if (cur_c == '}') return Token(Token::TokenType::RightCurlyBracket);
+    if (cur_c == '[') return Token(Token::TokenType::LeftSquareBracket);
+    if (cur_c == ']') return Token(Token::TokenType::RightSquareBracket);
+    if (cur_c == '#') return Token(Token::TokenType::RangeCountOperator);
+    if (cur_c == ':') return Token(Token::TokenType::TypeSpecifier);
+    if (cur_c == ';') return Token(Token::TokenType::StatementSeparator);
+    if (cur_c == ',') return Token(Token::TokenType::ExpressionSeparator);
+    if (cur_c == '?') return Token(Token::TokenType::TypeQuery);
+    return Token(Token::TokenType::None);
+}
+
+Token Lexer::handle_ambiguous_operators(std::istream& in, int cur_c, int next_c) {
+    if (cur_c == '.') return Token(Token::TokenType::MemberAccess);
+    return Token(Token::TokenType::None);
+}
+
 Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
 {
     if (cur_c == '/' && next_c == '/') {
@@ -85,107 +105,96 @@ Token Lexer::handle_bytes_literal(std::istream& in, int cur_c, int next_c)
     return Token(Token::TokenType::Error);
 }
 
-Token Lexer::build_integer_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary) {
+Token Lexer::build_integer_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {
     if (number_string == "") {
         return Token(Token::TokenType::None);
     }
-    if (integer_format == IntegerFormat::binary) {
+    if (number_format == NumberFormat::binary) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralBinary, number_string);
         else return Token(Token::TokenType::IntegerLiteralBinary, number_string);
     }
-    if (integer_format == IntegerFormat::octal) {
+    if (number_format == NumberFormat::octal) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralOctal, number_string);
         else return Token(Token::TokenType::IntegerLiteralOctal, number_string);
     }
-    if (integer_format == IntegerFormat::hexadecimal) {
+    if (number_format == NumberFormat::hexadecimal) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralHexadecimal, number_string);
         else return Token(Token::TokenType::IntegerLiteralHexadecimal, number_string);
     }
-    if (integer_format == IntegerFormat::decimal) {
+    if (number_format == NumberFormat::decimal) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralDecimal, number_string);
         else return Token(Token::TokenType::IntegerLiteralDecimal, number_string);
     }
 }
 
-Token build_real_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary) {
-    if (integer_format == IntegerFormat::binary || integer_format == IntegerFormat::octal) {
+Token Lexer::build_real_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {
+    if (number_format == NumberFormat::binary || number_format == NumberFormat::octal) {
         return Token(Token::TokenType::None);
     }
-    if (integer_format == IntegerFormat::hexadecimal) {
+    if (number_format == NumberFormat::hexadecimal) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryRealLiteralHexadecimal, number_string);
         else return Token(Token::TokenType::RealLiteralHexadecimal, number_string);
     }
-    if (integer_format == IntegerFormat::decimal) {
+    if (number_format == NumberFormat::decimal) {
         if (is_imaginary) return Token(Token::TokenType::ImaginaryRealLiteralDecimal, number_string);
         return Token(Token::TokenType::RealLiteralDecimal, number_string);
     }
 }
-/*
-Token build_imaginary_token(const std::string& read_string, IntegerFormat integer_format, bool is_real) {
-    if (read_string == "") {
-        return Token(Token::TokenType::None);
-    }
-    if (is_real) {
-        if (integer_format == IntegerFormat::binary || integer_format == IntegerFormat::octal) {
-            return Token(Token::TokenType::None);
-        }
-        if (integer_format == IntegerFormat::hexadecimal) {
-            return Token(Token::TokenType::ImaginaryRealLiteralHexadecimal, read_string.substr(0, read_string.size() - 1));
-        }
-        if (integer_format == IntegerFormat::decimal) {
-            return Token(Token::TokenType::ImaginaryRealLiteralDecimal, read_string.substr(0, read_string.size() - 1));
-        }
-    }
-    else {
-        if (integer_format == IntegerFormat::binary) {
-            return Token(Token::TokenType::ImaginaryIntegerLiteralBinary, read_string);
-        }
-        if (integer_format == IntegerFormat::octal) {
-            return Token(Token::TokenType::ImaginaryIntegerLiteralOctal, read_string);
-        }
-        if (integer_format == IntegerFormat::hexadecimal) {
-            return Token(Token::TokenType::ImaginaryIntegerLiteralHexadecimal, read_string);
-        }
-        if (integer_format == IntegerFormat::decimal) {
-            return Token(Token::TokenType::ImaginaryIntegerLiteralDecimal, read_string);
-        }
-    }
-}
-*/
 
-std::string handle_exponent_part(std::istream& in, int& cur_c) {
+std::string Lexer::handle_exponent_part(std::istream& in, int& cur_c) {
     std::stringstream number_string_stream;
     bool underscore_acceptable = false;
     cur_c = in.get();
     if (is_sign(cur_c)) {
-        number_string_stream << cur_c;
-        cur_c = in.get();
-        // will need to retract if ahead is not digits, well can check right now (and also maybe with dot using acceptible_digit() if no exponent possible without digits)
+        int next_c = in.peek();
+        if (is_digit(next_c)) {
+            number_string_stream << cur_c;
+            cur_c = in.get();
+        }
+        else {
+            return "";
+        }
     }
+    while (true) {
+        if (cur_c == '_' && !underscore_acceptable) {
+            break;
+        }
+        else if (is_digit(cur_c)) {
+            number_string_stream << (char) cur_c;
+        }
+        else {
+            break;
+        }
+    }
+    // letting caller to return not acceptable cur_c (because it maybe be acceptable in other context e.g 'i' - imaginary)
+    return number_string_stream.str();
 }
 
-std::string handle_fractional_part(std::istream& in, int& cur_c, IntegerFormat integer_format) {
-    if (integer_format == IntegerFormat::binary || integer_format == IntegerFormat::octal) return "";
-    bool (*is_acceptable_digit)(char) = get_check_digit_func(integer_format);
+std::string Lexer::handle_fractional_part(std::istream& in, int& cur_c, NumberFormat number_format) {
+    if (number_format == NumberFormat::binary || number_format == NumberFormat::octal) return "";
+    bool (*is_acceptable_digit)(char) = get_check_digit_func(number_format);
     std::stringstream number_string_stream;
     std::string exponent_part = "";
     bool underscore_acceptable = false;
     cur_c = in.get();
     while (true)
     {
-        if (is_e_exponent(cur_c)) {
-            if (integer_format == IntegerFormat::hexadecimal) break;
-            exponent_part = handle_exponent_part(in, cur_c);
-        }
-        else if (is_p_exponent(cur_c)) {
-            if (integer_format == IntegerFormat::decimal) break;
-            exponent_part = handle_exponent_part(in, cur_c);
+        if (is_e_exponent(cur_c) || is_p_exponent(cur_c)) {
+            if (!((is_e_exponent(cur_c) && number_format == NumberFormat::hexadecimal) ||
+                (is_p_exponent(cur_c) && number_format == NumberFormat::decimal))) { // if exponent corresponds to number format
+                exponent_part = std::string(1, cur_c) + handle_exponent_part(in, cur_c);
+                if (exponent_part.size() == 1) {
+                    in.putback(exponent_part[0]);
+                    exponent_part = "";
+                }
+            }
+            break;
         }
         else if (cur_c == '_' && !underscore_acceptable) {
             break;
         }
         else if (is_acceptable_digit(cur_c)) {
-            number_string_stream << cur_c;
+            number_string_stream << (char) cur_c;
         }
         else {
             break;
@@ -193,129 +202,77 @@ std::string handle_fractional_part(std::istream& in, int& cur_c, IntegerFormat i
         cur_c = in.get();
         underscore_acceptable = true;
     }
+    // letting caller to return not acceptable cur_c (because it maybe be acceptable in other context e.g 'i' - imaginary)
     return number_string_stream.str() + exponent_part;
 }
 
-Token Lexer::handle_number_literals_with_format(std::istream& in, int cur_c, IntegerFormat integer_format) {
-    bool (*is_acceptable_digit)(char) = get_check_digit_func(integer_format);
+Token Lexer::handle_number_literals_with_format(std::istream& in, int cur_c, NumberFormat number_format) {
+    bool (*is_acceptable_digit)(char) = get_check_digit_func(number_format);
     
     std::stringstream number_string_stream;
     std::string fractional_part = "";
     bool underscore_acceptable = false;
     while (true) {
+        bool is_acceptable_cur_c = false;
         if (cur_c == '.') {
-            fractional_part = handle_fractional_part(in, cur_c, integer_format);
-            if (fractional_part == "") in.putback('.');
+            if (is_acceptable_digit(in.peek())) fractional_part = handle_fractional_part(in, cur_c, number_format);
+            //if (fractional_part == "") in.putback('.');
             break;
         }
-        else if (cur_c == '_' && !underscore_acceptable) {
-            break;
+        if (cur_c == '_') {
+            is_acceptable_cur_c = underscore_acceptable;
         }
-        else if (is_acceptable_digit(cur_c)) {
-            number_string_stream << cur_c;
+        if (is_acceptable_digit(cur_c)) {
+            is_acceptable_cur_c = true;
+            number_string_stream << (char) cur_c;
         }
-        else {
-            break;
-        }
-        cur_c = in.get();
-        underscore_acceptable = true;
-    }
-    if (cur_c == 'i') is_imaginary = true;
-    else in.putback(cur_c);
-    if (fractional_part == "") {
-        return build_integer_token(number_string, integer_format, is_imaginary);
-    }
-    else {
-        return build_real_token(number_string + "." + fractional_part, integer_format, is_imaginary);
-    }
-
-    std::stringstream read_string_stream;
-    bool encountered_dot = false;
-    
-    char prev_c = 0;
-    bool encountered_exponent = false;
-    // handle exponents and imaginary
-    // maybe go while true and break if not acceptable
-    while (is_acceptable_digit(cur_c) || cur_c == '.' || cur_c == '_' || cur_c == 'e' || cur_c == 'E' || cur_c == 'p' || cur_c == 'P' || cur_c == '+' || cur_c == '-')
-    {
-        if (is_sign(cur_c) && !(is_e_exponent(prev_c) || is_p_exponent(prev_c))) break;
-        if (is_e_exponent(cur_c) && integer_format != IntegerFormat::decimal) break;
-        if (is_p_exponent(cur_c) && integer_format != IntegerFormat::hexadecimal) break;
-        if ((is_e_exponent(cur_c) || is_p_exponent(cur_c)) && !encountered_dot) break;
-        if (is_e_exponent(cur_c) || is_p_exponent(cur_c)) {
-
-        }
-        if (cur_c == '_' && !underscore_acceptable) {
-            break;
-        }
-        if (cur_c == '.') {
-            if (encountered_dot)
-            {
-                break;
-            }
-            else {
-                encountered_dot = true;
-                underscore_acceptable = false;
-            }
-        }
-        else {
+        if (is_acceptable_cur_c) {
+            cur_c = in.get();
             underscore_acceptable = true;
         }
-        if (cur_c != '_') number_string_stream << cur_c;
-        read_string_stream << cur_c;
-        cur_c = in.get();
-    }
-    bool should_put_back_cur_c = true;
-    bool is_imaginary = false;
-    if (cur_c == 'i') {
-        is_imaginary = true;
-        should_put_back_cur_c = false;
-    }
-    std::string read_string = read_string_stream.str();
-    std::string number_string = number_string_stream.str();
-    Token return_token = Token(Token::TokenType::Error, "error in parsing number (shouldn't occur)");
-    
-    if (encountered_dot) {
-        if (number_string[number_string.size() - 1] == '.') {
-            // real literal cannot end with dot
-            in.putback('.');
-            // case with dot and no digits ahead cannot occur here (check before)
-            return_token = build_integer_token(number_string.substr(0, number_string.size() - 1), integer_format, is_imaginary);
+        else {
+            break;
         }
-        return_token = build_real_token(number_string, integer_format, is_imaginary);
+    }
+
+    std::string number_string = number_string_stream.str();
+    
+    if (number_string == "" && fractional_part == "") return Token(Token::TokenType::None);
+
+    bool is_imaginary = false;
+    if (cur_c == 'i') is_imaginary = true;
+    else in.putback(cur_c);
+
+    if (fractional_part == "") {
+        return build_integer_token(number_string, number_format, is_imaginary);
     }
     else {
-        return_token = build_integer_token(number_string, integer_format, is_imaginary);
+        return build_real_token(number_string + "." + fractional_part, number_format, is_imaginary);
     }
-    if (return_token.get_token_type() == Token::TokenType::None) {
-        // retract, put back all read chars
-        for (std::size_t i = 0; i < read_string.size(); i++) {
-            // change read_string to include all chars and add number_string
-            in.putback(read_string[i]);
-        }
-        should_put_back_cur_c = true;
-    }
-    if (should_put_back_cur_c) in.putback(cur_c);
-    return return_token;
 }
 
 Token Lexer::handle_number_literals(std::istream& in, int cur_c, int next_c)
 {
-    if (cur_c == '0' && (next_c == 'x' || next_c == 'X')) {
-        // hexadecimal
+    NumberFormat number_format = NumberFormat::decimal;
+    if (cur_c == '0') {
+        if (next_c == 'x' || next_c == 'X') number_format = NumberFormat::hexadecimal;
+        if (next_c == 'o' || next_c == 'O') number_format = NumberFormat::octal;
+        if (next_c == 'b' || next_c == 'B') number_format = NumberFormat::binary;
+    }
+    if (number_format == NumberFormat::decimal) {
+        // guaranteed number
+        return handle_number_literals_with_format(in, cur_c, number_format);
+    }
+    else {
         cur_c = in.get();
         cur_c = in.get();
-        next_c = in.peek();
-        Token token = handle_number_literals_with_func(in, cur_c, next_c, is_hexadecimal_digit);
+        Token token = handle_number_literals_with_format(in, cur_c, NumberFormat::hexadecimal);
+        // after 0x can be not number, if so then it is just 0 (and id x next)
         if (token.get_token_type() == Token::TokenType::None) {
-            in.putback(cur_c);
-            return Token(Token::TokenType::IntegerLiteral, "0");
+            in.putback(next_c);
+            return Token(Token::TokenType::IntegerLiteralDecimal, "0");
         }
     }
-    if (cur_c == '0' && (next_c == 'o' || next_c == 'O')) {
-        // octal
-    }
-    return Token(Token::TokenType::Error);
 }
 
 Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c)
@@ -364,12 +321,16 @@ Token Lexer::retrive_next_token(std::istream& in)
 {
     int cur_c = in.get();
     if (cur_c == EOF) return Token(Token::TokenType::EndOfFile);
-    int next_c = in.peek();
 
     // skip whitespace chars, transition by whitespace to same starting state
     if (is_whitespace(cur_c)) {
         return retrive_next_token(in);
     }
+
+    Token return_token = handle_unambiguous_single_char_tokens(cur_c);
+    if (return_token.get_token_type() != Token::TokenType::None) return return_token;
+
+    int next_c = in.peek();
 
     // skip comments, if skipped comment also retrieves next token, if didn't returns None token or Error token. Automata notes in function
     Token token_from_skip_comments = skip_comments(in, cur_c, next_c);
@@ -381,11 +342,15 @@ Token Lexer::retrive_next_token(std::istream& in)
     if (cur_c == 'b' && (next_c == '"' || next_c == '\'')) return handle_bytes_literal(in, cur_c, next_c);
     // handle integer and real literals
     if (is_digit(cur_c) || (cur_c == '.' && is_digit(next_c))) {
-        return handle_integer_and_real_literals(in, cur_c, next_c);
+        return handle_number_literals(in, cur_c, next_c);
     }
     // handle Identifiers, Keywords, bool literals
     if (is_letter_or_underscore(cur_c)) {
         return handle_identifiers_keywords_and_bool_literals(in, cur_c, next_c);
     }
-    return Token(Token::TokenType::LeftRoundBracket);
+    // handle ambiguous operators
+    return_token = handle_ambiguous_operators(in, cur_c, next_c);
+    if (return_token.get_token_type() != Token::TokenType::None) return return_token;
+
+    return Token(Token::TokenType::Error);
 }

@@ -16,6 +16,10 @@ public:
     bool tokenize_file(std::string file_name, std::vector<Token>& tokens);
 private:
 
+    Token handle_unambiguous_single_char_tokens(int cur_c);
+
+    Token handle_ambiguous_operators(std::istream& in, int cur_c, int next_c);
+
     // if skipped comment also retrieves next token, if didn't returns None token or Error token
     Token skip_comments(std::istream& in, int cur_c, int next_c);
 
@@ -23,17 +27,17 @@ private:
 
     Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
 
-    Token build_integer_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary);
+    Token build_integer_token(const std::string& number_string, NumberFormat integer_format, bool is_imaginary);
 
-    Token build_real_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary);
+    Token build_real_token(const std::string& number_string, NumberFormat integer_format, bool is_imaginary);
 
-    Token build_imaginary_token(const std::string& read_string, IntegerFormat integer_format, bool is_real);
+    Token build_imaginary_token(const std::string& read_string, NumberFormat integer_format, bool is_real);
 
     Token handle_number_literals(std::istream& in, int cur_c, int next_c);
 
-    Token handle_number_literals_with_format(std::istream& in, int cur_c, IntegerFormat integer_format);
+    Token handle_number_literals_with_format(std::istream& in, int cur_c, NumberFormat integer_format);
 
-    std::string handle_fractional_part(std::istream& in, int& cur_c, IntegerFormat integer_format);
+    std::string handle_fractional_part(std::istream& in, int& cur_c, NumberFormat integer_format);
 
     std::string handle_exponent_part(std::istream& in, int& cur_c);
 
