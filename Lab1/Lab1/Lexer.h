@@ -27,6 +27,13 @@ private:
 
     Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
 
+    enum class NumberHandlingStage
+    {
+        WholeNumber,
+        FractionalPart,
+        ExponentPart
+    };
+
     Token build_integer_token(const std::string& number_string, NumberFormat integer_format, bool is_imaginary);
 
     Token build_real_token(const std::string& number_string, NumberFormat integer_format, bool is_imaginary);
@@ -35,7 +42,8 @@ private:
 
     Token handle_number_literals(std::istream& in, int cur_c, int next_c);
 
-    Token handle_number_literals_with_format(std::istream& in, int cur_c, NumberFormat integer_format);
+    Token handle_number_literals_with_format_by_stage(std::istream& in, int& cur_c, NumberFormat integer_format,
+        NumberHandlingStage number_handling_stage);
 
     std::string handle_fractional_part(std::istream& in, int& cur_c, NumberFormat integer_format);
 
