@@ -23,15 +23,19 @@ private:
 
     Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
 
-    Token build_integer_token(const std::string& read_string, IntegerFormat integer_format);
+    Token build_integer_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary);
 
-    Token build_real_token(const std::string& read_string, IntegerFormat integer_format);
+    Token build_real_token(const std::string& number_string, IntegerFormat integer_format, bool is_imaginary);
 
     Token build_imaginary_token(const std::string& read_string, IntegerFormat integer_format, bool is_real);
 
     Token handle_number_literals(std::istream& in, int cur_c, int next_c);
 
-    Token handle_number_literals_with_func(std::istream& in, int cur_c, IntegerFormat integer_format);
+    Token handle_number_literals_with_format(std::istream& in, int cur_c, IntegerFormat integer_format);
+
+    std::string handle_fractional_part(std::istream& in, int& cur_c, IntegerFormat integer_format);
+
+    std::string handle_exponent_part(std::istream& in, int& cur_c);
 
     Token handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c);
 

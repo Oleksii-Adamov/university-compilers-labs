@@ -26,6 +26,35 @@ bool is_binary_digit(char c) {
     return c == '0' || c == '1';
 }
 
+bool (*get_check_digit_func(IntegerFormat integer_format))(char) {
+    bool (*is_acceptable_digit)(char) = nullptr;
+    if (integer_format == IntegerFormat::binary) {
+        is_acceptable_digit = is_binary_digit;
+    }
+    if (integer_format == IntegerFormat::octal) {
+        is_acceptable_digit = is_octal_digit;
+    }
+    if (integer_format == IntegerFormat::hexadecimal) {
+        is_acceptable_digit = is_hexadecimal_digit;
+    }
+    if (integer_format == IntegerFormat::decimal) {
+        is_acceptable_digit = is_digit;
+    }
+    return is_acceptable_digit;
+}
+
+bool is_sign(char c) {
+    return c == '+' || c == '-';
+}
+
+bool is_e_exponent(char c) {
+    return c == 'e' || c == 'E';
+}
+
+bool is_p_exponent(char c) {
+    return c == 'p' || c == 'P';
+}
+
 bool is_letter_or_underscore(char c)
 {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';

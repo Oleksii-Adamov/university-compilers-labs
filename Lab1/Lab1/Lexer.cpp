@@ -152,32 +152,98 @@ Token build_imaginary_token(const std::string& read_string, IntegerFormat intege
     }
 }
 */
-Token Lexer::handle_number_literals_with_func(std::istream& in, int cur_c, IntegerFormat integer_format) {
-    bool (*is_acceptable_digit)(char) = nullptr;
-    if (integer_format == IntegerFormat::binary) {
-        is_acceptable_digit = is_binary_digit;
-    }
-    if (integer_format == IntegerFormat::octal) {
-        is_acceptable_digit = is_octal_digit;
-    }
-    if (integer_format == IntegerFormat::hexadecimal) {
-        is_acceptable_digit = is_hexadecimal_digit;
-    }
-    if (integer_format == IntegerFormat::decimal) {
-        is_acceptable_digit = is_digit;
-    }
-    std::stringstream read_string_stream;
+
+std::string handle_exponent_part(std::istream& in, int& cur_c) {
     std::stringstream number_string_stream;
-    bool encountered_dot = false;
     bool underscore_acceptable = false;
+    cur_c = in.get();
+    if (is_sign(cur_c)) {
+        number_string_stream << cur_c;
+        cur_c = in.get();
+        // will need to retract if ahead is not digits, well can check right now (and also maybe with dot using acceptible_digit() if no exponent possible without digits)
+    }
+}
+
+std::string handle_fractional_part(std::istream& in, int& cur_c, IntegerFormat integer_format) {
+    if (integer_format == IntegerFormat::binary || integer_format == IntegerFormat::octal) return "";
+    bool (*is_acceptable_digit)(char) = get_check_digit_func(integer_format);
+    std::stringstream number_string_stream;
+    std::string exponent_part = "";
+    bool underscore_acceptable = false;
+    cur_c = in.get();
+    while (true)
+    {
+        if (is_e_exponent(cur_c)) {
+            if (integer_format == IntegerFormat::hexadecimal) break;
+            exponent_part = handle_exponent_part(in, cur_c);
+        }
+        else if (is_p_exponent(cur_c)) {
+            if (integer_format == IntegerFormat::decimal) break;
+            exponent_part = handle_exponent_part(in, cur_c);
+        }
+        else if (cur_c == '_' && !underscore_acceptable) {
+            break;
+        }
+        else if (is_acceptable_digit(cur_c)) {
+            number_string_stream << cur_c;
+        }
+        else {
+            break;
+        }
+        cur_c = in.get();
+        underscore_acceptable = true;
+    }
+    return number_string_stream.str() + exponent_part;
+}
+
+Token Lexer::handle_number_literals_with_format(std::istream& in, int cur_c, IntegerFormat integer_format) {
+    bool (*is_acceptable_digit)(char) = get_check_digit_func(integer_format);
+    
+    std::stringstream number_string_stream;
+    std::string fractional_part = "";
+    bool underscore_acceptable = false;
+    while (true) {
+        if (cur_c == '.') {
+            fractional_part = handle_fractional_part(in, cur_c, integer_format);
+            if (fractional_part == "") in.putback('.');
+            break;
+        }
+        else if (cur_c == '_' && !underscore_acceptable) {
+            break;
+        }
+        else if (is_acceptable_digit(cur_c)) {
+            number_string_stream << cur_c;
+        }
+        else {
+            break;
+        }
+        cur_c = in.get();
+        underscore_acceptable = true;
+    }
+    if (cur_c == 'i') is_imaginary = true;
+    else in.putback(cur_c);
+    if (fractional_part == "") {
+        return build_integer_token(number_string, integer_format, is_imaginary);
+    }
+    else {
+        return build_real_token(number_string + "." + fractional_part, integer_format, is_imaginary);
+    }
+
+    std::stringstream read_string_stream;
+    bool encountered_dot = false;
+    
     char prev_c = 0;
+    bool encountered_exponent = false;
     // handle exponents and imaginary
     // maybe go while true and break if not acceptable
     while (is_acceptable_digit(cur_c) || cur_c == '.' || cur_c == '_' || cur_c == 'e' || cur_c == 'E' || cur_c == 'p' || cur_c == 'P' || cur_c == '+' || cur_c == '-')
     {
         if (is_sign(cur_c) && !(is_e_exponent(prev_c) || is_p_exponent(prev_c))) break;
-        if (cur_c == 'e' || cur_c == 'E') {
-            
+        if (is_e_exponent(cur_c) && integer_format != IntegerFormat::decimal) break;
+        if (is_p_exponent(cur_c) && integer_format != IntegerFormat::hexadecimal) break;
+        if ((is_e_exponent(cur_c) || is_p_exponent(cur_c)) && !encountered_dot) break;
+        if (is_e_exponent(cur_c) || is_p_exponent(cur_c)) {
+
         }
         if (cur_c == '_' && !underscore_acceptable) {
             break;

@@ -19,17 +19,13 @@ enum class IntegerFormat {
 	binary
 };
 
-bool is_sign(char c) {
-	return c == '+' || c == '-';
-}
+bool (*get_check_digit_func(IntegerFormat integer_format))(char);
 
-bool is_e_exponent(char c) {
-	return c == 'e' || c == 'E';
-}
+bool is_sign(char c);
 
-bool is_p_exponent(char c) {
-	return c == 'p' || c == 'P';
-}
+bool is_e_exponent(char c);
+
+bool is_p_exponent(char c);
 
 bool is_letter_or_underscore(char c);
 
