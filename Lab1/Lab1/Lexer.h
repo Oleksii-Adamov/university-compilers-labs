@@ -45,13 +45,7 @@ private:
     Token handle_number_literals_with_format_by_stage(std::istream& in, int& cur_c, NumberFormat integer_format,
         NumberHandlingStage number_handling_stage, std::vector<int>& chars_to_putback);
 
-    std::string handle_fractional_part(std::istream& in, int& cur_c, NumberFormat integer_format);
-
-    std::string handle_exponent_part(std::istream& in, int& cur_c);
-
     Token handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c);
-
-    Token handle_operators_and_punctuation(std::istream& in, int cur_c, int next_c);
 
     Token retrive_next_token(std::istream& in);
 };

@@ -141,71 +141,6 @@ Token Lexer::build_real_token(const std::string& number_string, NumberFormat num
     }
 }
 
-std::string Lexer::handle_exponent_part(std::istream& in, int& cur_c) {
-    std::stringstream number_string_stream;
-    bool underscore_acceptable = false;
-    cur_c = in.get();
-    if (is_sign(cur_c)) {
-        int next_c = in.peek();
-        if (is_digit(next_c)) {
-            number_string_stream << cur_c;
-            cur_c = in.get();
-        }
-        else {
-            return "";
-        }
-    }
-    while (true) {
-        if (cur_c == '_' && !underscore_acceptable) {
-            break;
-        }
-        else if (is_digit(cur_c)) {
-            number_string_stream << (char) cur_c;
-        }
-        else {
-            break;
-        }
-    }
-    // letting caller to return not acceptable cur_c (because it maybe be acceptable in other context e.g 'i' - imaginary)
-    return number_string_stream.str();
-}
-
-std::string Lexer::handle_fractional_part(std::istream& in, int& cur_c, NumberFormat number_format) {
-    if (number_format == NumberFormat::binary || number_format == NumberFormat::octal) return "";
-    bool (*is_acceptable_digit)(char) = get_check_digit_func(number_format);
-    std::stringstream number_string_stream;
-    std::string exponent_part = "";
-    bool underscore_acceptable = false;
-    cur_c = in.get();
-    while (true)
-    {
-        if (is_e_exponent(cur_c) || is_p_exponent(cur_c)) {
-            if (!((is_e_exponent(cur_c) && number_format == NumberFormat::hexadecimal) ||
-                (is_p_exponent(cur_c) && number_format == NumberFormat::decimal))) { // if exponent corresponds to number format
-                exponent_part = std::string(1, cur_c) + handle_exponent_part(in, cur_c);
-                if (exponent_part.size() == 1) {
-                    in.putback(exponent_part[0]);
-                    exponent_part = "";
-                }
-            }
-            break;
-        }
-        else if (cur_c == '_' && !underscore_acceptable) {
-            break;
-        }
-        else if (is_acceptable_digit(cur_c)) {
-            number_string_stream << (char) cur_c;
-        }
-        else {
-            break;
-        }
-        cur_c = in.get();
-        underscore_acceptable = true;
-    }
-    // letting caller to return not acceptable cur_c (because it maybe be acceptable in other context e.g 'i' - imaginary)
-    return number_string_stream.str() + exponent_part;
-}
-
 // united 3 functions/automatas for whole number, fractional part, and exponent part because of similar code
 Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& cur_c, NumberFormat number_format,
     NumberHandlingStage number_handling_stage, std::vector<int>& chars_to_putback) {
@@ -238,7 +173,6 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
             if (is_acceptable_digit(in.peek())) next_part = 
                 handle_number_literals_with_format_by_stage(in, cur_c, number_format, NumberHandlingStage::FractionalPart,
                     chars_to_putback).get_token_value();
-            //if (fractional_part == "") in.putback('.');
             break;
         }
         if (number_handling_stage == NumberHandlingStage::FractionalPart && (is_e_exponent(cur_c) || is_p_exponent(cur_c))) {
@@ -247,8 +181,6 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
                 next_part.append(1, (char)cur_c);
                 next_part.append(handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart,
                     chars_to_putback).get_token_value());
-                //next_part = std::string(1, (char) cur_c) + 
-                //    handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart).get_token_value();
                 if (next_part.size() == 1) {
                     chars_to_putback.push_back(next_part[0]);
                     next_part = "";
@@ -352,16 +284,6 @@ Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int
     else {
         return Token(Token::TokenType::Identifier, read_string);
     }
-}
-
-Token Lexer::handle_operators_and_punctuation(std::istream& in, int cur_c, int next_c)
-{
-    /*if (s[pos] == '(') return Token(Token::TokenType::LeftRoundBracket);
-    // all other one symbol Tokens that don't conflict with any longer Tokens
-    if (s[pos] == '<') {
-        if (pos < s.size() - 1 && s[pos + 1] == '=') return Token(Token::TokenType::RelationalOperator, "<=");
-    }*/
-    return Token(Token::TokenType::Error);
 }
 
 Token Lexer::retrive_next_token(std::istream& in)
