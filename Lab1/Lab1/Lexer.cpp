@@ -216,10 +216,22 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
     if (!(number_handling_stage == NumberHandlingStage::WholeNumber)) cur_c = in.get();
 
     bool (*is_acceptable_digit)(char) = get_check_digit_func(number_format);
-    
+
     std::stringstream number_string_stream;
     std::string next_part = "";
     bool underscore_acceptable = false;
+    
+    if (number_handling_stage == NumberHandlingStage::ExponentPart && is_sign(cur_c)) {
+        int next_c = in.peek();
+        if (is_digit(next_c)) {
+            number_string_stream << (char) cur_c;
+            cur_c = in.get();
+        }
+        else {
+            return Token(Token::TokenType::None, "");
+        }
+    }
+    
     while (true) {
         bool is_acceptable_cur_c = false;
         if (number_handling_stage == NumberHandlingStage::WholeNumber && cur_c == '.') {
@@ -231,8 +243,10 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
         if (number_handling_stage == NumberHandlingStage::FractionalPart && (is_e_exponent(cur_c) || is_p_exponent(cur_c))) {
             if (!((is_e_exponent(cur_c) && number_format == NumberFormat::hexadecimal) ||
                 (is_p_exponent(cur_c) && number_format == NumberFormat::decimal))) { // if exponent corresponds to number format
-                next_part = std::string(1, cur_c) + 
-                    handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart).get_token_value();
+                next_part.append(1, (char)cur_c);
+                next_part.append(handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart).get_token_value());
+                //next_part = std::string(1, (char) cur_c) + 
+                //    handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart).get_token_value();
                 if (next_part.size() == 1) {
                     in.putback(next_part[0]);
                     next_part = "";
@@ -260,7 +274,10 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
 
     if (!(number_handling_stage == NumberHandlingStage::WholeNumber)) return Token(Token::TokenType::None, number_string + next_part);
     
-    if (number_string == "" && next_part == "") return Token(Token::TokenType::None);
+    if (number_string == "" && next_part == "") {
+        in.putback(cur_c);
+        return Token(Token::TokenType::None);
+    }
 
     bool is_imaginary = false;
     if (cur_c == 'i') is_imaginary = true;
@@ -276,6 +293,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
 
 Token Lexer::handle_number_literals(std::istream& in, int cur_c, int next_c)
 {
+    std::vector<char> chars_to_putback();
     NumberFormat number_format = NumberFormat::decimal;
     if (cur_c == '0') {
         if (next_c == 'x' || next_c == 'X') number_format = NumberFormat::hexadecimal;
@@ -289,12 +307,13 @@ Token Lexer::handle_number_literals(std::istream& in, int cur_c, int next_c)
     else {
         cur_c = in.get();
         cur_c = in.get();
-        Token token = handle_number_literals_with_format_by_stage(in, cur_c, number_format, NumberHandlingStage::WholeNumber);
+        Token token = handle_number_literals_with_format_by_stage(in, cur_c, number_format, NumberHandlingStage::WholeNumber, chars_to_putback);
         // after 0x can be not number, if so then it is just 0 (and id x next)
         if (token.get_token_type() == Token::TokenType::None) {
             in.putback(next_c);
             return Token(Token::TokenType::IntegerLiteralDecimal, "0");
         }
+        else return token;
     }
 }
 

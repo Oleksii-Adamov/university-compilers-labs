@@ -43,7 +43,7 @@ private:
     Token handle_number_literals(std::istream& in, int cur_c, int next_c);
 
     Token handle_number_literals_with_format_by_stage(std::istream& in, int& cur_c, NumberFormat integer_format,
-        NumberHandlingStage number_handling_stage);
+        NumberHandlingStage number_handling_stage, std::vector<char> chars_to_putback);
 
     std::string handle_fractional_part(std::istream& in, int& cur_c, NumberFormat integer_format);
 
