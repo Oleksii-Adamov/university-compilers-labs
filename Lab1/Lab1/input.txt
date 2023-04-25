@@ -4,8 +4,9 @@
 /* comment2
 // 2
 */
-/*keywords*/ if
+/*keywords*/ if reduce
 /*identifiers*/ i ifi _ i21 _12
 /*correct numbers*/ 123 1_2__3 3_4.5_5 23.5e+3 23.5e-3 23.5e3 .5_5 0x5f 0x5f.2 0x5f.2p+2 0x5f.2p-2 0 0b0110 0o47
 /*incorrect numbers*/ 0x ._2 23.5p3 0x5f.2e2 23.5e_3 0b32 0o89 0o299 0b01.01 0o47.32
+/*compound assignment*/ reduce=
 12x

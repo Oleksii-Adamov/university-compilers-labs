@@ -54,7 +54,22 @@ Token Lexer::handle_unambiguous_single_char_tokens(int cur_c) {
 }
 
 Token Lexer::handle_ambiguous_operators(std::istream& in, int cur_c, int next_c) {
-    if (cur_c == '.') return Token(Token::TokenType::MemberAccess);
+    if (cur_c == '.') {
+        if (next_c == '.') {
+            cur_c = in.get();
+            next_c = in.peek();
+            if (next_c == '.') {
+                cur_c = in.get();
+                return Token(Token::TokenType::VariableArgumentLists);
+            }
+            else if (next_c == '<') {
+                cur_c = in.get();
+                return Token(Token::TokenType::RangeSpecifier, "..<");
+            }
+            else return Token(Token::TokenType::RangeSpecifier, "..");
+        }
+        else return Token(Token::TokenType::MemberAccess);
+    }
     return Token(Token::TokenType::None);
 }
 
@@ -276,6 +291,11 @@ Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int
     if (keyword_automata.is_in_accepted_state()) {
         if (read_string == "true" || read_string == "false") {
             return Token(Token::TokenType::BoolLiteral, read_string);
+        }
+        else if (read_string == "reduce" && cur_c == '=') {
+            // take back =
+            cur_c = in.get();
+            return Token(Token::TokenType::CompoundAssignment, "reduce=");
         }
         else {
             return Token(Token::TokenType::Keyword, read_string);
