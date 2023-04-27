@@ -1,5 +1,5 @@
 #include "checks.h"
-
+#include <iostream>
 bool is_lowercase_letter(char c) {
 	return c >= 'a' && c <= 'z';
 }
@@ -63,4 +63,8 @@ bool is_letter_or_underscore(char c)
 bool is_legal_identifier_char(char c)
 {
     return is_letter_or_underscore(c) || is_digit(c) || c == '$';
+}
+
+bool is_interpreted_string_char(int c) {
+    return (c != '\n' && c != EOF)
 }

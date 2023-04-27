@@ -30,3 +30,5 @@ bool is_p_exponent(char c);
 bool is_letter_or_underscore(char c);
 
 bool is_legal_identifier_char(char c);
+
+bool is_interpreted_string_char(int c);

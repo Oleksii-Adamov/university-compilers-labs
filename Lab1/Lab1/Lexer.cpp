@@ -112,7 +112,61 @@ Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
 
 Token Lexer::handle_string_literals(std::istream& in, int cur_c, int next_c)
 {
-    return Token(Token::TokenType::Error);
+    int terminating_char = cur_c;
+    bool is_interpreted = true;
+    if (next_c == terminating_char) {
+        cur_c = in.get();
+        next_c = in.peek();
+        if (next_c == terminating_char) {
+            cur_c = in.get();
+            is_interpreted = false;
+        }
+        else {
+            // empty string
+            return Token(Token::TokenType::InterpretedStringLiteral, "");
+        }
+    }
+    int terminating_char_seq_count = 0;
+    cur_c = in.get();
+    if (is_interpreted) return handle_interpreted_string_literal(in, cur_c);
+    else return  handle_uninterpreted_string_literal(in, cur_c);
+}
+
+Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int terminating_char) {
+    std::stringstream token_value_stream;
+    while (cur_c) {
+        if (cur_c == EOF) {
+            return Token(Token::TokenType::Error, "end of file in string literal");
+        }
+        else if (cur_c == '\n') {
+            return Token(Token::TokenType::Error, "new line in string literal");
+        }
+        else if (cur_c == '\\') {
+            int next_c = in.peek();
+            if (is_acceptable_simple_escape_char(next_c)) token_value_stream << escape_char(next_c);
+            else {
+                cur_c = in.get();
+                if (cur_c == 'x') {
+                    next_c = in.peek();
+                    if (is_hexadecimal_digit(next_c)) {
+                        cur_c = in.get();
+                        token_value_stream << interpret_hexadecimal_escape_char(in, cur_c);
+                        continue;
+                    }
+                }
+                return Token(Token::TokenType::Error, "Unacceptable escape character");
+            }
+        }
+        else if (cur_c == terminating_char) {
+            break;
+        }
+        else {
+            token_value_stream << cur_c;
+        }
+    }
+}
+Token Lexer::handle_uninterpreted_string_literal(std::istream& in, int cur_c) {
+
 }
 
 Token Lexer::handle_bytes_literal(std::istream& in, int cur_c, int next_c)
@@ -328,7 +382,21 @@ Token Lexer::retrive_next_token(std::istream& in)
     // handle string literals
     if (cur_c == '"' || cur_c == '\''/* || (cur_c == 'b' && (next_c == '"' || next_c == '\''))*/) return handle_string_literals(in, cur_c, next_c);
     // handle bytes literals
-    if (cur_c == 'b' && (next_c == '"' || next_c == '\'')) return handle_bytes_literal(in, cur_c, next_c);
+    if (cur_c == 'b' && (next_c == '"' || next_c == '\'')) {
+        cur_c = in.get();
+        next_c = in.peek();
+        Token string_literal_token = handle_string_literals(in, cur_c, next_c);
+        if (string_literal_token.get_token_type() == Token::TokenType::InterpretedStringLiteral) {
+            return Token(Token::TokenType::InterpretedBytesLiteral, string_literal_token.get_token_value());
+        }
+        else if (string_literal_token.get_token_type() == Token::TokenType::UninterpretedStringLiteral) {
+            return Token(Token::TokenType::UninterpretedBytesLiteral, string_literal_token.get_token_value());
+        }
+        else { // error
+            return string_literal_token;
+        }
+        //return handle_bytes_literal(in, cur_c, next_c);
+    }
     // handle integer and real literals
     if (is_digit(cur_c) || (cur_c == '.' && is_digit(next_c))) {
         return handle_number_literals(in, cur_c, next_c);
