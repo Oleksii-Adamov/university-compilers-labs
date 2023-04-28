@@ -6,10 +6,9 @@ int main()
     Lexer lexer;
     std::vector<Token> tokens;
     bool success = lexer.tokenize_file("input.txt", tokens);
-    if (success) {
-        for (int i = 0; i < tokens.size(); i++) {
-            std::cout << tokens[i] << " ";
-        }
+    std::cout << "Tokens:\n";
+    for (int i = 0; i < tokens.size(); i++) {
+        std::cout << tokens[i] << " ";
     }
 }
 

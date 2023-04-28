@@ -19,14 +19,15 @@ Lexer::Lexer() {
 
 bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens)
 {
+    bool error = false;
     while (true) {
         Token new_token = retrive_next_token(in);
         if (new_token.get_token_type() == Token::TokenType::Error) {
             std::cout << "Error: " << new_token.get_token_value();
-            return false;
+            error = true;
         }
         if (new_token.get_token_type() == Token::TokenType::EndOfFile) {
-            return true;
+            return !error;
         }
         tokens.push_back(new_token);
     }
@@ -143,7 +144,10 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
         }
         else if (cur_c == '\\') {
             int next_c = in.peek();
-            if (is_acceptable_simple_escape_char(next_c)) token_value_stream << escape_char(next_c);
+            if (is_acceptable_simple_escape_char(next_c)) {
+                token_value_stream << escape_char(next_c);
+                cur_c = in.get();
+            }
             else {
                 cur_c = in.get();
                 if (cur_c == 'x') {
@@ -151,6 +155,7 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
                     if (is_hexadecimal_digit(next_c)) {
                         cur_c = in.get();
                         token_value_stream << interpret_hexadecimal_escape_char(in, cur_c);
+                        cur_c = in.get();
                         continue;
                     }
                 }
@@ -421,5 +426,5 @@ Token Lexer::retrive_next_token(std::istream& in)
     return_token = handle_ambiguous_operators(in, cur_c, next_c);
     if (return_token.get_token_type() != Token::TokenType::None) return return_token;
 
-    return Token(Token::TokenType::Error);
+    return Token(Token::TokenType::Error, "Unaccepted character: " + std::string(1, (char) cur_c));
 }
