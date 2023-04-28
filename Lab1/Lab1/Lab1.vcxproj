@@ -145,6 +145,7 @@
     <ClCompile Include="LowercaseAutomataState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KeywordAutomata.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="LowercaseAutomataState.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="checks.h" />
+    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />

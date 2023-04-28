@@ -9,6 +9,7 @@ class Lexer
 private:
     static const std::vector<std::string> KEYWORDS;
     KeywordAutomata keyword_automata;
+    unsigned int cur_line = 1;
 public:
     Lexer();
     bool tokenize_stream(std::istream& in, std::vector<Token>& tokens);
@@ -52,5 +53,7 @@ private:
     Token handle_identifiers_keywords_and_bool_literals(std::istream& in, int cur_c, int next_c);
 
     Token retrive_next_token(std::istream& in);
+
+    std::string error_string_wrapper(std::string error_discritption);
 };
 

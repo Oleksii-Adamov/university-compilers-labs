@@ -32,7 +32,3 @@ bool is_letter_or_underscore(char c);
 bool is_legal_identifier_char(char c);
 
 bool is_acceptable_simple_escape_char(int c);
-
-char escape_char(char c);
-
-int hexadecimal_digit_to_int(char c);

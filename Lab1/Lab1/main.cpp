@@ -8,7 +8,7 @@ int main()
     bool success = lexer.tokenize_file("input.txt", tokens);
     std::cout << "Tokens:\n";
     for (int i = 0; i < tokens.size(); i++) {
-        std::cout << tokens[i] << " ";
+        std::cout << tokens[i] << std::endl;
     }
 }
 

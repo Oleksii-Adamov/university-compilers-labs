@@ -1,6 +1,7 @@
 #include "Lexer.h"
 #include <sstream>
 #include <iostream>
+#include "util.h"
 
 const std::vector <std::string> Lexer::KEYWORDS = { "_", "align", "as", "atomic",  "begin",  "bool",  "borrowed",  "break",  "by",  "bytes",  "catch",
 "class",  "cobegin",  "coforall",  "complex", "config",  "const",  "continue",  "defer",  "delete",  "dmapped",  "do",  "domain",  "else",  "enum",
@@ -23,7 +24,7 @@ bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens)
     while (true) {
         Token new_token = retrive_next_token(in);
         if (new_token.get_token_type() == Token::TokenType::Error) {
-            std::cout << "Error: " << new_token.get_token_value();
+            std::cout << "Error: " << new_token.get_token_value() << std::endl;
             error = true;
         }
         if (new_token.get_token_type() == Token::TokenType::EndOfFile) {
@@ -86,6 +87,9 @@ Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
         if (cur_c == EOF) {
             return Token(Token::TokenType::EndOfFile);
         }
+        else {
+            cur_line++;
+        }
         // state with transition by \n is starting state
         return retrive_next_token(in);
     }
@@ -96,6 +100,7 @@ Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
         next_c = in.peek();
         while (cur_c != EOF && !(cur_c == '*' && next_c == '/'))
         {
+            if (cur_c == '\n') cur_line++;
             cur_c = in.get();
             next_c = in.peek();
         }
@@ -135,12 +140,18 @@ Token Lexer::handle_string_literals(std::istream& in, int cur_c, int next_c)
 
 Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int terminating_char) {
     std::stringstream token_value_stream;
+    bool error = false;
+    std::string error_discritption;
     while (cur_c) {
         if (cur_c == EOF) {
-            return Token(Token::TokenType::Error, "end of file in string literal");
+            error = true;
+            error_discritption = "end of file in string literal";
+            break;
         }
         else if (cur_c == '\n') {
-            return Token(Token::TokenType::Error, "new line in string literal");
+            error = true;
+            error_discritption = "new line in string literal";
+            break;
         }
         else if (cur_c == '\\') {
             int next_c = in.peek();
@@ -159,7 +170,9 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
                         continue;
                     }
                 }
-                return Token(Token::TokenType::Error, "Unacceptable escape character");
+                error = true;
+                error_discritption = "Unacceptable escape character: \\" + std::string(1, cur_c);
+                break;
             }
         }
         else if (cur_c == terminating_char) {
@@ -169,6 +182,15 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
             token_value_stream << (char) cur_c;
         }
         cur_c = in.get();
+    }
+    if (error) {
+        // skip all charasters to EOF or termitating char, because otherwise if it was string literal was closed and we stop here that would
+        // produce new errors and misleading tokens
+        while (cur_c != EOF && cur_c != terminating_char)
+        {
+            cur_c = in.get();
+        }
+        return Token(Token::TokenType::Error, error_string_wrapper(error_discritption));
     }
     return Token(Token::TokenType::InterpretedStringLiteral, token_value_stream.str());
 }
@@ -384,6 +406,7 @@ Token Lexer::retrive_next_token(std::istream& in)
 
     // skip whitespace chars, transition by whitespace to same starting state
     if (is_whitespace(cur_c)) {
+        if (cur_c == '\n') cur_line++;
         return retrive_next_token(in);
     }
 
@@ -427,4 +450,8 @@ Token Lexer::retrive_next_token(std::istream& in)
     if (return_token.get_token_type() != Token::TokenType::None) return return_token;
 
     return Token(Token::TokenType::Error, "Unaccepted character: " + std::string(1, (char) cur_c));
+}
+
+std::string Lexer::error_string_wrapper(std::string error_discritption) {
+    return "Lexical error in line " + std::to_string(cur_line) + ": " + error_discritption;
 }
