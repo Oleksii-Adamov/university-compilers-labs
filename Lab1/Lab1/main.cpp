@@ -5,10 +5,17 @@ int main()
 {
     Lexer lexer;
     std::vector<Token> tokens;
-    bool success = lexer.tokenize_file("input.txt", tokens);
-    std::cout << "Tokens:\n";
+    std::vector<std::string> errors;
+    bool success = lexer.tokenize_file("input.txt", tokens, errors);
+    if (!success) {
+        std::cout << "Errors:\n";
+        for (std::size_t i = 0; i < errors.size(); i++) {
+            std::cout << errors[i] << "\n";
+        }
+    }
+    std::cout << "Tokens:" << "\n";
     for (int i = 0; i < tokens.size(); i++) {
-        std::cout << tokens[i] << std::endl;
+        std::cout << tokens[i] << "\n";
     }
 }
 

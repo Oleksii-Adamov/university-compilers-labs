@@ -12,9 +12,9 @@ private:
     unsigned int cur_line = 1;
 public:
     Lexer();
-    bool tokenize_stream(std::istream& in, std::vector<Token>& tokens);
+    bool tokenize_stream(std::istream& in, std::vector<Token>& tokens, std::vector<std::string>& errors);
 
-    bool tokenize_file(std::string file_name, std::vector<Token>& tokens);
+    bool tokenize_file(std::string file_name, std::vector<Token>& tokens, std::vector<std::string>& errors);
 private:
 
     Token handle_unambiguous_single_char_tokens(int cur_c);

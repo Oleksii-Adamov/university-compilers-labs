@@ -12,4 +12,5 @@
 /*incorrect interpreted string literals*/ "\c" "ab
 cd" "\5" "\xz"
 // /*compound assignment*/ reduce=
-// 12x
+// 2x
+"abc

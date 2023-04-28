@@ -18,13 +18,13 @@ Lexer::Lexer() {
     }
 }
 
-bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens)
+bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens, std::vector<std::string>& errors)
 {
     bool error = false;
     while (true) {
         Token new_token = retrive_next_token(in);
         if (new_token.get_token_type() == Token::TokenType::Error) {
-            std::cout << "Error: " << new_token.get_token_value() << std::endl;
+            errors.push_back(new_token.get_token_value());
             error = true;
         }
         if (new_token.get_token_type() == Token::TokenType::EndOfFile) {
@@ -34,10 +34,10 @@ bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens)
     }
 }
 
-bool Lexer::tokenize_file(std::string file_name, std::vector<Token>& tokens)
+bool Lexer::tokenize_file(std::string file_name, std::vector<Token>& tokens, std::vector<std::string>& errors)
 {
     std::ifstream in(file_name);
-    return tokenize_stream(in, tokens);
+    return tokenize_stream(in, tokens, errors);
 }
 
 Token Lexer::handle_unambiguous_single_char_tokens(int cur_c) {
@@ -105,7 +105,7 @@ Token Lexer::skip_comments(std::istream& in, int cur_c, int next_c)
             next_c = in.peek();
         }
         if (cur_c == EOF) {
-            return Token(Token::TokenType::Error, "unterminated comment");
+            return Token(Token::TokenType::Error, error_string_wrapper("unterminated comment"));
         }
         cur_c = in.get();
         return retrive_next_token(in);
@@ -449,7 +449,7 @@ Token Lexer::retrive_next_token(std::istream& in)
     return_token = handle_ambiguous_operators(in, cur_c, next_c);
     if (return_token.get_token_type() != Token::TokenType::None) return return_token;
 
-    return Token(Token::TokenType::Error, "Unaccepted character: " + std::string(1, (char) cur_c));
+    return Token(Token::TokenType::Error, error_string_wrapper("Unaccepted character: " + std::string(1, (char) cur_c)));
 }
 
 std::string Lexer::error_string_wrapper(std::string error_discritption) {
