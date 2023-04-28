@@ -128,7 +128,7 @@ Token Lexer::handle_string_literals(std::istream& in, int cur_c, int next_c)
     }
     int terminating_char_seq_count = 0;
     cur_c = in.get();
-    if (is_interpreted) return handle_interpreted_string_literal(in, cur_c);
+    if (is_interpreted) return handle_interpreted_string_literal(in, cur_c, terminating_char);
     else return  handle_uninterpreted_string_literal(in, cur_c);
 }
 
@@ -161,12 +161,24 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
             break;
         }
         else {
-            token_value_stream << cur_c;
+            token_value_stream << (char) cur_c;
         }
+        cur_c = in.get();
     }
+    return Token(Token::TokenType::InterpretedStringLiteral, token_value_stream.str());
 }
-Token Lexer::handle_uninterpreted_string_literal(std::istream& in, int cur_c) {
 
+char Lexer::interpret_hexadecimal_escape_char(std::istream& in, int cur_c) {
+    int next_c = in.peek();
+    if (is_hexadecimal_digit(next_c)) {
+        next_c = in.get();
+        return (char) (16 * hexadecimal_digit_to_int(cur_c) + hexadecimal_digit_to_int(next_c));
+    }
+    else return (char) hexadecimal_digit_to_int(cur_c);
+}
+
+Token Lexer::handle_uninterpreted_string_literal(std::istream& in, int cur_c) {
+    return Token(Token::TokenType::Error);
 }
 
 Token Lexer::handle_bytes_literal(std::istream& in, int cur_c, int next_c)

@@ -25,8 +25,9 @@ private:
 
     Token handle_string_literals(std::istream& in, int cur_c, int next_c);
 
-    Token handle_interpreted_string_literal(std::istream& in, int cur_c);
+    Token handle_interpreted_string_literal(std::istream& in, int cur_c, int terminating_char);
     Token handle_uninterpreted_string_literal(std::istream& in, int cur_c);
+    char interpret_hexadecimal_escape_char(std::istream& in, int cur_c);
 
     Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
 

@@ -49,7 +49,6 @@ public:
 		ExpressionSeparator,
 		MemberAccess,
 		TypeQuery,
-		StringDelimiter,
 
 		LeftRoundBracket,
 		RightRoundBracket,
