@@ -11,6 +11,9 @@
 /*interpreted string literals*/ "abc" 'abc' "" '' "'abc'" '"abc"' "\"ab\tc\nd" "a\xa\x62"
 /*incorrect interpreted string literals*/ "\c" "ab
 cd" "\5" "\xz"
+/*uninterpreted string literals*/ """a"b"c""" '''a'b'c''' """""" '''''' """ab\nc\x12""" '''ab\tc\x11''' """ab
+c"""
+
 // /*compound assignment*/ reduce=
 // 2x
-"abc
+"""abc

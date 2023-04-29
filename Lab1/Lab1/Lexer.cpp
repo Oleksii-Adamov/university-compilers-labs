@@ -223,8 +223,8 @@ Token Lexer::handle_uninterpreted_string_literal(std::istream& in, int cur_c, in
         cur_c = in.get();
     }
     std::string read_string = read_string_stream.str();
-    // excluding last 3 chars (terminating chars)
-    return Token(Token::TokenType::UninterpretedStringLiteral, read_string.substr(0, read_string.size() - 3));
+    // excluding last 2 chars (terminating chars - third is not in read_string)
+    return Token(Token::TokenType::UninterpretedStringLiteral, read_string.substr(0, read_string.size() - 2));
 }
 
 Token Lexer::handle_bytes_literal(std::istream& in, int cur_c, int next_c)
