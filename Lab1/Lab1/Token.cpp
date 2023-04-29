@@ -45,7 +45,8 @@ std::ostream& operator<<(std::ostream& out, const Token::TokenType& token_type) 
 	case Token::TokenType::RangeDomainStrideSpecifier: s = "RangeDomainStrideSpecifier"; break;
 	case Token::TokenType::RangeCountOperator: s = "RangeCountOperator"; break;
 	case Token::TokenType::VariableArgumentLists: s = "VariableArgumentLists"; break;
-	case Token::TokenType::LogicalBitwiseOperator: s = "LogicalBitwiseOperator"; break;
+	case Token::TokenType::LogicalOperator: s = "LogicalOperator"; break;
+	case Token::TokenType::BitwiseOperator: s = "BitwiseOperator"; break;
 	case Token::TokenType::RelationalOperator: s = "RelationalOperator"; break;
 	case Token::TokenType::ArithmeticOperator: s = "ArithmeticOperator"; break;
 	case Token::TokenType::TypeSpecifier: s = "TypeSpecifier"; break;

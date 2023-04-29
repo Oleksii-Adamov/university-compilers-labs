@@ -19,7 +19,7 @@ private:
 
     Token handle_unambiguous_single_char_tokens(int cur_c);
 
-    Token handle_ambiguous_operators(std::istream& in, int cur_c, int next_c);
+    Token handle_ambiguous_tokens(std::istream& in, int cur_c, int next_c);
 
     // if skipped comment also retrieves next token, if didn't returns None token or Error token
     Token skip_comments(std::istream& in, int cur_c, int next_c);

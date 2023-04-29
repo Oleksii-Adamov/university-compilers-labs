@@ -52,25 +52,94 @@ Token Lexer::handle_unambiguous_single_char_tokens(int cur_c) {
     if (cur_c == ';') return Token(Token::TokenType::StatementSeparator);
     if (cur_c == ',') return Token(Token::TokenType::ExpressionSeparator);
     if (cur_c == '?') return Token(Token::TokenType::TypeQuery);
+    if (cur_c == '~') return Token(Token::TokenType::BitwiseOperator, "~");
     return Token(Token::TokenType::None);
 }
 
-Token Lexer::handle_ambiguous_operators(std::istream& in, int cur_c, int next_c) {
+Token Lexer::handle_ambiguous_tokens(std::istream& in, int cur_c, int next_c) {
+    char c;
     if (cur_c == '.') {
         if (next_c == '.') {
-            cur_c = in.get();
+            c = in.get();
             next_c = in.peek();
             if (next_c == '.') {
-                cur_c = in.get();
+                c = in.get();
                 return Token(Token::TokenType::VariableArgumentLists);
             }
             else if (next_c == '<') {
-                cur_c = in.get();
+                c = in.get();
                 return Token(Token::TokenType::RangeSpecifier, "..<");
             }
             else return Token(Token::TokenType::RangeSpecifier, "..");
         }
         else return Token(Token::TokenType::MemberAccess);
+    }
+    if (cur_c == '*' && next_c == '*') {
+        c = in.get();
+        if (in.peek() == '=') {
+            c = in.get();
+            return Token(Token::TokenType::CompoundAssignment, "**=");
+        }
+        else {
+            return Token(Token::TokenType::ArithmeticOperator, "**");
+        }
+    }
+    if (cur_c == '+' || cur_c == '-' || cur_c == '/' || cur_c == '%' || cur_c == '*') {
+        if (next_c == '=') {
+            c = in.get();
+            return Token(Token::TokenType::CompoundAssignment, std::string(1, cur_c) + "=");
+        }
+        else {
+            return Token(Token::TokenType::ArithmeticOperator, std::string(1, cur_c));
+        }
+    }
+    if (cur_c == '&' || cur_c == '|' || cur_c == '^') {
+        if (next_c == '=') {
+            c = in.get();
+            return Token(Token::TokenType::CompoundAssignment, std::string(1, cur_c) + "=");
+        }
+        else if (cur_c != '^' && next_c == cur_c) {
+            c = in.get();
+            if (in.peek() == '=') {
+                c = in.get();
+                return Token(Token::TokenType::CompoundAssignment, std::string(2, cur_c) + "=");
+            }
+            return Token(Token::TokenType::LogicalOperator, std::string(2, cur_c));
+        }
+        else return Token(Token::TokenType::BitwiseOperator, std::string(1, cur_c));
+    }
+    if (cur_c == '!') {
+        if (next_c == '=') {
+            c = in.get();
+            return Token(Token::TokenType::RelationalOperator, "!=");
+        }
+        else return Token(Token::TokenType::LogicalOperator, "!");
+    }
+    if (cur_c == '<' || cur_c == '>') {
+        if (next_c == '=') {
+            c = in.get();
+            if (cur_c == '<' && in.peek() == '>') { // swap - <=>
+                c = in.get();
+                return Token(Token::TokenType::Swap);
+            }
+            else return Token(Token::TokenType::RelationalOperator, std::string(1, cur_c) + "=");
+        }
+        else if (next_c == cur_c) {
+            c = in.get();
+            if (in.peek() == '=') {
+                c = in.get();
+                return Token(Token::TokenType::CompoundAssignment, std::string(2, cur_c) + "=");
+            }
+            return Token(Token::TokenType::BitwiseOperator, std::string(2, cur_c));
+        }
+        else return Token(Token::TokenType::RelationalOperator, std::string(1, cur_c));
+    }
+    if (cur_c == '=') {
+        if (next_c == '=') {
+            c = in.get();
+            return Token(Token::TokenType::RelationalOperator, "==");
+        }
+        else return Token(Token::TokenType::Assignment);
     }
     return Token(Token::TokenType::None);
 }
@@ -465,7 +534,7 @@ Token Lexer::retrive_next_token(std::istream& in)
         return handle_identifiers_keywords_and_bool_literals(in, cur_c, next_c);
     }
     // handle ambiguous operators
-    return_token = handle_ambiguous_operators(in, cur_c, next_c);
+    return_token = handle_ambiguous_tokens(in, cur_c, next_c);
     if (return_token.get_token_type() != Token::TokenType::None) return return_token;
 
     return Token(Token::TokenType::Error, error_string_wrapper("Unaccepted character: " + std::string(1, (char) cur_c)));
