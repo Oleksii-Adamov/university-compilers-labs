@@ -25,17 +25,21 @@ void KeywordAutomata::feed(char c) {
 				current_state = current_state->next(c);
 			}
 		}
-		else {
+		else { // no keyword with not lowercase letters (except underscore)
 			current_state = nullptr;
 		}
 	}
 }
 
 bool KeywordAutomata::is_in_accepted_state() {
-	if (current_state != nullptr) return current_state->is_accepted_state() || is_underline;
-	else return false || is_underline;
+	return ((current_state != nullptr) && current_state->is_accepted_state()) || is_underline;
 }
 
 void KeywordAutomata::reset_state() {
 	current_state = starting_state;
+}
+
+KeywordAutomata::~KeywordAutomata() {
+	// all others will be cascadly deleted
+	delete starting_state;
 }

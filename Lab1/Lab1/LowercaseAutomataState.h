@@ -7,12 +7,13 @@ class LowercaseAutomataState
 {
 private:
 	static const std::size_t num_states = 'z' - 'a' + 1;
-
-	// TODO: use smart pointers
+	
+	// transitions to next state
 	LowercaseAutomataState* next_states[num_states];
 
 	bool accepted_state;
 
+	// lowercase char to index in next_states
 	std::size_t char_to_index(char c);
 
 public:
@@ -25,5 +26,7 @@ public:
 	void set_accepted_state(bool accepted_state_);
 
 	bool is_accepted_state();
+
+	~LowercaseAutomataState();
 };
 

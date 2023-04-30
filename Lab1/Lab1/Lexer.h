@@ -9,6 +9,7 @@ class Lexer
 private:
     static const std::vector<std::string> KEYWORDS;
     KeywordAutomata keyword_automata;
+    // counting lines to notify in which line error occurred
     unsigned int cur_line = 1;
 public:
     Lexer();

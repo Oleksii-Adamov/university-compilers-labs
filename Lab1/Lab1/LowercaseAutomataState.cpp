@@ -27,3 +27,10 @@ void LowercaseAutomataState::set_accepted_state(bool accepted_state_) {
 bool LowercaseAutomataState::is_accepted_state() {
 	return accepted_state;
 }
+
+LowercaseAutomataState::~LowercaseAutomataState() {
+	// cascade deletion of next states (destructors of next will be called)
+	for (std::size_t i = 0; i < num_states; i++) {
+		if (next_states[i] != nullptr) delete next_states[i];
+	}
+}

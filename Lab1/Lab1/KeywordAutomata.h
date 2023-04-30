@@ -6,7 +6,6 @@
 class KeywordAutomata
 {
 private:
-	// TODO: use smart pointers
 	LowercaseAutomataState* starting_state = new LowercaseAutomataState();
 	LowercaseAutomataState* current_state = starting_state;
 	// keyword underline handling separately to allow automata deal only with lowercase letters for convenience
@@ -19,5 +18,7 @@ public:
 	bool is_in_accepted_state();
 
 	void reset_state();
+
+	~KeywordAutomata();
 };
 

@@ -378,6 +378,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
 
     std::string number_string = number_string_stream.str();
 
+    // if not whole number stage only string matters, so just return it 
     if (!(number_handling_stage == NumberHandlingStage::WholeNumber)) return Token(Token::TokenType::None, number_string + next_part);
 
     if (number_string == "" && next_part == "") {
@@ -385,6 +386,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
         return Token(Token::TokenType::None);
     }
 
+    // imaginary numbers end with i (e.g. 12i)
     bool is_imaginary = false;
     if (cur_c == 'i') is_imaginary = true;
     else chars_to_putback.push_back(cur_c);
@@ -474,6 +476,8 @@ Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int
 }
 
 Token Lexer::handle_ambiguous_tokens(std::istream& in, int cur_c, int next_c) {
+    // a lot of ifs because of different types tokens instead of few (like operator and punctuation)
+    // That is done so because it will be easier for parser to work with meaningful tokens (imo)
     char c;
     if (cur_c == '.') {
         if (next_c == '.') {

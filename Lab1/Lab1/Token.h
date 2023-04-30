@@ -4,10 +4,6 @@ class Token
 {
 public:
 	enum class TokenType {
-		/*OneLineComment,
-		MultiLineCommentOpening,
-		MultiLineCommentEnclosing,
-		WhiteSpace,*/
 
 		Identifier,
 		Keyword,
