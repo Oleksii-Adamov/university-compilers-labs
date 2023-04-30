@@ -156,7 +156,10 @@
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input.txt" />
+    <Text Include="demo_input.txt" />
+    <Text Include="demo_output.txt" />
+    <Text Include="full_test_input.txt" />
+    <Text Include="full_test_output.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

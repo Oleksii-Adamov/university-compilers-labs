@@ -1,31 +1,32 @@
 #include <iostream>
+#include <fstream>
 #include "Lexer.h"
 
-int main()
-{
-    Lexer lexer;
-    std::vector<Token> tokens;
-    std::vector<std::string> errors;
-    bool success = lexer.tokenize_file("input.txt", tokens, errors);
+void output_to_stream(std::ostream& out, bool success, const std::vector<Token>& tokens, const std::vector<std::string>& errors) {
     if (!success) {
-        std::cout << "Errors:\n";
+        out << "Errors:\n";
         for (std::size_t i = 0; i < errors.size(); i++) {
-            std::cout << errors[i] << "\n";
+            out << errors[i] << "\n";
         }
     }
-    std::cout << "Tokens:" << "\n";
-    for (int i = 0; i < tokens.size(); i++) {
-        std::cout << tokens[i] << "\n";
+    out << "Tokens:" << "\n";
+    for (std::size_t i = 0; i < tokens.size(); i++) {
+        out << tokens[i] << "\n";
     }
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+int main()
+{
+    std::string input_file_name = "full_test_input.txt";
+    std::string output_file_name = "full_test_output.txt";
+    //std::string input_file_name = "demo_input.txt";
+    //std::string output_file_name = "demo_output.txt";
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    std::ofstream out(output_file_name);
+    Lexer lexer;
+    std::vector<Token> tokens;
+    std::vector<std::string> errors;
+    bool success = lexer.tokenize_file(input_file_name, tokens, errors);
+    output_to_stream(out, success, tokens, errors);
+    output_to_stream(std::cout, success, tokens, errors);
+}

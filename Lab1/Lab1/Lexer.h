@@ -30,8 +30,6 @@ private:
     Token handle_uninterpreted_string_literal(std::istream& in, int cur_c, int terminating_char);
     char interpret_hexadecimal_escape_char(std::istream& in, int cur_c);
 
-    Token handle_bytes_literal(std::istream& in, int cur_c, int next_c);
-
     enum class NumberHandlingStage
     {
         WholeNumber,

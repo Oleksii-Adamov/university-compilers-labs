@@ -1,0 +1,10 @@
+// example code
+var myVar = 10;
+var mySecondVar = -1.234;
+var myThirdVar: real;
+myThirdVar = myVar + mySecondVar;
+myThirdVar *= 2
+if myThirdVar > 0 then
+	writeln(myThirdVar, " positive");
+else
+	writeln(myThirdVar, " negative");
