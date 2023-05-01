@@ -4,15 +4,15 @@
 /* comment2
 // 2
 */
-/*keywords*/ if reduce _
+/*some keywords*/ if reduce _ by
 /*identifiers*/ i ifi i21 _12 i$
-/*correct numbers*/ 123 1_2__3 3_4.5_5 23.5e+3 23.5e-3 23.5e3 23e3 .5_5 0x5f 0x5f.2 0x5f.2p+2 0x5f.2p-2 0x5f.2e2 0 0b0110 0o47 12i 23.5i 0x5f.2p-2i 184467440737095516165123123i
-/*incorrect numbers (not errors, just different tokens)*/ 0x ._2 23.5p3 0x5f.2e+2 23.5e_3 0b32 0o89 0o299 0b01.01 0o47.32 3.5e+ 3.5e
+/*correct numbers*/ 123 1_2__3 3_4.5_5 23.5e+3 23.5e-3 23.5e3 23e3 .5_5 0x5f 0x5f.2 0x5f.2p+2 0x5f.2p-2 0x5f.2e2 0x5fp+2 0 0b0110 0o47 12i 23.5i 0x5f.2p-2i 184467440737095516165123123i
+/*incorrect numbers (not errors, just different tokens)*/ 23. 0x ._2 23.5p3 0x5f.2e+2 23.5e_3 0b32 0o89 0o299 0b01.01 0o47.32 3.5e+ 3.5e 3.5e++1 0x5pf
 /*integer overflow*/ 18446744073709551616 184467440737095516155 0x18446744073709551615 0o17777777777777777777771 0b11111111111111111111111111111111111111111111111111111111111111110
 /*interpreted string literals*/ "abc" 'abc' "" '' "'abc'" '"abc"' "\"ab\tc\nd" "a\xa\x62"
 /*incorrect interpreted string literals*/ "\c" "ab
 cd" "\5" "\xz"
-/*uninterpreted string literals*/ """a"b"c""" '''a'b'c''' """""" '''''' """ab\nc\x12""" '''ab\tc\x11''' """ab
+/*uninterpreted string literals*/ """a"b"c""" '''a'b'c''' """""" '''''' """ab\nc\x12""" '''ab\tc\x11''' """a""b""c""" """a'''b'''c""" """ab
 c"""
 /*bytes literals*/ b"a'b'\tb" b'a"b"\tb' b"" b'' b"""a"b"\nb""" b'''a'b'\nb''' b"""""" b'''''' b"""ab
 c"""

@@ -106,7 +106,7 @@ Token Lexer::retrive_next_token(std::istream& in)
     if (return_token.get_token_type() != Token::TokenType::None) return return_token;
 
     // no token can start with this character
-    return Token(Token::TokenType::Error, error_string_wrapper("No token can start with character: " + std::string(1, (char)cur_c)));
+    return Token(Token::TokenType::Error, error_string_wrapper("no token can start with character: " + std::string(1, (char)cur_c)));
 }
 
 Token Lexer::handle_unambiguous_single_char_tokens(int cur_c) {
@@ -223,7 +223,7 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
                     }
                 }
                 error = true;
-                error_discritption = "Unacceptable escape character: \\" + std::string(1, cur_c);
+                error_discritption = "unacceptable escape character: \\" + std::string(1, cur_c);
                 break;
             }
         }
@@ -345,19 +345,24 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
         bool is_acceptable_cur_c = false;
 
         if (number_handling_stage == NumberHandlingStage::WholeNumber && cur_c == '.') { // that can be real number, finding fractional part
-            if (is_acceptable_digit(in.peek())) next_part =
+            // call fractional part handler
+            if (is_acceptable_digit(in.peek())) next_part = "." +
                 handle_number_literals_with_format_by_stage(in, cur_c, number_format, NumberHandlingStage::FractionalPart,
                     chars_to_putback).get_token_value();
+            // check if following chars result in invalid fractional part
+            if (next_part.size() == 1) next_part = "";
             break;
         }
 
-        if (number_handling_stage == NumberHandlingStage::FractionalPart && (is_e_exponent(cur_c) || is_p_exponent(cur_c))) {
-            // real number has exponent part, but it can be incorrect (or part of fractional part)
+        if (is_e_exponent(cur_c) || is_p_exponent(cur_c)) {
+            // found exponent part, but it can be incorrect (or legal char of fractional part)
             if (!((is_e_exponent(cur_c) && number_format == NumberFormat::hexadecimal) ||
                 (is_p_exponent(cur_c) && number_format == NumberFormat::decimal))) { // if exponent corresponds to number format
                 next_part.append(1, (char)cur_c);
+                // call exponent part handler
                 next_part.append(handle_number_literals_with_format_by_stage(in, cur_c, NumberFormat::decimal, NumberHandlingStage::ExponentPart,
                     chars_to_putback).get_token_value());
+                // check if following chars result in invalid exponent
                 if (next_part.size() == 1) {
                     chars_to_putback.push_back(next_part[0]);
                     next_part = "";
@@ -400,7 +405,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
         return build_integer_token(number_string, number_format, is_imaginary);
     }
     else {
-        return build_real_token(number_string + "." + next_part, number_format, is_imaginary);
+        return build_real_token(number_string + next_part, number_format, is_imaginary);
     }
 }
 
@@ -449,8 +454,8 @@ Token Lexer::build_integer_token(const std::string& number_string, NumberFormat 
             else return Token(Token::TokenType::IntegerLiteralDecimal, number_string);
         }
     }
-    return Token(Token::TokenType::Error, "Integer literal overflow: '" + text_integer_representation_for_error +
-        "' is too big for a 64-bit unsigned integer");
+    return Token(Token::TokenType::Error, error_string_wrapper("integer literal overflow: '" + text_integer_representation_for_error +
+        "' is too big for a 64-bit unsigned integer"));
 }
 
 Token Lexer::build_real_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {

@@ -1,21 +1,22 @@
 Errors:
-Integer literal overflow: '18446744073709551616' is too big for a 64-bit unsigned integer
-Integer literal overflow: '184467440737095516155' is too big for a 64-bit unsigned integer
-Integer literal overflow: '0x18446744073709551615' is too big for a 64-bit unsigned integer
-Integer literal overflow: '0o17777777777777777777771' is too big for a 64-bit unsigned integer
-Integer literal overflow: '0b11111111111111111111111111111111111111111111111111111111111111110' is too big for a 64-bit unsigned integer
-Lexical error in line 13: Unacceptable escape character: \c
+Lexical error in line 11: integer literal overflow: '18446744073709551616' is too big for a 64-bit unsigned integer
+Lexical error in line 11: integer literal overflow: '184467440737095516155' is too big for a 64-bit unsigned integer
+Lexical error in line 11: integer literal overflow: '0x18446744073709551615' is too big for a 64-bit unsigned integer
+Lexical error in line 11: integer literal overflow: '0o17777777777777777777771' is too big for a 64-bit unsigned integer
+Lexical error in line 11: integer literal overflow: '0b11111111111111111111111111111111111111111111111111111111111111110' is too big for a 64-bit unsigned integer
+Lexical error in line 13: unacceptable escape character: \c
 Lexical error in line 13: new line in string literal
-Lexical error in line 13: Unacceptable escape character: \5
-Lexical error in line 13: Unacceptable escape character: \x
-Lexical error in line 20: No token can start with character: \
-Lexical error in line 20: No token can start with character: `
-Lexical error in line 20: No token can start with character: $
+Lexical error in line 13: unacceptable escape character: \5
+Lexical error in line 13: unacceptable escape character: \x
+Lexical error in line 20: no token can start with character: \
+Lexical error in line 20: no token can start with character: `
+Lexical error in line 20: no token can start with character: $
 Lexical error in line 22: end of file in string literal
 Tokens:
 (Keyword, if)
 (Keyword, reduce)
 (Keyword, _)
+(Keyword, by)
 (Identifier, i)
 (Identifier, ifi)
 (Identifier, i21)
@@ -27,14 +28,14 @@ Tokens:
 (RealLiteralDecimal, 23.5e+3)
 (RealLiteralDecimal, 23.5e-3)
 (RealLiteralDecimal, 23.5e3)
-(IntegerLiteralDecimal, 23)
-(Identifier, e3)
+(RealLiteralDecimal, 23e3)
 (RealLiteralDecimal, .55)
 (IntegerLiteralHexadecimal, 5f)
 (RealLiteralHexadecimal, 5f.2)
 (RealLiteralHexadecimal, 5f.2p+2)
 (RealLiteralHexadecimal, 5f.2p-2)
 (RealLiteralHexadecimal, 5f.2e2)
+(RealLiteralHexadecimal, 5fp+2)
 (IntegerLiteralDecimal, 0)
 (IntegerLiteralBinary, 0110)
 (IntegerLiteralOctal, 47)
@@ -42,6 +43,8 @@ Tokens:
 (ImaginaryRealLiteralDecimal, 23.5)
 (ImaginaryRealLiteralHexadecimal, 5f.2p-2)
 (ImaginaryRealLiteralDecimal, 184467440737095516165123123)
+(IntegerLiteralDecimal, 23)
+(MemberAccess, )
 (IntegerLiteralDecimal, 0)
 (Identifier, x)
 (MemberAccess, )
@@ -68,11 +71,18 @@ Tokens:
 (ArithmeticOperator, +)
 (RealLiteralDecimal, 3.5)
 (Identifier, e)
-(Error, Integer literal overflow: '18446744073709551616' is too big for a 64-bit unsigned integer)
-(Error, Integer literal overflow: '184467440737095516155' is too big for a 64-bit unsigned integer)
-(Error, Integer literal overflow: '0x18446744073709551615' is too big for a 64-bit unsigned integer)
-(Error, Integer literal overflow: '0o17777777777777777777771' is too big for a 64-bit unsigned integer)
-(Error, Integer literal overflow: '0b11111111111111111111111111111111111111111111111111111111111111110' is too big for a 64-bit unsigned integer)
+(RealLiteralDecimal, 3.5)
+(Identifier, e)
+(ArithmeticOperator, +)
+(ArithmeticOperator, +)
+(IntegerLiteralDecimal, 1)
+(IntegerLiteralHexadecimal, 5)
+(Identifier, pf)
+(Error, Lexical error in line 11: integer literal overflow: '18446744073709551616' is too big for a 64-bit unsigned integer)
+(Error, Lexical error in line 11: integer literal overflow: '184467440737095516155' is too big for a 64-bit unsigned integer)
+(Error, Lexical error in line 11: integer literal overflow: '0x18446744073709551615' is too big for a 64-bit unsigned integer)
+(Error, Lexical error in line 11: integer literal overflow: '0o17777777777777777777771' is too big for a 64-bit unsigned integer)
+(Error, Lexical error in line 11: integer literal overflow: '0b11111111111111111111111111111111111111111111111111111111111111110' is too big for a 64-bit unsigned integer)
 (InterpretedStringLiteral, abc)
 (InterpretedStringLiteral, abc)
 (InterpretedStringLiteral, )
@@ -83,16 +93,18 @@ Tokens:
 d)
 (InterpretedStringLiteral, a
 b)
-(Error, Lexical error in line 13: Unacceptable escape character: \c)
+(Error, Lexical error in line 13: unacceptable escape character: \c)
 (Error, Lexical error in line 13: new line in string literal)
-(Error, Lexical error in line 13: Unacceptable escape character: \5)
-(Error, Lexical error in line 13: Unacceptable escape character: \x)
+(Error, Lexical error in line 13: unacceptable escape character: \5)
+(Error, Lexical error in line 13: unacceptable escape character: \x)
 (UninterpretedStringLiteral, a"b"c)
 (UninterpretedStringLiteral, a'b'c)
 (UninterpretedStringLiteral, )
 (UninterpretedStringLiteral, )
 (UninterpretedStringLiteral, ab\nc\x12)
 (UninterpretedStringLiteral, ab\tc\x11)
+(UninterpretedStringLiteral, a""b""c)
+(UninterpretedStringLiteral, a'''b'''c)
 (UninterpretedStringLiteral, ab
 c)
 (InterpretedBytesLiteral, a'b'	b)
@@ -156,9 +168,9 @@ c)
 (RightSquareBracket, )
 (LeftCurlyBracket, )
 (RightCurlyBracket, )
-(Error, Lexical error in line 20: No token can start with character: \)
-(Error, Lexical error in line 20: No token can start with character: `)
-(Error, Lexical error in line 20: No token can start with character: $)
+(Error, Lexical error in line 20: no token can start with character: \)
+(Error, Lexical error in line 20: no token can start with character: `)
+(Error, Lexical error in line 20: no token can start with character: $)
 (IntegerLiteralDecimal, 2)
 (Identifier, x)
 (Error, Lexical error in line 22: end of file in string literal)
