@@ -48,10 +48,12 @@ bool Lexer::tokenize_stream(std::istream& in, std::vector<Token>& tokens, std::v
 Token Lexer::retrive_next_token(std::istream& in)
 {
     // Sequential checks for different types of tokens, most determined by first two chars
-    // order of checks is crucial (e.g. bytes literals before identifiers),
+    // order of checks is crucial (e.g. bytes literals before identifiers, real numbers before dot operators),
     // but enables immediate return of token without further checks (the longest correct token guaranteed)
     // So this implementation acts like united automata
     // In fact based on first two characters input is transfered to corresponding algorithm (implicit automata)
+
+    // reading from stream, generally when unaccepted character of analyzed token encountered (start of next token) I put it back and return formed token
 
     int cur_c = in.get();
     if (cur_c == EOF) return Token(Token::TokenType::EndOfFile);
@@ -236,7 +238,7 @@ Token Lexer::handle_interpreted_string_literal(std::istream& in, int cur_c, int 
         cur_c = in.get();
     }
     if (error) {
-        // skip all charasters to EOF or termitating char, because otherwise if string literal was closed and we stop here that would
+        // skip all charasters to EOF or termitating char (panic mode), because otherwise if string literal was closed and we stop here that would
         // produce new errors and misleading tokens
         while (cur_c != EOF && cur_c != terminating_char)
         {
@@ -391,6 +393,8 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
     // if not whole number stage only string matters, so just return it 
     if (!(number_handling_stage == NumberHandlingStage::WholeNumber)) return Token(Token::TokenType::None, number_string + next_part);
 
+    // cur_c is updated by recursive calls, because passed by reference, and so points to first unaccepted character in whole analysis
+
     if (number_string == "" && next_part == "") {
         chars_to_putback.push_back(cur_c);
         return Token(Token::TokenType::None);
@@ -412,7 +416,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
 
 Token Lexer::build_integer_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {
     // here we handle integer overflow - maximum uint(64) as errors, but imaginary integers in this case are converted to real imaginary numbers
-    std::string text_integer_representation_for_error;
+    std::string text_integer_representation_for_error = "";
     if (number_string == "") {
         return Token(Token::TokenType::None);
     }
@@ -494,9 +498,11 @@ Token Lexer::handle_identifiers_keywords_and_bool_literals(std::istream& in, int
     }
     std::string read_string = read_string_stream.str();
     if (keyword_automata.is_in_accepted_state()) {
+        // check for bool literal
         if (read_string == "true" || read_string == "false") {
             return Token(Token::TokenType::BoolLiteral, read_string);
         }
+        // check of compound assignment reduce=
         else if (read_string == "reduce" && cur_c == '=') {
             // take back =
             cur_c = in.get();
