@@ -7,6 +7,11 @@
 class Lexer
 {
 private:
+    static const std::string MAX_DECIMAL_INTEGER;
+    static const std::string MAX_OCTAL_INTEGER;
+    static const std::size_t MAX_HEXADECIMAL_INTEGER_LENGTH;
+    static const std::size_t MAX_BINARY_INTEGER_LENGTH;
+
     static const std::vector<std::string> KEYWORDS;
     KeywordAutomata keyword_automata;
     // counting lines to notify in which line error occurred

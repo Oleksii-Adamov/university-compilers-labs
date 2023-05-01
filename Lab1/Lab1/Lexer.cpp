@@ -3,6 +3,11 @@
 #include <iostream>
 #include "util.h"
 
+const std::string Lexer::MAX_DECIMAL_INTEGER = "18446744073709551615";
+const std::string Lexer::MAX_OCTAL_INTEGER = "1777777777777777777777";
+const std::size_t Lexer::MAX_HEXADECIMAL_INTEGER_LENGTH = 16;
+const std::size_t Lexer::MAX_BINARY_INTEGER_LENGTH = 64;
+
 const std::vector <std::string> Lexer::KEYWORDS = { "_", "align", "as", "atomic",  "begin",  "bool",  "borrowed",  "break",  "by",  "bytes",  "catch",
 "class",  "cobegin",  "coforall",  "complex", "config",  "const",  "continue",  "defer",  "delete",  "dmapped",  "do",  "domain",  "else",  "enum",
 "except",  "export",  "extern",  "false",  "for",  "forall",  "foreach",  "forwarding",  "if",  "imag", "implements",  "in",  "index",  "inline",
@@ -347,7 +352,7 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
         }
 
         if (number_handling_stage == NumberHandlingStage::FractionalPart && (is_e_exponent(cur_c) || is_p_exponent(cur_c))) {
-            // real number has exponent part, but it can be incorrect
+            // real number has exponent part, but it can be incorrect (or part of fractional part)
             if (!((is_e_exponent(cur_c) && number_format == NumberFormat::hexadecimal) ||
                 (is_p_exponent(cur_c) && number_format == NumberFormat::decimal))) { // if exponent corresponds to number format
                 next_part.append(1, (char)cur_c);
@@ -357,8 +362,8 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
                     chars_to_putback.push_back(next_part[0]);
                     next_part = "";
                 }
+                break;
             }
-            break;
         }
         if (cur_c == '_') {
             is_acceptable_cur_c = underscore_acceptable;
@@ -401,29 +406,55 @@ Token Lexer::handle_number_literals_with_format_by_stage(std::istream& in, int& 
 
 
 Token Lexer::build_integer_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {
+    // here we handle integer overflow - maximum uint(64) as errors, but imaginary integers in this case are converted to real imaginary numbers
+    std::string text_integer_representation_for_error;
     if (number_string == "") {
         return Token(Token::TokenType::None);
     }
     if (number_format == NumberFormat::binary) {
-        if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralBinary, number_string);
-        else return Token(Token::TokenType::IntegerLiteralBinary, number_string);
+        if (number_string.size() > MAX_BINARY_INTEGER_LENGTH) {
+            text_integer_representation_for_error = "0b" + number_string;
+        }
+        else {
+            if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralBinary, number_string);
+            else return Token(Token::TokenType::IntegerLiteralBinary, number_string);    
+        }
     }
     if (number_format == NumberFormat::octal) {
-        if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralOctal, number_string);
-        else return Token(Token::TokenType::IntegerLiteralOctal, number_string);
+        if (number_string.size() > MAX_OCTAL_INTEGER.size() || (number_string.size() == MAX_OCTAL_INTEGER.size() && number_string > MAX_OCTAL_INTEGER)) {
+            text_integer_representation_for_error = "0o" + number_string;
+        }
+        else {
+            if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralOctal, number_string);
+            else return Token(Token::TokenType::IntegerLiteralOctal, number_string);
+        }
     }
     if (number_format == NumberFormat::hexadecimal) {
-        if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralHexadecimal, number_string);
-        else return Token(Token::TokenType::IntegerLiteralHexadecimal, number_string);
+        if (number_string.size() > MAX_HEXADECIMAL_INTEGER_LENGTH) {
+            if (is_imaginary)return build_real_token(number_string, number_format, is_imaginary);
+            else text_integer_representation_for_error = "0x" + number_string;
+        }
+        else {
+            if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralHexadecimal, number_string);
+            else  return Token(Token::TokenType::IntegerLiteralHexadecimal, number_string);
+        }
     }
     if (number_format == NumberFormat::decimal) {
-        if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralDecimal, number_string);
-        else return Token(Token::TokenType::IntegerLiteralDecimal, number_string);
+        if (number_string.size() > MAX_DECIMAL_INTEGER.size() || (number_string.size() == MAX_DECIMAL_INTEGER.size() && number_string > MAX_DECIMAL_INTEGER)) {
+            if (is_imaginary) return build_real_token(number_string, number_format, is_imaginary);
+            else text_integer_representation_for_error = number_string;
+        }
+        else {
+            if (is_imaginary) return Token(Token::TokenType::ImaginaryIntegerLiteralDecimal, number_string);
+            else return Token(Token::TokenType::IntegerLiteralDecimal, number_string);
+        }
     }
-    return Token(Token::TokenType::None);
+    return Token(Token::TokenType::Error, "Integer literal overflow: '" + text_integer_representation_for_error +
+        "' is too big for a 64-bit unsigned integer");
 }
 
 Token Lexer::build_real_token(const std::string& number_string, NumberFormat number_format, bool is_imaginary) {
+    // real overflow should (imo) be handled by other parts of compiler pipeline (conversion (to bit representation) needed)
     if (number_format == NumberFormat::binary || number_format == NumberFormat::octal) {
         return Token(Token::TokenType::None);
     }

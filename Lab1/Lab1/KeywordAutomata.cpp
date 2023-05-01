@@ -1,6 +1,7 @@
 #include "KeywordAutomata.h"
 void KeywordAutomata::add_keyword(std::string keyword) {
 	if (keyword != "_") {
+		// making use of existing states (adding only mandatory transitions)
 		LowercaseAutomataState* add_cur_state = starting_state;
 		for (std::size_t i = 0; i < keyword.size(); i++) {
 			LowercaseAutomataState* next_state = add_cur_state->next(keyword[i]);
