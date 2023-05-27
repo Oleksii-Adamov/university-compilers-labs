@@ -30,19 +30,9 @@
 %define api.token.prefix {TOK_}
 
 %token <std::string> BINARY_OPERATOR
-
-%token
-  ASSIGN  ":="
-  MINUS   "-"
-  PLUS    "+"
-  STAR    "*"
-  SLASH   "/"
-  LPAREN  "("
-  RPAREN  ")"
-;
-
-%token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER "number"
+%token <std::string> IDENTIFIER
+%token <std::string> INTEGER_LITERAL
+%token <std::string> STATEMENT_SEPARATOR ";"
 %nterm <int> exp
 
 %printer { yyo << $$; } <*>;
