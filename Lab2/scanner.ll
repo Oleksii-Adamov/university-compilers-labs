@@ -1,22 +1,3 @@
-/* Scanner for calc++.   -*- C++ -*-
-
-   Copyright (C) 2005-2015, 2018-2021 Free Software Foundation, Inc.
-
-   This file is part of Bison, the GNU Compiler Compiler.
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
-
 %{ /* -*- C++ -*- */
 # include <cerrno>
 # include <climits>
@@ -25,6 +6,7 @@
 # include <string>
 # include "driver.hh"
 # include "parser.hh"
+# include "ASTNode.hh"
 %}
 
 %{
@@ -126,23 +108,22 @@ integer_literal  {digits}
 {white_space}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
 
-"+"|"-"|"*"|"/"|"%"|"**"|"&"|"|"|"^"|"<<"|">>"|"&&"|"||"|"=="|"!="|"<="|">="|"<"|">"|"by"|"#" return yy::parser::make_BINARY_OPERATOR (yytext, loc);
+"+"|"-"|"*"|"/"|"%"|"**"|"&"|"|"|"^"|"<<"|">>"|"&&"|"||"|"=="|"!="|"<="|">="|"<"|">"|"by"|"#" return yy::parser::make_BINARY_OPERATOR (new ASTNode("binary-operator", yytext), loc);
 
-{identifier} return yy::parser::make_IDENTIFIER (yytext, loc);
+{identifier} return yy::parser::make_IDENTIFIER (new ASTNode("identifier", yytext), loc);
 
-{integer_literal} return make_INTEGER_LITERAL (yytext, loc);
+{integer_literal} return make_INTEGER_LITERAL (new ASTNode("integer-literal", yytext), loc);
 
-";" return make_STATEMENT_SEPARATOR (loc);
+";" return make_STATEMENT_SEPARATOR (new ASTNode("statement-separator", ";"), loc);
 
-.          {
+. {
              throw yy::parser::syntax_error
                (loc, "invalid character: " + std::string(yytext));
 }
-<<EOF>>    return yy::parser::make_YYEOF (loc);
+<<EOF>> return yy::parser::make_YYEOF (loc);
 %%
 
-void
-driver::scan_begin ()
+void driver::scan_begin ()
 {
   yy_flex_debug = trace_scanning;
   if (file.empty () || file == "-")
@@ -154,8 +135,7 @@ driver::scan_begin ()
     }
 }
 
-void
-driver::scan_end ()
+void driver::scan_end ()
 {
   fclose (yyin);
 }

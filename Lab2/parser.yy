@@ -29,35 +29,37 @@
 
 %define api.token.prefix {TOK_}
 
-%token <std::string> BINARY_OPERATOR
-%token <std::string> IDENTIFIER
-%token <std::string> INTEGER_LITERAL
-%token <std::string> STATEMENT_SEPARATOR ";"
-%nterm <int> exp
+%token <ASTNode> BINARY_OPERATOR
+%token <ASTNode> IDENTIFIER
+%token <ASTNode> INTEGER_LITERAL
+%token <ASTNode> STATEMENT_SEPARATOR
+%nterm <ASTNode> literal_expression
+%nterm <ASTNode> variable_expression
+%nterm <ASTNode> expression
+%nterm <ASTNode> binary_expression
+%nterm <ASTNode> statement
+%nterm <ASTNode> statements
 
 %printer { yyo << $$; } <*>;
 
 %%
 %start unit;
-unit: assignments exp  { drv.result = $2; };
+unit: statements  { drv.result = $1; };
 
-assignments:
-  %empty                 {}
-| assignments assignment {};
+statements:
+  %empty                 {$$ = new ASTNode("nothing", $1, $2)}
+| statements statement {$$ = new ASTNode("statements", $1, $2)};
 
-assignment:
-  "identifier" ":=" exp { drv.variables[$1] = $3; };
+statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode("statement", $1, $2); };
 
-%left "+" "-";
-%left "*" "/";
-exp:
-  "number"
-| "identifier"  { $$ = drv.variables[$1]; }
-| exp "+" exp   { $$ = $1 + $3; }
-| exp "-" exp   { $$ = $1 - $3; }
-| exp "*" exp   { $$ = $1 * $3; }
-| exp "/" exp   { $$ = $1 / $3; }
-| "(" exp ")"   { $$ = $2; }
+expression:
+  literal_expression { $$ = $1; }
+| variable_expression { $$ = $1; }
+| binary_expression { $$ = $1; };
+
+literal_expression: INTEGER_LITERAL { $$ = new ASTNode("literal_expression", $1); };
+variable_expression: IDENTIFIER { $$ = new ASTNode("variable_expression", $1); };
+binary_expression: expression BINARY_OPERATOR expression { $$ = new ASTNode("binary_expression", $1, $2, $3); };
 %%
 
 void
