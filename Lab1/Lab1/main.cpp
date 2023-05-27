@@ -17,10 +17,10 @@ void output_to_stream(std::ostream& out, bool success, const std::vector<Token>&
 
 int main()
 {
-    //std::string input_file_name = "full_test_input.txt";
-    //std::string output_file_name = "full_test_output.txt";
-    std::string input_file_name = "demo_input.txt";
-    std::string output_file_name = "demo_output.txt";
+    std::string input_file_name = "full_test_input.txt";
+    std::string output_file_name = "full_test_output.txt";
+    //std::string input_file_name = "demo_input.txt";
+    //std::string output_file_name = "demo_output.txt";
 
     std::ofstream out(output_file_name);
     Lexer lexer;
