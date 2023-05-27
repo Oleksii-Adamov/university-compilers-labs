@@ -11,6 +11,7 @@
 %code requires {
   # include <string>
   # include "ASTNode.hh"
+  # include <iostream>
   class driver;
 }
 
@@ -44,26 +45,25 @@
 
 %%
 %start unit;
-unit: statements  { drv.result = $1; };
+unit: statements  { drv.result = &$1; std::cout << "Start symbol " << $1;};
 
 statements:
-  %empty                 {$$ = new ASTNode("nothing", $1, $2)}
-| statements statement {$$ = new ASTNode("statements", $1, $2)};
+  %empty                 {$$ = ASTNode("nothing", {}); std::cout << $$ << " " << &$$;}
+| statements statement {$$ = ASTNode("statements", {&$1, &$2}); std::cout << $$ << " " << &$$;};
 
-statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode("statement", $1, $2); };
+statement: expression STATEMENT_SEPARATOR { $$ = ASTNode("statement", {&$1, &$2});  std::cout << $$ << " " << &$$;};
 
 expression:
-  literal_expression { $$ = $1; }
-| variable_expression { $$ = $1; }
-| binary_expression { $$ = $1; };
+  literal_expression { $$ = $1;  std::cout << $$ << " " << &$$;}
+| variable_expression { $$ = $1;  std::cout << $$ << " " << &$$;}
+| binary_expression { $$ = $1;  std::cout << $$ << " " << &$$;};
 
-literal_expression: INTEGER_LITERAL { $$ = new ASTNode("literal_expression", $1); };
-variable_expression: IDENTIFIER { $$ = new ASTNode("variable_expression", $1); };
-binary_expression: expression BINARY_OPERATOR expression { $$ = new ASTNode("binary_expression", $1, $2, $3); };
+literal_expression: INTEGER_LITERAL { $$ = ASTNode("literal_expression", {&$1});  std::cout << $$ << " " << &$$;};
+variable_expression: IDENTIFIER { $$ = ASTNode("variable_expression", {&$1});  std::cout << $$ << " " << &$$;};
+binary_expression: expression BINARY_OPERATOR expression { $$ = ASTNode("binary_expression", {&$1, &$2, &$3});  std::cout << $$ << " " << &$$;};
 %%
 
-void
-yy::parser::error (const location_type& l, const std::string& m)
+void yy::parser::error (const location_type& l, const std::string& m)
 {
   std::cerr << l << ": " << m << '\n';
 }

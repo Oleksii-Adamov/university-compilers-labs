@@ -85,10 +85,10 @@
 <ul>
   <li><b>$end</b> (0) <a href="#rule_0">0</a></li>
   <li><b>error</b> (256)</li>
-  <li><b>BINARY_OPERATOR</b> (258) <a href="#rule_10">10</a></li>
-  <li><b>IDENTIFIER</b> (259) <a href="#rule_9">9</a></li>
-  <li><b>INTEGER_LITERAL</b> (260) <a href="#rule_8">8</a></li>
-  <li><b>STATEMENT_SEPARATOR</b> (261) <a href="#rule_4">4</a></li>
+  <li><b>BINARY_OPERATOR</b> &lt;ASTNode&gt; (258) <a href="#rule_10">10</a></li>
+  <li><b>IDENTIFIER</b> &lt;ASTNode&gt; (259) <a href="#rule_9">9</a></li>
+  <li><b>INTEGER_LITERAL</b> &lt;ASTNode&gt; (260) <a href="#rule_8">8</a></li>
+  <li><b>STATEMENT_SEPARATOR</b> &lt;ASTNode&gt; (261) <a href="#rule_4">4</a></li>
 </ul>
 
 <h3><a name="nonterminals" id="nonterminals"></a> Nonterminals, with rules where they appear</h3>
@@ -105,37 +105,37 @@
       <li>on right: <a href="#rule_0">0</a></li>
     </ul>
   </li>
-  <li><b>statements</b> (9)
+  <li><b>statements</b> &lt;ASTNode&gt; (9)
     <ul>
       <li>on left: <a href="#rule_2">2</a> <a href="#rule_3">3</a></li>
       <li>on right: <a href="#rule_1">1</a> <a href="#rule_3">3</a></li>
     </ul>
   </li>
-  <li><b>statement</b> (10)
+  <li><b>statement</b> &lt;ASTNode&gt; (10)
     <ul>
       <li>on left: <a href="#rule_4">4</a></li>
       <li>on right: <a href="#rule_3">3</a></li>
     </ul>
   </li>
-  <li><b>expression</b> (11)
+  <li><b>expression</b> &lt;ASTNode&gt; (11)
     <ul>
       <li>on left: <a href="#rule_5">5</a> <a href="#rule_6">6</a> <a href="#rule_7">7</a></li>
       <li>on right: <a href="#rule_4">4</a> <a href="#rule_10">10</a></li>
     </ul>
   </li>
-  <li><b>literal_expression</b> (12)
+  <li><b>literal_expression</b> &lt;ASTNode&gt; (12)
     <ul>
       <li>on left: <a href="#rule_8">8</a></li>
       <li>on right: <a href="#rule_5">5</a></li>
     </ul>
   </li>
-  <li><b>variable_expression</b> (13)
+  <li><b>variable_expression</b> &lt;ASTNode&gt; (13)
     <ul>
       <li>on left: <a href="#rule_9">9</a></li>
       <li>on right: <a href="#rule_6">6</a></li>
     </ul>
   </li>
-  <li><b>binary_expression</b> (14)
+  <li><b>binary_expression</b> &lt;ASTNode&gt; (14)
     <ul>
       <li>on left: <a href="#rule_10">10</a></li>
       <li>on right: <a href="#rule_7">7</a></li>

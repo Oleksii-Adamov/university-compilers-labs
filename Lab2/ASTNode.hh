@@ -3,13 +3,15 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 class ASTNode {
 private:
     std::vector<ASTNode*> sons;
-    std::string name;
+    std::string name = "";
     std::string val = "";
 public:
+    ASTNode();
     ASTNode(std::string name_, std::string val_);
     ASTNode(std::string name_, std::initializer_list<ASTNode*> sons_);
     ~ASTNode();

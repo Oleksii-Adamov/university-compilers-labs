@@ -45,13 +45,14 @@
 #ifndef YY_YY_PARSER_HH_INCLUDED
 # define YY_YY_PARSER_HH_INCLUDED
 // "%code requires" blocks.
-#line 9 "parser.yy"
+#line 11 "parser.yy"
 
   # include <string>
   # include "ASTNode.hh"
+  # include <iostream>
   class driver;
 
-#line 55 "parser.hh"
+#line 56 "parser.hh"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -97,6 +98,11 @@
 # define YY_CONSTEXPR
 #endif
 # include "location.hh"
+#include <typeinfo>
+#ifndef YY_ASSERT
+# include <cassert>
+# define YY_ASSERT assert
+#endif
 
 
 #ifndef YY_ATTRIBUTE_PURE
@@ -186,7 +192,7 @@
 #endif
 
 namespace yy {
-#line 190 "parser.hh"
+#line 196 "parser.hh"
 
 
 
@@ -201,8 +207,239 @@ namespace yy {
 # endif
     typedef YYSTYPE value_type;
 #else
-    /// Symbol semantic values.
-    typedef ASTNode* value_type;
+  /// A buffer to store and retrieve objects.
+  ///
+  /// Sort of a variant, but does not keep track of the nature
+  /// of the stored data, since that knowledge is available
+  /// via the current parser state.
+  class value_type
+  {
+  public:
+    /// Type of *this.
+    typedef value_type self_type;
+
+    /// Empty construction.
+    value_type () YY_NOEXCEPT
+      : yyraw_ ()
+      , yytypeid_ (YY_NULLPTR)
+    {}
+
+    /// Construct and fill.
+    template <typename T>
+    value_type (YY_RVREF (T) t)
+      : yytypeid_ (&typeid (T))
+    {
+      YY_ASSERT (sizeof (T) <= size);
+      new (yyas_<T> ()) T (YY_MOVE (t));
+    }
+
+#if 201103L <= YY_CPLUSPLUS
+    /// Non copyable.
+    value_type (const self_type&) = delete;
+    /// Non copyable.
+    self_type& operator= (const self_type&) = delete;
+#endif
+
+    /// Destruction, allowed only if empty.
+    ~value_type () YY_NOEXCEPT
+    {
+      YY_ASSERT (!yytypeid_);
+    }
+
+# if 201103L <= YY_CPLUSPLUS
+    /// Instantiate a \a T in here from \a t.
+    template <typename T, typename... U>
+    T&
+    emplace (U&&... u)
+    {
+      YY_ASSERT (!yytypeid_);
+      YY_ASSERT (sizeof (T) <= size);
+      yytypeid_ = & typeid (T);
+      return *new (yyas_<T> ()) T (std::forward <U>(u)...);
+    }
+# else
+    /// Instantiate an empty \a T in here.
+    template <typename T>
+    T&
+    emplace ()
+    {
+      YY_ASSERT (!yytypeid_);
+      YY_ASSERT (sizeof (T) <= size);
+      yytypeid_ = & typeid (T);
+      return *new (yyas_<T> ()) T ();
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    template <typename T>
+    T&
+    emplace (const T& t)
+    {
+      YY_ASSERT (!yytypeid_);
+      YY_ASSERT (sizeof (T) <= size);
+      yytypeid_ = & typeid (T);
+      return *new (yyas_<T> ()) T (t);
+    }
+# endif
+
+    /// Instantiate an empty \a T in here.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build ()
+    {
+      return emplace<T> ();
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build (const T& t)
+    {
+      return emplace<T> (t);
+    }
+
+    /// Accessor to a built \a T.
+    template <typename T>
+    T&
+    as () YY_NOEXCEPT
+    {
+      YY_ASSERT (yytypeid_);
+      YY_ASSERT (*yytypeid_ == typeid (T));
+      YY_ASSERT (sizeof (T) <= size);
+      return *yyas_<T> ();
+    }
+
+    /// Const accessor to a built \a T (for %printer).
+    template <typename T>
+    const T&
+    as () const YY_NOEXCEPT
+    {
+      YY_ASSERT (yytypeid_);
+      YY_ASSERT (*yytypeid_ == typeid (T));
+      YY_ASSERT (sizeof (T) <= size);
+      return *yyas_<T> ();
+    }
+
+    /// Swap the content with \a that, of same type.
+    ///
+    /// Both variants must be built beforehand, because swapping the actual
+    /// data requires reading it (with as()), and this is not possible on
+    /// unconstructed variants: it would require some dynamic testing, which
+    /// should not be the variant's responsibility.
+    /// Swapping between built and (possibly) non-built is done with
+    /// self_type::move ().
+    template <typename T>
+    void
+    swap (self_type& that) YY_NOEXCEPT
+    {
+      YY_ASSERT (yytypeid_);
+      YY_ASSERT (*yytypeid_ == *that.yytypeid_);
+      std::swap (as<T> (), that.as<T> ());
+    }
+
+    /// Move the content of \a that to this.
+    ///
+    /// Destroys \a that.
+    template <typename T>
+    void
+    move (self_type& that)
+    {
+# if 201103L <= YY_CPLUSPLUS
+      emplace<T> (std::move (that.as<T> ()));
+# else
+      emplace<T> ();
+      swap<T> (that);
+# endif
+      that.destroy<T> ();
+    }
+
+# if 201103L <= YY_CPLUSPLUS
+    /// Move the content of \a that to this.
+    template <typename T>
+    void
+    move (self_type&& that)
+    {
+      emplace<T> (std::move (that.as<T> ()));
+      that.destroy<T> ();
+    }
+#endif
+
+    /// Copy the content of \a that to this.
+    template <typename T>
+    void
+    copy (const self_type& that)
+    {
+      emplace<T> (that.as<T> ());
+    }
+
+    /// Destroy the stored \a T.
+    template <typename T>
+    void
+    destroy ()
+    {
+      as<T> ().~T ();
+      yytypeid_ = YY_NULLPTR;
+    }
+
+  private:
+#if YY_CPLUSPLUS < 201103L
+    /// Non copyable.
+    value_type (const self_type&);
+    /// Non copyable.
+    self_type& operator= (const self_type&);
+#endif
+
+    /// Accessor to raw memory as \a T.
+    template <typename T>
+    T*
+    yyas_ () YY_NOEXCEPT
+    {
+      void *yyp = yyraw_;
+      return static_cast<T*> (yyp);
+     }
+
+    /// Const accessor to raw memory as \a T.
+    template <typename T>
+    const T*
+    yyas_ () const YY_NOEXCEPT
+    {
+      const void *yyp = yyraw_;
+      return static_cast<const T*> (yyp);
+     }
+
+    /// An auxiliary type to compute the largest semantic type.
+    union union_type
+    {
+      // BINARY_OPERATOR
+      // IDENTIFIER
+      // INTEGER_LITERAL
+      // STATEMENT_SEPARATOR
+      // statements
+      // statement
+      // expression
+      // literal_expression
+      // variable_expression
+      // binary_expression
+      char dummy1[sizeof (ASTNode)];
+    };
+
+    /// The size of the largest semantic type.
+    enum { size = sizeof (union_type) };
+
+    /// A buffer to store semantic values.
+    union
+    {
+      /// Strongest alignment constraints.
+      long double yyalign_me_;
+      /// A buffer large enough to store any of the semantic values.
+      char yyraw_[size];
+    };
+
+    /// Whether the content is built: if defined, the name of the stored type.
+    const std::type_info *yytypeid_;
+  };
+
 #endif
     /// Backward compatibility (Bison 3.8).
     typedef value_type semantic_type;
@@ -304,21 +541,60 @@ namespace yy {
       /// Move constructor.
       basic_symbol (basic_symbol&& that)
         : Base (std::move (that))
-        , value (std::move (that.value))
+        , value ()
         , location (std::move (that.location))
-      {}
+      {
+        switch (this->kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.move< ASTNode > (std::move (that.value));
+        break;
+
+      default:
+        break;
+    }
+
+      }
 #endif
 
       /// Copy constructor.
       basic_symbol (const basic_symbol& that);
-      /// Constructor for valueless symbols.
-      basic_symbol (typename Base::kind_type t,
-                    YY_MOVE_REF (location_type) l);
 
-      /// Constructor for symbols with semantic value.
-      basic_symbol (typename Base::kind_type t,
-                    YY_RVREF (value_type) v,
-                    YY_RVREF (location_type) l);
+      /// Constructors for typed symbols.
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, location_type&& l)
+        : Base (t)
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const location_type& l)
+        : Base (t)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, ASTNode&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const ASTNode& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
 
       /// Destroy the symbol.
       ~basic_symbol ()
@@ -329,6 +605,36 @@ namespace yy {
       /// Destroy contents, and record that is empty.
       void clear () YY_NOEXCEPT
       {
+        // User destructor.
+        symbol_kind_type yykind = this->kind ();
+        basic_symbol<Base>& yysym = *this;
+        (void) yysym;
+        switch (yykind)
+        {
+       default:
+          break;
+        }
+
+        // Value type destructor.
+switch (yykind)
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.template destroy< ASTNode > ();
+        break;
+
+      default:
+        break;
+    }
+
         Base::clear ();
       }
 
@@ -403,7 +709,40 @@ namespace yy {
 
     /// "External" symbols: returned by the scanner.
     struct symbol_type : basic_symbol<by_kind>
-    {};
+    {
+      /// Superclass.
+      typedef basic_symbol<by_kind> super_type;
+
+      /// Empty symbol.
+      symbol_type () {}
+
+      /// Constructor for valueless symbols, and symbols from each type.
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, location_type l)
+        : super_type (token_type (tok), std::move (l))
+#else
+      symbol_type (int tok, const location_type& l)
+        : super_type (token_type (tok), l)
+#endif
+      {
+#if !defined _MSC_VER || defined __clang__
+        YY_ASSERT (tok == token::TOK_YYEOF
+                   || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF));
+#endif
+      }
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, ASTNode v, location_type l)
+        : super_type (token_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const ASTNode& v, const location_type& l)
+        : super_type (token_type (tok), v, l)
+#endif
+      {
+#if !defined _MSC_VER || defined __clang__
+        YY_ASSERT ((token::TOK_BINARY_OPERATOR <= tok && tok <= token::TOK_STATEMENT_SEPARATOR));
+#endif
+      }
+    };
 
     /// Build a parser object.
     parser (driver& drv_yyarg);
@@ -450,6 +789,112 @@ namespace yy {
     /// YYSYMBOL.  No bounds checking.
     static const char *symbol_name (symbol_kind_type yysymbol);
 
+    // Implementation of make_symbol for each token kind.
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_YYEOF (location_type l)
+      {
+        return symbol_type (token::TOK_YYEOF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_YYEOF (const location_type& l)
+      {
+        return symbol_type (token::TOK_YYEOF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_YYerror (location_type l)
+      {
+        return symbol_type (token::TOK_YYerror, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_YYerror (const location_type& l)
+      {
+        return symbol_type (token::TOK_YYerror, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_YYUNDEF (location_type l)
+      {
+        return symbol_type (token::TOK_YYUNDEF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_YYUNDEF (const location_type& l)
+      {
+        return symbol_type (token::TOK_YYUNDEF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BINARY_OPERATOR (ASTNode v, location_type l)
+      {
+        return symbol_type (token::TOK_BINARY_OPERATOR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BINARY_OPERATOR (const ASTNode& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BINARY_OPERATOR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IDENTIFIER (ASTNode v, location_type l)
+      {
+        return symbol_type (token::TOK_IDENTIFIER, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IDENTIFIER (const ASTNode& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_IDENTIFIER, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INTEGER_LITERAL (ASTNode v, location_type l)
+      {
+        return symbol_type (token::TOK_INTEGER_LITERAL, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_INTEGER_LITERAL (const ASTNode& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_INTEGER_LITERAL, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STATEMENT_SEPARATOR (ASTNode v, location_type l)
+      {
+        return symbol_type (token::TOK_STATEMENT_SEPARATOR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STATEMENT_SEPARATOR (const ASTNode& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_STATEMENT_SEPARATOR, v, l);
+      }
+#endif
 
 
     class context
@@ -805,9 +1250,140 @@ namespace yy {
 
   };
 
+  inline
+  parser::symbol_kind_type
+  parser::yytranslate_ (int t)
+  {
+    return static_cast<symbol_kind_type> (t);
+  }
+
+  // basic_symbol.
+  template <typename Base>
+  parser::basic_symbol<Base>::basic_symbol (const basic_symbol& that)
+    : Base (that)
+    , value ()
+    , location (that.location)
+  {
+    switch (this->kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.copy< ASTNode > (YY_MOVE (that.value));
+        break;
+
+      default:
+        break;
+    }
+
+  }
+
+
+
+  template <typename Base>
+  parser::symbol_kind_type
+  parser::basic_symbol<Base>::type_get () const YY_NOEXCEPT
+  {
+    return this->kind ();
+  }
+
+  template <typename Base>
+  bool
+  parser::basic_symbol<Base>::empty () const YY_NOEXCEPT
+  {
+    return this->kind () == symbol_kind::S_YYEMPTY;
+  }
+
+  template <typename Base>
+  void
+  parser::basic_symbol<Base>::move (basic_symbol& s)
+  {
+    super_type::move (s);
+    switch (this->kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.move< ASTNode > (YY_MOVE (s.value));
+        break;
+
+      default:
+        break;
+    }
+
+    location = YY_MOVE (s.location);
+  }
+
+  // by_kind.
+  inline
+  parser::by_kind::by_kind ()
+    : kind_ (symbol_kind::S_YYEMPTY)
+  {}
+
+#if 201103L <= YY_CPLUSPLUS
+  inline
+  parser::by_kind::by_kind (by_kind&& that)
+    : kind_ (that.kind_)
+  {
+    that.clear ();
+  }
+#endif
+
+  inline
+  parser::by_kind::by_kind (const by_kind& that)
+    : kind_ (that.kind_)
+  {}
+
+  inline
+  parser::by_kind::by_kind (token_kind_type t)
+    : kind_ (yytranslate_ (t))
+  {}
+
+  inline
+  void
+  parser::by_kind::clear () YY_NOEXCEPT
+  {
+    kind_ = symbol_kind::S_YYEMPTY;
+  }
+
+  inline
+  void
+  parser::by_kind::move (by_kind& that)
+  {
+    kind_ = that.kind_;
+    that.clear ();
+  }
+
+  inline
+  parser::symbol_kind_type
+  parser::by_kind::kind () const YY_NOEXCEPT
+  {
+    return kind_;
+  }
+
+  inline
+  parser::symbol_kind_type
+  parser::by_kind::type_get () const YY_NOEXCEPT
+  {
+    return this->kind ();
+  }
 
 } // yy
-#line 811 "parser.hh"
+#line 1387 "parser.hh"
 
 
 

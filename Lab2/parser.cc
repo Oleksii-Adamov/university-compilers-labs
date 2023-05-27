@@ -42,7 +42,7 @@
 
 
 // Unqualified %code blocks.
-#line 24 "parser.yy"
+#line 27 "parser.yy"
 
 # include "driver.hh"
 
@@ -162,98 +162,6 @@ namespace yy {
   | symbol kinds.  |
   `---------------*/
 
-  // basic_symbol.
-  template <typename Base>
-  parser::basic_symbol<Base>::basic_symbol (const basic_symbol& that)
-    : Base (that)
-    , value (that.value)
-    , location (that.location)
-  {}
-
-
-  /// Constructor for valueless symbols.
-  template <typename Base>
-  parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, YY_MOVE_REF (location_type) l)
-    : Base (t)
-    , value ()
-    , location (l)
-  {}
-
-  template <typename Base>
-  parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, YY_RVREF (value_type) v, YY_RVREF (location_type) l)
-    : Base (t)
-    , value (YY_MOVE (v))
-    , location (YY_MOVE (l))
-  {}
-
-  template <typename Base>
-  parser::symbol_kind_type
-  parser::basic_symbol<Base>::type_get () const YY_NOEXCEPT
-  {
-    return this->kind ();
-  }
-
-  template <typename Base>
-  bool
-  parser::basic_symbol<Base>::empty () const YY_NOEXCEPT
-  {
-    return this->kind () == symbol_kind::S_YYEMPTY;
-  }
-
-  template <typename Base>
-  void
-  parser::basic_symbol<Base>::move (basic_symbol& s)
-  {
-    super_type::move (s);
-    value = YY_MOVE (s.value);
-    location = YY_MOVE (s.location);
-  }
-
-  // by_kind.
-  parser::by_kind::by_kind ()
-    : kind_ (symbol_kind::S_YYEMPTY)
-  {}
-
-#if 201103L <= YY_CPLUSPLUS
-  parser::by_kind::by_kind (by_kind&& that)
-    : kind_ (that.kind_)
-  {
-    that.clear ();
-  }
-#endif
-
-  parser::by_kind::by_kind (const by_kind& that)
-    : kind_ (that.kind_)
-  {}
-
-  parser::by_kind::by_kind (token_kind_type t)
-    : kind_ (yytranslate_ (t))
-  {}
-
-  void
-  parser::by_kind::clear () YY_NOEXCEPT
-  {
-    kind_ = symbol_kind::S_YYEMPTY;
-  }
-
-  void
-  parser::by_kind::move (by_kind& that)
-  {
-    kind_ = that.kind_;
-    that.clear ();
-  }
-
-  parser::symbol_kind_type
-  parser::by_kind::kind () const YY_NOEXCEPT
-  {
-    return kind_;
-  }
-
-  parser::symbol_kind_type
-  parser::by_kind::type_get () const YY_NOEXCEPT
-  {
-    return this->kind ();
-  }
 
 
   // by_state.
@@ -295,8 +203,27 @@ namespace yy {
   {}
 
   parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
-    : super_type (YY_MOVE (that.state), YY_MOVE (that.value), YY_MOVE (that.location))
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.location))
   {
+    switch (that.kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.YY_MOVE_OR_COPY< ASTNode > (YY_MOVE (that.value));
+        break;
+
+      default:
+        break;
+    }
+
 #if 201103L <= YY_CPLUSPLUS
     // that is emptied.
     that.state = empty_state;
@@ -304,8 +231,27 @@ namespace yy {
   }
 
   parser::stack_symbol_type::stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) that)
-    : super_type (s, YY_MOVE (that.value), YY_MOVE (that.location))
+    : super_type (s, YY_MOVE (that.location))
   {
+    switch (that.kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.move< ASTNode > (YY_MOVE (that.value));
+        break;
+
+      default:
+        break;
+    }
+
     // that is emptied.
     that.kind_ = symbol_kind::S_YYEMPTY;
   }
@@ -315,7 +261,25 @@ namespace yy {
   parser::stack_symbol_type::operator= (const stack_symbol_type& that)
   {
     state = that.state;
-    value = that.value;
+    switch (that.kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.copy< ASTNode > (that.value);
+        break;
+
+      default:
+        break;
+    }
+
     location = that.location;
     return *this;
   }
@@ -324,7 +288,25 @@ namespace yy {
   parser::stack_symbol_type::operator= (stack_symbol_type& that)
   {
     state = that.state;
-    value = that.value;
+    switch (that.kind ())
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        value.move< ASTNode > (that.value);
+        break;
+
+      default:
+        break;
+    }
+
     location = that.location;
     // that is emptied.
     that.state = empty_state;
@@ -338,9 +320,6 @@ namespace yy {
   {
     if (yymsg)
       YY_SYMBOL_PRINT (yymsg, yysym);
-
-    // User destructor.
-    YY_USE (yysym.kind ());
   }
 
 #if YYDEBUG
@@ -358,7 +337,71 @@ namespace yy {
         yyo << (yykind < YYNTOKENS ? "token" : "nterm")
             << ' ' << yysym.name () << " ("
             << yysym.location << ": ";
-        YY_USE (yykind);
+        switch (yykind)
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 346 "parser.cc"
+        break;
+
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 352 "parser.cc"
+        break;
+
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 358 "parser.cc"
+        break;
+
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 364 "parser.cc"
+        break;
+
+      case symbol_kind::S_statements: // statements
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 370 "parser.cc"
+        break;
+
+      case symbol_kind::S_statement: // statement
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 376 "parser.cc"
+        break;
+
+      case symbol_kind::S_expression: // expression
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 382 "parser.cc"
+        break;
+
+      case symbol_kind::S_literal_expression: // literal_expression
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 388 "parser.cc"
+        break;
+
+      case symbol_kind::S_variable_expression: // variable_expression
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 394 "parser.cc"
+        break;
+
+      case symbol_kind::S_binary_expression: // binary_expression
+#line 44 "parser.yy"
+                 { yyo << yysym.value.template as < ASTNode > (); }
+#line 400 "parser.cc"
+        break;
+
+      default:
+        break;
+    }
         yyo << ')';
       }
   }
@@ -513,7 +556,8 @@ namespace yy {
         try
 #endif // YY_EXCEPTIONS
           {
-            yyla.kind_ = yytranslate_ (yylex (&yyla.value, &yyla.location, drv));
+            symbol_type yylookahead (yylex (drv));
+            yyla.move (yylookahead);
           }
 #if YY_EXCEPTIONS
         catch (const syntax_error& yyexc)
@@ -587,16 +631,28 @@ namespace yy {
     {
       stack_symbol_type yylhs;
       yylhs.state = yy_lr_goto_state_ (yystack_[yylen].state, yyr1_[yyn]);
-      /* If YYLEN is nonzero, implement the default value of the
-         action: '$$ = $1'.  Otherwise, use the top of the stack.
+      /* Variants are always initialized to an empty instance of the
+         correct type. The default '$$ = $1' action is NOT applied
+         when using variants.  */
+      switch (yyr1_[yyn])
+    {
+      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
+      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
+      case symbol_kind::S_statements: // statements
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression: // expression
+      case symbol_kind::S_literal_expression: // literal_expression
+      case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_binary_expression: // binary_expression
+        yylhs.value.emplace< ASTNode > ();
+        break;
 
-         Otherwise, the following line sets YYLHS.VALUE to garbage.
-         This behavior is undocumented and Bison users should not rely
-         upon it.  */
-      if (yylen)
-        yylhs.value = yystack_[yylen - 1].value;
-      else
-        yylhs.value = yystack_[0].value;
+      default:
+        break;
+    }
+
 
       // Default location.
       {
@@ -614,67 +670,67 @@ namespace yy {
           switch (yyn)
             {
   case 2: // unit: statements
-#line 45 "parser.yy"
-                  { drv.result = yystack_[0].value; }
-#line 620 "parser.cc"
+#line 48 "parser.yy"
+                  { drv.result = &yystack_[0].value.as < ASTNode > (); std::cout << "Start symbol " << yystack_[0].value.as < ASTNode > ();}
+#line 676 "parser.cc"
     break;
 
   case 3: // statements: %empty
-#line 48 "parser.yy"
-                         {}
-#line 626 "parser.cc"
+#line 51 "parser.yy"
+                         {yylhs.value.as < ASTNode > () = ASTNode("nothing", {}); std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 682 "parser.cc"
     break;
 
   case 4: // statements: statements statement
-#line 49 "parser.yy"
-                       {}
-#line 632 "parser.cc"
+#line 52 "parser.yy"
+                       {yylhs.value.as < ASTNode > () = ASTNode("statements", {&yystack_[1].value.as < ASTNode > (), &yystack_[0].value.as < ASTNode > ()}); std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 688 "parser.cc"
     break;
 
   case 5: // statement: expression STATEMENT_SEPARATOR
-#line 51 "parser.yy"
-                                          { yylhs.value = new ASTNode("statement", yystack_[1].value, yystack_[0].value); }
-#line 638 "parser.cc"
+#line 54 "parser.yy"
+                                          { yylhs.value.as < ASTNode > () = ASTNode("statement", {&yystack_[1].value.as < ASTNode > (), &yystack_[0].value.as < ASTNode > ()});  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 694 "parser.cc"
     break;
 
   case 6: // expression: literal_expression
-#line 54 "parser.yy"
-                     { yylhs.value = yystack_[0].value; }
-#line 644 "parser.cc"
+#line 57 "parser.yy"
+                     { yylhs.value.as < ASTNode > () = yystack_[0].value.as < ASTNode > ();  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 700 "parser.cc"
     break;
 
   case 7: // expression: variable_expression
-#line 55 "parser.yy"
-                      { yylhs.value = yystack_[0].value; }
-#line 650 "parser.cc"
+#line 58 "parser.yy"
+                      { yylhs.value.as < ASTNode > () = yystack_[0].value.as < ASTNode > ();  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 706 "parser.cc"
     break;
 
   case 8: // expression: binary_expression
-#line 56 "parser.yy"
-                    { yylhs.value = yystack_[0].value; }
-#line 656 "parser.cc"
+#line 59 "parser.yy"
+                    { yylhs.value.as < ASTNode > () = yystack_[0].value.as < ASTNode > ();  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 712 "parser.cc"
     break;
 
   case 9: // literal_expression: INTEGER_LITERAL
-#line 58 "parser.yy"
-                                    { yylhs.value = new ASTNode("literal_expression", yystack_[0].value); }
-#line 662 "parser.cc"
+#line 61 "parser.yy"
+                                    { yylhs.value.as < ASTNode > () = ASTNode("literal_expression", {&yystack_[0].value.as < ASTNode > ()});  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 718 "parser.cc"
     break;
 
   case 10: // variable_expression: IDENTIFIER
-#line 59 "parser.yy"
-                                { yylhs.value = new ASTNode("variable_expression", yystack_[0].value); }
-#line 668 "parser.cc"
+#line 62 "parser.yy"
+                                { yylhs.value.as < ASTNode > () = ASTNode("variable_expression", {&yystack_[0].value.as < ASTNode > ()});  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 724 "parser.cc"
     break;
 
   case 11: // binary_expression: expression BINARY_OPERATOR expression
-#line 60 "parser.yy"
-                                                         { yylhs.value = new ASTNode("binary_expression", yystack_[2].value, yystack_[1].value, yystack_[0].value); }
-#line 674 "parser.cc"
+#line 63 "parser.yy"
+                                                         { yylhs.value.as < ASTNode > () = ASTNode("binary_expression", {&yystack_[2].value.as < ASTNode > (), &yystack_[1].value.as < ASTNode > (), &yystack_[0].value.as < ASTNode > ()});  std::cout << yylhs.value.as < ASTNode > () << " " << &yylhs.value.as < ASTNode > ();}
+#line 730 "parser.cc"
     break;
 
 
-#line 678 "parser.cc"
+#line 734 "parser.cc"
 
             default:
               break;
@@ -1200,8 +1256,8 @@ namespace yy {
   const signed char
   parser::yyrline_[] =
   {
-       0,    45,    45,    48,    49,    51,    54,    55,    56,    58,
-      59,    60
+       0,    48,    48,    51,    52,    54,    57,    58,    59,    61,
+      62,    63
   };
 
   void
@@ -1231,20 +1287,14 @@ namespace yy {
   }
 #endif // YYDEBUG
 
-  parser::symbol_kind_type
-  parser::yytranslate_ (int t)
-  {
-    return static_cast<symbol_kind_type> (t);
-  }
 
 } // yy
-#line 1242 "parser.cc"
+#line 1293 "parser.cc"
 
-#line 61 "parser.yy"
+#line 64 "parser.yy"
 
 
-void
-yy::parser::error (const location_type& l, const std::string& m)
+void yy::parser::error (const location_type& l, const std::string& m)
 {
   std::cerr << l << ": " << m << '\n';
 }
