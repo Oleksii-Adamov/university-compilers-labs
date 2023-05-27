@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& out, ASTNode const& node) {
         out << node.val;
     } else {
         for (std::size_t i = 0; i < node.sons.size(); i++) {
-            out << "\n" << node.sons[i];
+            out << "\n" << *node.sons[i];
         }
     }
     out << ")";

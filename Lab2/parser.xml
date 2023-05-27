@@ -81,20 +81,20 @@
     <terminals>
       <terminal symbol-number="0" token-number="0" name="$end" type="" usefulness="useful"/>
       <terminal symbol-number="1" token-number="256" name="error" type="" usefulness="useful"/>
-      <terminal symbol-number="3" token-number="258" name="BINARY_OPERATOR" type="ASTNode" usefulness="useful"/>
-      <terminal symbol-number="4" token-number="259" name="IDENTIFIER" type="ASTNode" usefulness="useful"/>
-      <terminal symbol-number="5" token-number="260" name="INTEGER_LITERAL" type="ASTNode" usefulness="useful"/>
-      <terminal symbol-number="6" token-number="261" name="STATEMENT_SEPARATOR" type="ASTNode" usefulness="useful"/>
+      <terminal symbol-number="3" token-number="258" name="BINARY_OPERATOR" type="ASTNode*" usefulness="useful"/>
+      <terminal symbol-number="4" token-number="259" name="IDENTIFIER" type="ASTNode*" usefulness="useful"/>
+      <terminal symbol-number="5" token-number="260" name="INTEGER_LITERAL" type="ASTNode*" usefulness="useful"/>
+      <terminal symbol-number="6" token-number="261" name="STATEMENT_SEPARATOR" type="ASTNode*" usefulness="useful"/>
     </terminals>
     <nonterminals>
       <nonterminal symbol-number="7" name="$accept" type="" usefulness="useful"/>
       <nonterminal symbol-number="8" name="unit" type="" usefulness="useful"/>
-      <nonterminal symbol-number="9" name="statements" type="ASTNode" usefulness="useful"/>
-      <nonterminal symbol-number="10" name="statement" type="ASTNode" usefulness="useful"/>
-      <nonterminal symbol-number="11" name="expression" type="ASTNode" usefulness="useful"/>
-      <nonterminal symbol-number="12" name="literal_expression" type="ASTNode" usefulness="useful"/>
-      <nonterminal symbol-number="13" name="variable_expression" type="ASTNode" usefulness="useful"/>
-      <nonterminal symbol-number="14" name="binary_expression" type="ASTNode" usefulness="useful"/>
+      <nonterminal symbol-number="9" name="statements" type="ASTNode*" usefulness="useful"/>
+      <nonterminal symbol-number="10" name="statement" type="ASTNode*" usefulness="useful"/>
+      <nonterminal symbol-number="11" name="expression" type="ASTNode*" usefulness="useful"/>
+      <nonterminal symbol-number="12" name="literal_expression" type="ASTNode*" usefulness="useful"/>
+      <nonterminal symbol-number="13" name="variable_expression" type="ASTNode*" usefulness="useful"/>
+      <nonterminal symbol-number="14" name="binary_expression" type="ASTNode*" usefulness="useful"/>
     </nonterminals>
   </grammar>
 

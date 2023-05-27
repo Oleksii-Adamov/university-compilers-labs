@@ -421,7 +421,7 @@ namespace yy {
       // literal_expression
       // variable_expression
       // binary_expression
-      char dummy1[sizeof (ASTNode)];
+      char dummy1[sizeof (ASTNode*)];
     };
 
     /// The size of the largest semantic type.
@@ -556,7 +556,7 @@ namespace yy {
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
       case symbol_kind::S_binary_expression: // binary_expression
-        value.move< ASTNode > (std::move (that.value));
+        value.move< ASTNode* > (std::move (that.value));
         break;
 
       default:
@@ -583,13 +583,13 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, ASTNode&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, ASTNode*&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const ASTNode& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const ASTNode*& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -628,7 +628,7 @@ switch (yykind)
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
       case symbol_kind::S_binary_expression: // binary_expression
-        value.template destroy< ASTNode > ();
+        value.template destroy< ASTNode* > ();
         break;
 
       default:
@@ -731,10 +731,10 @@ switch (yykind)
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, ASTNode v, location_type l)
+      symbol_type (int tok, ASTNode* v, location_type l)
         : super_type (token_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const ASTNode& v, const location_type& l)
+      symbol_type (int tok, const ASTNode*& v, const location_type& l)
         : super_type (token_type (tok), v, l)
 #endif
       {
@@ -838,14 +838,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_BINARY_OPERATOR (ASTNode v, location_type l)
+      make_BINARY_OPERATOR (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_BINARY_OPERATOR, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_BINARY_OPERATOR (const ASTNode& v, const location_type& l)
+      make_BINARY_OPERATOR (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_BINARY_OPERATOR, v, l);
       }
@@ -853,14 +853,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_IDENTIFIER (ASTNode v, location_type l)
+      make_IDENTIFIER (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_IDENTIFIER, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_IDENTIFIER (const ASTNode& v, const location_type& l)
+      make_IDENTIFIER (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_IDENTIFIER, v, l);
       }
@@ -868,14 +868,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_INTEGER_LITERAL (ASTNode v, location_type l)
+      make_INTEGER_LITERAL (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_INTEGER_LITERAL, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_INTEGER_LITERAL (const ASTNode& v, const location_type& l)
+      make_INTEGER_LITERAL (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_INTEGER_LITERAL, v, l);
       }
@@ -883,14 +883,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_STATEMENT_SEPARATOR (ASTNode v, location_type l)
+      make_STATEMENT_SEPARATOR (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_STATEMENT_SEPARATOR, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_STATEMENT_SEPARATOR (const ASTNode& v, const location_type& l)
+      make_STATEMENT_SEPARATOR (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_STATEMENT_SEPARATOR, v, l);
       }
@@ -1276,7 +1276,7 @@ switch (yykind)
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
       case symbol_kind::S_binary_expression: // binary_expression
-        value.copy< ASTNode > (YY_MOVE (that.value));
+        value.copy< ASTNode* > (YY_MOVE (that.value));
         break;
 
       default:
@@ -1318,7 +1318,7 @@ switch (yykind)
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
       case symbol_kind::S_binary_expression: // binary_expression
-        value.move< ASTNode > (YY_MOVE (s.value));
+        value.move< ASTNode* > (YY_MOVE (s.value));
         break;
 
       default:

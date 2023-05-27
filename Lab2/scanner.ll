@@ -108,13 +108,13 @@ integer_literal  {digits}
 {white_space}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
 
-"+"|"-"|"*"|"/"|"%"|"**"|"&"|"|"|"^"|"<<"|">>"|"&&"|"||"|"=="|"!="|"<="|">="|"<"|">"|"by"|"#" return yy::parser::make_BINARY_OPERATOR (ASTNode("binary-operator", yytext), loc);
+"+"|"-"|"*"|"/"|"%"|"**"|"&"|"|"|"^"|"<<"|">>"|"&&"|"||"|"=="|"!="|"<="|">="|"<"|">"|"by"|"#" return yy::parser::make_BINARY_OPERATOR (new ASTNode("binary-operator", yytext), loc);
 
-{identifier} return yy::parser::make_IDENTIFIER (ASTNode("identifier", yytext), loc);
+{identifier} return yy::parser::make_IDENTIFIER (new ASTNode("identifier", yytext), loc);
 
-{integer_literal} return yy::parser::make_INTEGER_LITERAL (ASTNode("integer-literal", yytext), loc);
+{integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode("integer-literal", yytext), loc);
 
-";" return yy::parser::make_STATEMENT_SEPARATOR (ASTNode("statement-separator", yytext), loc);
+";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode("statement-separator", yytext), loc);
 
 . {
              throw yy::parser::syntax_error
