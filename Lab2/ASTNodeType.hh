@@ -16,9 +16,7 @@ enum class ASTNodeType {
     InterpretedBytesLiteral,
     UninterpretedBytesLiteral,
 
-    Assignment,
-    CompoundAssignment,
-    Swap,
+    AssignmentOp,
     RangeSpecifier,
     RangeDomainStrideSpecifier,
     RangeCount,
@@ -56,6 +54,7 @@ enum class ASTNodeType {
     UnaryExpression,
     BinaryExpression,
     ExpressionStatement,
+    AssignmentStatement,
     Statements,
 
 };

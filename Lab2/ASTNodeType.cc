@@ -13,9 +13,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::UninterpretedStringLiteral: s = "UninterpretedStringLiteral"; break;
         case ASTNodeType::InterpretedBytesLiteral: s = "InterpretedBytesLiteral"; break;
         case ASTNodeType::UninterpretedBytesLiteral: s = "UninterpretedBytesLiteral"; break;
-        case ASTNodeType::Assignment: s = "Assignment"; break;
-        case ASTNodeType::CompoundAssignment: s = "CompoundAssignment"; break;
-        case ASTNodeType::Swap: s = "Swap"; break;
+        case ASTNodeType::AssignmentOp: s = "AssignmentOp"; break;
         case ASTNodeType::RangeSpecifier: s = "RangeSpecifier"; break;
         case ASTNodeType::RangeDomainStrideSpecifier: s = "RangeDomainStrideSpecifier"; break;
         case ASTNodeType::RangeCount: s = "RangeCount"; break;
@@ -51,6 +49,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
+        case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }
 

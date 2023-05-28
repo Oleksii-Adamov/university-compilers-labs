@@ -48,6 +48,7 @@
 %token <ASTNode*> EQUALITY_COMP
 %token <ASTNode*> BY "by"
 %token <ASTNode*> RANGE_COUNT "#"
+%token <ASTNode*> ASSIGNMENT_OP
 %token <ASTNode*> STATEMENT_SEPARATOR ";"
 %token <ASTNode*> LEFT_ROUND_BRACKET "("
 %token <ASTNode*> RIGHT_ROUND_BRACKET ")"
@@ -61,7 +62,9 @@
 %nterm <ASTNode*> parenthesized_expression
 %nterm <ASTNode*> unary_expression
 %nterm <ASTNode*> binary_expression
+%nterm <ASTNode*> lvalue_expression
 %nterm <ASTNode*> expression_statement
+%nterm <ASTNode*> assignment_statement
 %nterm <ASTNode*> statement
 %nterm <ASTNode*> statements
 
@@ -91,20 +94,26 @@ statements:
   %empty                 {$$ = nullptr;}
 | statements statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
-statement: expression_statement
+statement: expression_statement | assignment_statement;
 
-expression_statement: expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+assignment_statement: lvalue_expression ASSIGNMENT_OP expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
 
 expression:
-  literal_expression { $$ = $1;}
-| variable_expression { $$ = $1;}
-| parenthesized_expression { $$ = $1;}
-| unary_expression { $$ = $1;}
-| binary_expression { $$ = $1;};
+  literal_expression
+| variable_expression
+| parenthesized_expression
+| lvalue_expression
+| unary_expression
+| binary_expression;
 
-literal_expression: INTEGER_LITERAL { $$ = $1;};
-variable_expression: IDENTIFIER { $$ = $1;};
+literal_expression: INTEGER_LITERAL;
+variable_expression: IDENTIFIER;
 parenthesized_expression: "(" expression ")" %prec HIGHEST_PREC { $$ = $2; delete $1; delete $3;};
+lvalue_expression:
+  variable_expression
+| parenthesized_expression;
+
 unary_expression:
   "+" expression %prec POSITIVE_IDENTITY { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
 | "-" expression %prec NEG { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}

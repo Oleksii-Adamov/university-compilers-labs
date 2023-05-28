@@ -126,6 +126,7 @@ integer_literal  {digits}
 "=="|"!=" return yy::parser::make_EQUALITY_COMP (new ASTNode(ASTNodeType::EqualityComp, yytext), loc);
 "by" return yy::parser::make_BY (new ASTNode(ASTNodeType::By, yytext), loc);
 "#" return yy::parser::make_RANGE_COUNT (new ASTNode(ASTNodeType::RangeCount, yytext), loc);
+"="|"+="|"-="|"*="|"/="|"%="|"**="|"&="|"|="|"^="|"&&="|"||="|"<<="|">>=" return yy::parser::make_ASSIGNMENT_OP (new ASTNode(ASTNodeType::AssignmentOp, yytext), loc);
 ";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode(ASTNodeType::StatementSeparator, yytext), loc);
 "(" return yy::parser::make_LEFT_ROUND_BRACKET (new ASTNode(ASTNodeType::LeftRoundBracket, yytext), loc);
 ")" return yy::parser::make_RIGHT_ROUND_BRACKET (new ASTNode(ASTNodeType::RightRoundBracket, yytext), loc);
