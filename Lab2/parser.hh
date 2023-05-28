@@ -438,6 +438,7 @@ namespace yy {
       // expression
       // literal_expression
       // variable_expression
+      // unary_expression
       // binary_expression
       char dummy1[sizeof (ASTNode*)];
     };
@@ -568,7 +569,8 @@ namespace yy {
         S_expression = 32,                       // expression
         S_literal_expression = 33,               // literal_expression
         S_variable_expression = 34,              // variable_expression
-        S_binary_expression = 35                 // binary_expression
+        S_unary_expression = 35,                 // unary_expression
+        S_binary_expression = 36                 // binary_expression
       };
     };
 
@@ -632,6 +634,7 @@ namespace yy {
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (std::move (that.value));
         break;
@@ -722,6 +725,7 @@ switch (yykind)
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.template destroy< ASTNode* > ();
         break;
@@ -1635,8 +1639,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 146,     ///< Last index in yytable_.
-      yynnts_ = 9,  ///< Number of nonterminal symbols.
+      yylast_ = 160,     ///< Last index in yytable_.
+      yynnts_ = 10,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -1689,6 +1693,7 @@ switch (yykind)
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.copy< ASTNode* > (YY_MOVE (that.value));
         break;
@@ -1749,6 +1754,7 @@ switch (yykind)
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (YY_MOVE (s.value));
         break;
@@ -1815,7 +1821,7 @@ switch (yykind)
   }
 
 } // yy
-#line 1819 "parser.hh"
+#line 1825 "parser.hh"
 
 
 

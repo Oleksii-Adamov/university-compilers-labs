@@ -54,6 +54,7 @@
 %nterm <ASTNode*> literal_expression
 %nterm <ASTNode*> variable_expression
 %nterm <ASTNode*> expression
+%nterm <ASTNode*> unary_expression
 %nterm <ASTNode*> binary_expression
 %nterm <ASTNode*> expression_statement
 %nterm <ASTNode*> statement
@@ -90,12 +91,18 @@ statement: expression_statement
 expression_statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 expression:
-  literal_expression { $$ = $1; }
+  literal_expression { $$ = $1;}
 | variable_expression { $$ = $1;}
+| unary_expression { $$ = $1;}
 | binary_expression { $$ = $1;};
 
 literal_expression: INTEGER_LITERAL { $$ = $1;};
 variable_expression: IDENTIFIER { $$ = $1;};
+unary_expression:
+  "+" expression %prec POSITIVE_IDENTITY { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
+| "-" expression %prec NEG { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
+| "~" expression { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
+| "!" expression { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
 binary_expression:
   expression "+" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
 | expression "-" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}

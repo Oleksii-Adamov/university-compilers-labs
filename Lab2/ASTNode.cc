@@ -35,3 +35,23 @@ std::ostream& operator<<(std::ostream& out, ASTNode const& node) {
     out << ")";
     return out;
 }
+
+void ASTNode::print(std::ostream& out, const std::string& prefix, bool isLast)
+{
+    out << prefix;
+
+    out << (isLast ? "└──" : "├──");
+
+    // print the value of the node
+    if (val.size() == 0) {
+        out << type << "\n";
+    } else {
+        out << "(" << type << ", " << val << ")\n";
+    }
+
+    // enter the next tree level
+    for (std::size_t i = 0; i < sons.size(); i++) {
+        if (sons[i] != nullptr)
+            sons[i]->print(out, prefix + (isLast ? "    " : "│   "), i == sons.size() - 1);
+    }
+}

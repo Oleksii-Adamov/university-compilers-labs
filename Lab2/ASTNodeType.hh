@@ -53,6 +53,7 @@ enum class ASTNodeType {
     LeftCurlyBracket,
     RightCurlyBracket,
 
+    UnaryExpression,
     BinaryExpression,
     ExpressionStatement,
     Statements,

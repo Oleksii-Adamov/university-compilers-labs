@@ -48,6 +48,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::RightSquareBracket: s = "RightSquareBracket"; break;
         case ASTNodeType::LeftCurlyBracket: s = "LeftCurlyBracket"; break;
         case ASTNodeType::RightCurlyBracket: s = "RightCurlyBracket"; break;
+        case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
         case ASTNodeType::Statements: s = "Statements"; break;

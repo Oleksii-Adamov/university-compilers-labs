@@ -18,6 +18,7 @@ public:
     ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_);
     ~ASTNode();
     friend std::ostream& operator<<(std::ostream& out, const ASTNode& node);
+    void print(std::ostream& out, const std::string& prefix, bool isLast);
 };
 
 
