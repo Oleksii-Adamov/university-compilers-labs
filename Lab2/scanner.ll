@@ -108,13 +108,31 @@ integer_literal  {digits}
 {white_space}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
 
-"+"|"-"|"*"|"/"|"%"|"**"|"&"|"|"|"^"|"<<"|">>"|"&&"|"||"|"=="|"!="|"<="|">="|"<"|">"|"by"|"#" return yy::parser::make_BINARY_OPERATOR (new ASTNode("binary-operator", yytext), loc);
+"+" return yy::parser::make_PLUS (new ASTNode(ASTNodeType::Plus, yytext), loc);
+"-" return yy::parser::make_MINUS (new ASTNode(ASTNodeType::Minus, yytext), loc);
+"*" return yy::parser::make_MULTIPLICATION (new ASTNode(ASTNodeType::Multiplication, yytext), loc);
+"/" return yy::parser::make_DIVISION (new ASTNode(ASTNodeType::Division, yytext), loc);
+"%" return yy::parser::make_MODULUS (new ASTNode(ASTNodeType::Modulus, yytext), loc);
+"**" return yy::parser::make_EXPONENTIATION (new ASTNode(ASTNodeType::Exponentiation, yytext), loc);
+"~" return yy::parser::make_BITWISE_COMPLEMENT (new ASTNode(ASTNodeType::BitwiseComplement, yytext), loc);
+"&" return yy::parser::make_BITWISE_AND (new ASTNode(ASTNodeType::BitwiseAnd, yytext), loc);
+"|" return yy::parser::make_BITWISE_OR (new ASTNode(ASTNodeType::BitwiseOr, yytext), loc);
+"^" return yy::parser::make_BITWISE_XOR (new ASTNode(ASTNodeType::BitwiseXor, yytext), loc);
+"<<"|">>" return yy::parser::make_BITWISE_SHIFT (new ASTNode(ASTNodeType::BitwiseShift, yytext), loc);
+"!" return yy::parser::make_EXCLAMATION_MARK (new ASTNode(ASTNodeType::ExclamationMark, yytext), loc);
+"&&" return yy::parser::make_LOGICAL_AND (new ASTNode(ASTNodeType::LogicalAnd, yytext), loc);
+"||" return yy::parser::make_LOGICAL_OR (new ASTNode(ASTNodeType::LogicalOr, yytext), loc);
+"<="|">="|"<"|">" return yy::parser::make_ORDERED_COMP (new ASTNode(ASTNodeType::OrderedComp, yytext), loc);
+"=="|"!=" return yy::parser::make_EQUALITY_COMP (new ASTNode(ASTNodeType::EqualityComp, yytext), loc);
+"by" return yy::parser::make_BY (new ASTNode(ASTNodeType::By, yytext), loc);
+"#" return yy::parser::make_RANGE_COUNT (new ASTNode(ASTNodeType::RangeCount, yytext), loc);
+";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode(ASTNodeType::StatementSeparator, yytext), loc);
 
-{identifier} return yy::parser::make_IDENTIFIER (new ASTNode("identifier", yytext), loc);
+{identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
-{integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode("integer-literal", yytext), loc);
+{integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
 
-";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode("statement-separator", yytext), loc);
+
 
 . {
              throw yy::parser::syntax_error

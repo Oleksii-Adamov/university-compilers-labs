@@ -30,7 +30,24 @@
 
 %define api.token.prefix {TOK_}
 
-%token <ASTNode*> BINARY_OPERATOR
+%token <ASTNode*> PLUS "+"
+%token <ASTNode*> MINUS "-"
+%token <ASTNode*> MULTIPLICATION "*"
+%token <ASTNode*> DIVISION "/"
+%token <ASTNode*> MODULUS "%"
+%token <ASTNode*> EXPONENTIATION "**"
+%token <ASTNode*> BITWISE_COMPLEMENT "~"
+%token <ASTNode*> BITWISE_AND "&"
+%token <ASTNode*> BITWISE_OR "|"
+%token <ASTNode*> BITWISE_XOR "^"
+%token <ASTNode*> BITWISE_SHIFT
+%token <ASTNode*> EXCLAMATION_MARK "!"
+%token <ASTNode*> LOGICAL_AND "&&"
+%token <ASTNode*> LOGICAL_OR "||"
+%token <ASTNode*> ORDERED_COMP
+%token <ASTNode*> EQUALITY_COMP
+%token <ASTNode*> BY "by"
+%token <ASTNode*> RANGE_COUNT "#"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
 %token <ASTNode*> STATEMENT_SEPARATOR
@@ -38,29 +55,64 @@
 %nterm <ASTNode*> variable_expression
 %nterm <ASTNode*> expression
 %nterm <ASTNode*> binary_expression
+%nterm <ASTNode*> expression_statement
 %nterm <ASTNode*> statement
 %nterm <ASTNode*> statements
 
 %printer { yyo << *$$; } <*>;
 
 %%
+%left "by" "#";
+%left "||";
+%left "&&";
+%left EQUALITY_COMP;
+%left ORDERED_COMP;
+%left "+" "-";
+%left "|";
+%left "^";
+%left "&";
+%left BITWISE_SHIFT;
+%right NEG POSITIVE_IDENTITY;
+%left "*" "/" "%";
+%right "!" "~";
+%right "**";
+%left HIGHEST_PREC;
+
 %start unit;
-unit: statements  { drv.result = $1; std::cout << "Start symbol " << *$1 << "\n";};
+unit: statements  { drv.result = $1;};
 
 statements:
-  %empty                 {$$ = new ASTNode("nothing", {}); std::cout << *$$ << " " << $$ << "\n";}
-| statements statement {$$ = new ASTNode("statements", {$1, $2}); std::cout << *$$ << " " << $$ << "\n";};
+  %empty                 {$$ = nullptr;}
+| statements statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
-statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode("statement", {$1, $2});  std::cout << *$$ << " " << $$ << "\n";};
+statement: expression_statement
+
+expression_statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 expression:
-  literal_expression { $$ = $1;  std::cout << *$$ << " " << $$ << "\n";}
-| variable_expression { $$ = $1;  std::cout << *$$ << " " << $$ << "\n";}
-| binary_expression { $$ = $1;  std::cout << *$$ << " " << $$ << "\n";};
+  literal_expression { $$ = $1; }
+| variable_expression { $$ = $1;}
+| binary_expression { $$ = $1;};
 
-literal_expression: INTEGER_LITERAL { $$ = new ASTNode("literal_expression", {$1});  std::cout << *$$ << " " << $$ << "\n";};
-variable_expression: IDENTIFIER { $$ = new ASTNode("variable_expression", {$1});  std::cout << *$$ << " " << $$ << "\n";};
-binary_expression: expression BINARY_OPERATOR expression { $$ = new ASTNode("binary_expression", {$1, $2, $3});  std::cout << *$$ << " " << $$ << "\n";};
+literal_expression: INTEGER_LITERAL { $$ = $1;};
+variable_expression: IDENTIFIER { $$ = $1;};
+binary_expression:
+  expression "+" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "-" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "*" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "/" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "%" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "**" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "&" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "|" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "^" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression BITWISE_SHIFT expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "&&" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "||" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression EQUALITY_COMP expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression ORDERED_COMP expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "by" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
+| expression "#" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});};
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m)

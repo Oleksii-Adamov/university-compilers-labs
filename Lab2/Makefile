@@ -17,7 +17,7 @@ all: $(BASE)
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c -o$@ $<
 
-$(BASE): $(BASE).o driver.o parser.o scanner.o ASTNode.o
+$(BASE): $(BASE).o driver.o parser.o scanner.o ASTNode.o ASTNodeType.o
 	$(CXX) -o $@ $^
 
 $(BASE).o: parser.hh

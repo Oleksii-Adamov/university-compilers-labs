@@ -411,12 +411,30 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
-      // BINARY_OPERATOR
+      // "+"
+      // "-"
+      // "*"
+      // "/"
+      // "%"
+      // "**"
+      // "~"
+      // "&"
+      // "|"
+      // "^"
+      // BITWISE_SHIFT
+      // "!"
+      // "&&"
+      // "||"
+      // ORDERED_COMP
+      // EQUALITY_COMP
+      // "by"
+      // "#"
       // IDENTIFIER
       // INTEGER_LITERAL
       // STATEMENT_SEPARATOR
       // statements
       // statement
+      // expression_statement
       // expression
       // literal_expression
       // variable_expression
@@ -473,10 +491,30 @@ namespace yy {
     TOK_YYEOF = 0,                 // "end of file"
     TOK_YYerror = 1,               // error
     TOK_YYUNDEF = 2,               // "invalid token"
-    TOK_BINARY_OPERATOR = 3,       // BINARY_OPERATOR
-    TOK_IDENTIFIER = 4,            // IDENTIFIER
-    TOK_INTEGER_LITERAL = 5,       // INTEGER_LITERAL
-    TOK_STATEMENT_SEPARATOR = 6    // STATEMENT_SEPARATOR
+    TOK_PLUS = 3,                  // "+"
+    TOK_MINUS = 4,                 // "-"
+    TOK_MULTIPLICATION = 5,        // "*"
+    TOK_DIVISION = 6,              // "/"
+    TOK_MODULUS = 7,               // "%"
+    TOK_EXPONENTIATION = 8,        // "**"
+    TOK_BITWISE_COMPLEMENT = 9,    // "~"
+    TOK_BITWISE_AND = 10,          // "&"
+    TOK_BITWISE_OR = 11,           // "|"
+    TOK_BITWISE_XOR = 12,          // "^"
+    TOK_BITWISE_SHIFT = 13,        // BITWISE_SHIFT
+    TOK_EXCLAMATION_MARK = 14,     // "!"
+    TOK_LOGICAL_AND = 15,          // "&&"
+    TOK_LOGICAL_OR = 16,           // "||"
+    TOK_ORDERED_COMP = 17,         // ORDERED_COMP
+    TOK_EQUALITY_COMP = 18,        // EQUALITY_COMP
+    TOK_BY = 19,                   // "by"
+    TOK_RANGE_COUNT = 20,          // "#"
+    TOK_IDENTIFIER = 21,           // IDENTIFIER
+    TOK_INTEGER_LITERAL = 22,      // INTEGER_LITERAL
+    TOK_STATEMENT_SEPARATOR = 23,  // STATEMENT_SEPARATOR
+    TOK_NEG = 24,                  // NEG
+    TOK_POSITIVE_IDENTITY = 25,    // POSITIVE_IDENTITY
+    TOK_HIGHEST_PREC = 26          // HIGHEST_PREC
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -493,23 +531,44 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 7, ///< Number of tokens.
+        YYNTOKENS = 27, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
         S_YYUNDEF = 2,                           // "invalid token"
-        S_BINARY_OPERATOR = 3,                   // BINARY_OPERATOR
-        S_IDENTIFIER = 4,                        // IDENTIFIER
-        S_INTEGER_LITERAL = 5,                   // INTEGER_LITERAL
-        S_STATEMENT_SEPARATOR = 6,               // STATEMENT_SEPARATOR
-        S_YYACCEPT = 7,                          // $accept
-        S_unit = 8,                              // unit
-        S_statements = 9,                        // statements
-        S_statement = 10,                        // statement
-        S_expression = 11,                       // expression
-        S_literal_expression = 12,               // literal_expression
-        S_variable_expression = 13,              // variable_expression
-        S_binary_expression = 14                 // binary_expression
+        S_PLUS = 3,                              // "+"
+        S_MINUS = 4,                             // "-"
+        S_MULTIPLICATION = 5,                    // "*"
+        S_DIVISION = 6,                          // "/"
+        S_MODULUS = 7,                           // "%"
+        S_EXPONENTIATION = 8,                    // "**"
+        S_BITWISE_COMPLEMENT = 9,                // "~"
+        S_BITWISE_AND = 10,                      // "&"
+        S_BITWISE_OR = 11,                       // "|"
+        S_BITWISE_XOR = 12,                      // "^"
+        S_BITWISE_SHIFT = 13,                    // BITWISE_SHIFT
+        S_EXCLAMATION_MARK = 14,                 // "!"
+        S_LOGICAL_AND = 15,                      // "&&"
+        S_LOGICAL_OR = 16,                       // "||"
+        S_ORDERED_COMP = 17,                     // ORDERED_COMP
+        S_EQUALITY_COMP = 18,                    // EQUALITY_COMP
+        S_BY = 19,                               // "by"
+        S_RANGE_COUNT = 20,                      // "#"
+        S_IDENTIFIER = 21,                       // IDENTIFIER
+        S_INTEGER_LITERAL = 22,                  // INTEGER_LITERAL
+        S_STATEMENT_SEPARATOR = 23,              // STATEMENT_SEPARATOR
+        S_NEG = 24,                              // NEG
+        S_POSITIVE_IDENTITY = 25,                // POSITIVE_IDENTITY
+        S_HIGHEST_PREC = 26,                     // HIGHEST_PREC
+        S_YYACCEPT = 27,                         // $accept
+        S_unit = 28,                             // unit
+        S_statements = 29,                       // statements
+        S_statement = 30,                        // statement
+        S_expression_statement = 31,             // expression_statement
+        S_expression = 32,                       // expression
+        S_literal_expression = 33,               // literal_expression
+        S_variable_expression = 34,              // variable_expression
+        S_binary_expression = 35                 // binary_expression
       };
     };
 
@@ -546,12 +605,30 @@ namespace yy {
       {
         switch (this->kind ())
     {
-      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_PLUS: // "+"
+      case symbol_kind::S_MINUS: // "-"
+      case symbol_kind::S_MULTIPLICATION: // "*"
+      case symbol_kind::S_DIVISION: // "/"
+      case symbol_kind::S_MODULUS: // "%"
+      case symbol_kind::S_EXPONENTIATION: // "**"
+      case symbol_kind::S_BITWISE_COMPLEMENT: // "~"
+      case symbol_kind::S_BITWISE_AND: // "&"
+      case symbol_kind::S_BITWISE_OR: // "|"
+      case symbol_kind::S_BITWISE_XOR: // "^"
+      case symbol_kind::S_BITWISE_SHIFT: // BITWISE_SHIFT
+      case symbol_kind::S_EXCLAMATION_MARK: // "!"
+      case symbol_kind::S_LOGICAL_AND: // "&&"
+      case symbol_kind::S_LOGICAL_OR: // "||"
+      case symbol_kind::S_ORDERED_COMP: // ORDERED_COMP
+      case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
+      case symbol_kind::S_BY: // "by"
+      case symbol_kind::S_RANGE_COUNT: // "#"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
       case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
@@ -618,12 +695,30 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
-      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_PLUS: // "+"
+      case symbol_kind::S_MINUS: // "-"
+      case symbol_kind::S_MULTIPLICATION: // "*"
+      case symbol_kind::S_DIVISION: // "/"
+      case symbol_kind::S_MODULUS: // "%"
+      case symbol_kind::S_EXPONENTIATION: // "**"
+      case symbol_kind::S_BITWISE_COMPLEMENT: // "~"
+      case symbol_kind::S_BITWISE_AND: // "&"
+      case symbol_kind::S_BITWISE_OR: // "|"
+      case symbol_kind::S_BITWISE_XOR: // "^"
+      case symbol_kind::S_BITWISE_SHIFT: // BITWISE_SHIFT
+      case symbol_kind::S_EXCLAMATION_MARK: // "!"
+      case symbol_kind::S_LOGICAL_AND: // "&&"
+      case symbol_kind::S_LOGICAL_OR: // "||"
+      case symbol_kind::S_ORDERED_COMP: // ORDERED_COMP
+      case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
+      case symbol_kind::S_BY: // "by"
+      case symbol_kind::S_RANGE_COUNT: // "#"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
       case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
@@ -727,7 +822,8 @@ switch (yykind)
       {
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_YYEOF
-                   || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF));
+                   || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF)
+                   || (token::TOK_NEG <= tok && tok <= token::TOK_HIGHEST_PREC));
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -739,7 +835,7 @@ switch (yykind)
 #endif
       {
 #if !defined _MSC_VER || defined __clang__
-        YY_ASSERT ((token::TOK_BINARY_OPERATOR <= tok && tok <= token::TOK_STATEMENT_SEPARATOR));
+        YY_ASSERT ((token::TOK_PLUS <= tok && tok <= token::TOK_STATEMENT_SEPARATOR));
 #endif
       }
     };
@@ -838,16 +934,271 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_BINARY_OPERATOR (ASTNode* v, location_type l)
+      make_PLUS (ASTNode* v, location_type l)
       {
-        return symbol_type (token::TOK_BINARY_OPERATOR, std::move (v), std::move (l));
+        return symbol_type (token::TOK_PLUS, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_BINARY_OPERATOR (const ASTNode*& v, const location_type& l)
+      make_PLUS (const ASTNode*& v, const location_type& l)
       {
-        return symbol_type (token::TOK_BINARY_OPERATOR, v, l);
+        return symbol_type (token::TOK_PLUS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MINUS (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_MINUS, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MINUS (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_MINUS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MULTIPLICATION (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_MULTIPLICATION, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MULTIPLICATION (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_MULTIPLICATION, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DIVISION (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_DIVISION, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DIVISION (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_DIVISION, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MODULUS (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_MODULUS, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MODULUS (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_MODULUS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXPONENTIATION (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_EXPONENTIATION, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EXPONENTIATION (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_EXPONENTIATION, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BITWISE_COMPLEMENT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BITWISE_COMPLEMENT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BITWISE_COMPLEMENT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BITWISE_COMPLEMENT, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BITWISE_AND (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BITWISE_AND, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BITWISE_AND (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BITWISE_AND, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BITWISE_OR (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BITWISE_OR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BITWISE_OR (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BITWISE_OR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BITWISE_XOR (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BITWISE_XOR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BITWISE_XOR (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BITWISE_XOR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BITWISE_SHIFT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BITWISE_SHIFT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BITWISE_SHIFT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BITWISE_SHIFT, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXCLAMATION_MARK (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_EXCLAMATION_MARK, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EXCLAMATION_MARK (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_EXCLAMATION_MARK, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOGICAL_AND (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_LOGICAL_AND, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LOGICAL_AND (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_LOGICAL_AND, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LOGICAL_OR (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_LOGICAL_OR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LOGICAL_OR (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_LOGICAL_OR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ORDERED_COMP (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_ORDERED_COMP, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ORDERED_COMP (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_ORDERED_COMP, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EQUALITY_COMP (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_EQUALITY_COMP, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EQUALITY_COMP (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_EQUALITY_COMP, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BY (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BY, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BY (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BY, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RANGE_COUNT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_RANGE_COUNT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RANGE_COUNT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_RANGE_COUNT, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -893,6 +1244,51 @@ switch (yykind)
       make_STATEMENT_SEPARATOR (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_STATEMENT_SEPARATOR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NEG (location_type l)
+      {
+        return symbol_type (token::TOK_NEG, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_NEG (const location_type& l)
+      {
+        return symbol_type (token::TOK_NEG, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_POSITIVE_IDENTITY (location_type l)
+      {
+        return symbol_type (token::TOK_POSITIVE_IDENTITY, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_POSITIVE_IDENTITY (const location_type& l)
+      {
+        return symbol_type (token::TOK_POSITIVE_IDENTITY, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_HIGHEST_PREC (location_type l)
+      {
+        return symbol_type (token::TOK_HIGHEST_PREC, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_HIGHEST_PREC (const location_type& l)
+      {
+        return symbol_type (token::TOK_HIGHEST_PREC, l);
       }
 #endif
 
@@ -970,7 +1366,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -1239,8 +1635,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 6,     ///< Last index in yytable_.
-      yynnts_ = 8,  ///< Number of nonterminal symbols.
+      yylast_ = 146,     ///< Last index in yytable_.
+      yynnts_ = 9,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -1266,12 +1662,30 @@ switch (yykind)
   {
     switch (this->kind ())
     {
-      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_PLUS: // "+"
+      case symbol_kind::S_MINUS: // "-"
+      case symbol_kind::S_MULTIPLICATION: // "*"
+      case symbol_kind::S_DIVISION: // "/"
+      case symbol_kind::S_MODULUS: // "%"
+      case symbol_kind::S_EXPONENTIATION: // "**"
+      case symbol_kind::S_BITWISE_COMPLEMENT: // "~"
+      case symbol_kind::S_BITWISE_AND: // "&"
+      case symbol_kind::S_BITWISE_OR: // "|"
+      case symbol_kind::S_BITWISE_XOR: // "^"
+      case symbol_kind::S_BITWISE_SHIFT: // BITWISE_SHIFT
+      case symbol_kind::S_EXCLAMATION_MARK: // "!"
+      case symbol_kind::S_LOGICAL_AND: // "&&"
+      case symbol_kind::S_LOGICAL_OR: // "||"
+      case symbol_kind::S_ORDERED_COMP: // ORDERED_COMP
+      case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
+      case symbol_kind::S_BY: // "by"
+      case symbol_kind::S_RANGE_COUNT: // "#"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
       case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
@@ -1308,12 +1722,30 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
-      case symbol_kind::S_BINARY_OPERATOR: // BINARY_OPERATOR
+      case symbol_kind::S_PLUS: // "+"
+      case symbol_kind::S_MINUS: // "-"
+      case symbol_kind::S_MULTIPLICATION: // "*"
+      case symbol_kind::S_DIVISION: // "/"
+      case symbol_kind::S_MODULUS: // "%"
+      case symbol_kind::S_EXPONENTIATION: // "**"
+      case symbol_kind::S_BITWISE_COMPLEMENT: // "~"
+      case symbol_kind::S_BITWISE_AND: // "&"
+      case symbol_kind::S_BITWISE_OR: // "|"
+      case symbol_kind::S_BITWISE_XOR: // "^"
+      case symbol_kind::S_BITWISE_SHIFT: // BITWISE_SHIFT
+      case symbol_kind::S_EXCLAMATION_MARK: // "!"
+      case symbol_kind::S_LOGICAL_AND: // "&&"
+      case symbol_kind::S_LOGICAL_OR: // "||"
+      case symbol_kind::S_ORDERED_COMP: // ORDERED_COMP
+      case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
+      case symbol_kind::S_BY: // "by"
+      case symbol_kind::S_RANGE_COUNT: // "#"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
       case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
@@ -1383,7 +1815,7 @@ switch (yykind)
   }
 
 } // yy
-#line 1387 "parser.hh"
+#line 1819 "parser.hh"
 
 
 

@@ -4,18 +4,20 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "ASTNodeType.hh"
 
 class ASTNode {
 private:
     std::vector<ASTNode*> sons;
-    std::string name = "";
+    ASTNodeType type;
+    // value (for tokens)
     std::string val = "";
 public:
     ASTNode();
-    ASTNode(std::string name_, std::string val_);
-    ASTNode(std::string name_, std::initializer_list<ASTNode*> sons_);
+    ASTNode(ASTNodeType type_, std::string val_);
+    ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_);
     ~ASTNode();
-    friend std::ostream& operator<<(std::ostream& out, ASTNode const& node);
+    friend std::ostream& operator<<(std::ostream& out, const ASTNode& node);
 };
 
 
