@@ -4,7 +4,6 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
     const char* s = "";
     switch (astNodeType) {
         case ASTNodeType::Identifier: s = "Identifier"; break;
-        case ASTNodeType::Keyword: s = "Keyword"; break;
         case ASTNodeType::BoolLiteral: s = "BoolLiteral"; break;
         case ASTNodeType::IntegerLiteral: s = "IntegerLiteral"; break;
         case ASTNodeType::RealLiteral: s = "RealLiteral"; break;
@@ -13,7 +12,8 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::UninterpretedStringLiteral: s = "UninterpretedStringLiteral"; break;
         case ASTNodeType::InterpretedBytesLiteral: s = "InterpretedBytesLiteral"; break;
         case ASTNodeType::UninterpretedBytesLiteral: s = "UninterpretedBytesLiteral"; break;
-        case ASTNodeType::AssignmentOp: s = "AssignmentOp"; break;
+        case ASTNodeType::Assignment: s = "Assignment"; break;
+        case ASTNodeType::CompoundAssignment: s = "CompoundAssignment"; break;
         case ASTNodeType::RangeSpecifier: s = "RangeSpecifier"; break;
         case ASTNodeType::RangeDomainStrideSpecifier: s = "RangeDomainStrideSpecifier"; break;
         case ASTNodeType::RangeCount: s = "RangeCount"; break;
@@ -46,10 +46,18 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::RightSquareBracket: s = "RightSquareBracket"; break;
         case ASTNodeType::LeftCurlyBracket: s = "LeftCurlyBracket"; break;
         case ASTNodeType::RightCurlyBracket: s = "RightCurlyBracket"; break;
+        case ASTNodeType::If: s = "If"; break;
+        case ASTNodeType::Then: s = "Then"; break;
+        case ASTNodeType::Else: s = "Else"; break;
+        case ASTNodeType::Var: s = "Var"; break;
+        case ASTNodeType::Const: s = "Const"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
+        case ASTNodeType::BlockStatement: s = "BlockStatement"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
         case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;
+        case ASTNodeType::ConditionalStatement: s = "ConditionalStatement"; break;
+        case ASTNodeType::CtrlDecl: s = "CtrlDecl"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }
 

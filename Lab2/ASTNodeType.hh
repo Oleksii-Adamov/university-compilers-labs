@@ -5,7 +5,6 @@
 
 enum class ASTNodeType {
     Identifier,
-    Keyword,
 
     BoolLiteral,
     IntegerLiteral,
@@ -16,7 +15,8 @@ enum class ASTNodeType {
     InterpretedBytesLiteral,
     UninterpretedBytesLiteral,
 
-    AssignmentOp,
+    Assignment,
+    CompoundAssignment,
     RangeSpecifier,
     RangeDomainStrideSpecifier,
     RangeCount,
@@ -51,10 +51,19 @@ enum class ASTNodeType {
     LeftCurlyBracket,
     RightCurlyBracket,
 
+    If,
+    Then,
+    Else,
+    Var,
+    Const,
+
     UnaryExpression,
     BinaryExpression,
+    BlockStatement,
     ExpressionStatement,
     AssignmentStatement,
+    ConditionalStatement,
+    CtrlDecl,
     Statements,
 
 };

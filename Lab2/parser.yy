@@ -48,14 +48,21 @@
 %token <ASTNode*> EQUALITY_COMP
 %token <ASTNode*> BY "by"
 %token <ASTNode*> RANGE_COUNT "#"
-%token <ASTNode*> ASSIGNMENT_OP
+%token <ASTNode*> ASSIGNMENT "="
+%token <ASTNode*> COMPOUND_ASSIGNMENT
 %token <ASTNode*> STATEMENT_SEPARATOR ";"
 %token <ASTNode*> LEFT_ROUND_BRACKET "("
 %token <ASTNode*> RIGHT_ROUND_BRACKET ")"
 %token <ASTNode*> LEFT_CURLY_BRACKET "{"
 %token <ASTNode*> RIGHT_CURLY_BRACKET "}"
+%token <ASTNode*> IF "if"
+%token <ASTNode*> THEN "then"
+%token <ASTNode*> ELSE "else"
+%token <ASTNode*> VAR "var"
+%token <ASTNode*> CONST "const"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
+
 %nterm <ASTNode*> literal_expression
 %nterm <ASTNode*> variable_expression
 %nterm <ASTNode*> expression
@@ -63,14 +70,21 @@
 %nterm <ASTNode*> unary_expression
 %nterm <ASTNode*> binary_expression
 %nterm <ASTNode*> lvalue_expression
+
+%nterm <ASTNode*> block_statement
 %nterm <ASTNode*> expression_statement
 %nterm <ASTNode*> assignment_statement
+%nterm <ASTNode*> conditional_statement
+%nterm <ASTNode*> else_part_opt
+%nterm <ASTNode*> ctrl_decl
 %nterm <ASTNode*> statement
-%nterm <ASTNode*> statements
+%nterm <ASTNode*> statements_opt
 
 %printer { yyo << *$$; } <*>;
 
 %%
+%precedence "then";
+%precedence "else";
 %left "by" "#";
 %left "||";
 %left "&&";
@@ -88,16 +102,30 @@
 %left HIGHEST_PREC;
 
 %start unit;
-unit: statements  { drv.result = $1;};
+unit: statements_opt  { drv.result = $1;};
 
-statements:
+statements_opt:
   %empty                 {$$ = nullptr;}
-| statements statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
+| statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
-statement: expression_statement | assignment_statement;
-
+statement: block_statement | expression_statement | assignment_statement | conditional_statement;
+block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
 expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
-assignment_statement: lvalue_expression ASSIGNMENT_OP expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
+assignment_statement:
+  lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
+| lvalue_expression COMPOUND_ASSIGNMENT expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});};
+
+conditional_statement:
+  "if" expression "then" statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $4, $5}); delete $1; delete $3;}
+| "if" expression block_statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $3, $4}); delete $1;}
+| "if" ctrl_decl "then" statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $4, $5}); delete $1; delete $3;}
+| "if" ctrl_decl block_statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $3, $4}); delete $1;};
+else_part_opt:
+  %empty {$$ = nullptr;}
+| "else" statement {$$ = $2; delete $1;};
+ctrl_decl:
+  "var" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;}
+| "const" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;};
 
 expression:
   literal_expression

@@ -14,7 +14,7 @@ private:
     std::string val = "";
 public:
     ASTNode();
-    ASTNode(ASTNodeType type_, std::string val_);
+    ASTNode(ASTNodeType type_, std::string val_ = "");
     ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_);
     ~ASTNode();
     friend std::ostream& operator<<(std::ostream& out, const ASTNode& node);
