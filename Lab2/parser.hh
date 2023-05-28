@@ -429,15 +429,20 @@ namespace yy {
       // EQUALITY_COMP
       // "by"
       // "#"
+      // ";"
+      // "("
+      // ")"
+      // "{"
+      // "}"
       // IDENTIFIER
       // INTEGER_LITERAL
-      // STATEMENT_SEPARATOR
       // statements
       // statement
       // expression_statement
       // expression
       // literal_expression
       // variable_expression
+      // parenthesized_expression
       // unary_expression
       // binary_expression
       char dummy1[sizeof (ASTNode*)];
@@ -510,12 +515,16 @@ namespace yy {
     TOK_EQUALITY_COMP = 18,        // EQUALITY_COMP
     TOK_BY = 19,                   // "by"
     TOK_RANGE_COUNT = 20,          // "#"
-    TOK_IDENTIFIER = 21,           // IDENTIFIER
-    TOK_INTEGER_LITERAL = 22,      // INTEGER_LITERAL
-    TOK_STATEMENT_SEPARATOR = 23,  // STATEMENT_SEPARATOR
-    TOK_NEG = 24,                  // NEG
-    TOK_POSITIVE_IDENTITY = 25,    // POSITIVE_IDENTITY
-    TOK_HIGHEST_PREC = 26          // HIGHEST_PREC
+    TOK_STATEMENT_SEPARATOR = 21,  // ";"
+    TOK_LEFT_ROUND_BRACKET = 22,   // "("
+    TOK_RIGHT_ROUND_BRACKET = 23,  // ")"
+    TOK_LEFT_CURLY_BRACKET = 24,   // "{"
+    TOK_RIGHT_CURLY_BRACKET = 25,  // "}"
+    TOK_IDENTIFIER = 26,           // IDENTIFIER
+    TOK_INTEGER_LITERAL = 27,      // INTEGER_LITERAL
+    TOK_NEG = 28,                  // NEG
+    TOK_POSITIVE_IDENTITY = 29,    // POSITIVE_IDENTITY
+    TOK_HIGHEST_PREC = 30          // HIGHEST_PREC
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -532,7 +541,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 27, ///< Number of tokens.
+        YYNTOKENS = 31, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -555,22 +564,27 @@ namespace yy {
         S_EQUALITY_COMP = 18,                    // EQUALITY_COMP
         S_BY = 19,                               // "by"
         S_RANGE_COUNT = 20,                      // "#"
-        S_IDENTIFIER = 21,                       // IDENTIFIER
-        S_INTEGER_LITERAL = 22,                  // INTEGER_LITERAL
-        S_STATEMENT_SEPARATOR = 23,              // STATEMENT_SEPARATOR
-        S_NEG = 24,                              // NEG
-        S_POSITIVE_IDENTITY = 25,                // POSITIVE_IDENTITY
-        S_HIGHEST_PREC = 26,                     // HIGHEST_PREC
-        S_YYACCEPT = 27,                         // $accept
-        S_unit = 28,                             // unit
-        S_statements = 29,                       // statements
-        S_statement = 30,                        // statement
-        S_expression_statement = 31,             // expression_statement
-        S_expression = 32,                       // expression
-        S_literal_expression = 33,               // literal_expression
-        S_variable_expression = 34,              // variable_expression
-        S_unary_expression = 35,                 // unary_expression
-        S_binary_expression = 36                 // binary_expression
+        S_STATEMENT_SEPARATOR = 21,              // ";"
+        S_LEFT_ROUND_BRACKET = 22,               // "("
+        S_RIGHT_ROUND_BRACKET = 23,              // ")"
+        S_LEFT_CURLY_BRACKET = 24,               // "{"
+        S_RIGHT_CURLY_BRACKET = 25,              // "}"
+        S_IDENTIFIER = 26,                       // IDENTIFIER
+        S_INTEGER_LITERAL = 27,                  // INTEGER_LITERAL
+        S_NEG = 28,                              // NEG
+        S_POSITIVE_IDENTITY = 29,                // POSITIVE_IDENTITY
+        S_HIGHEST_PREC = 30,                     // HIGHEST_PREC
+        S_YYACCEPT = 31,                         // $accept
+        S_unit = 32,                             // unit
+        S_statements = 33,                       // statements
+        S_statement = 34,                        // statement
+        S_expression_statement = 35,             // expression_statement
+        S_expression = 36,                       // expression
+        S_literal_expression = 37,               // literal_expression
+        S_variable_expression = 38,              // variable_expression
+        S_parenthesized_expression = 39,         // parenthesized_expression
+        S_unary_expression = 40,                 // unary_expression
+        S_binary_expression = 41                 // binary_expression
       };
     };
 
@@ -625,15 +639,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (std::move (that.value));
@@ -716,15 +735,20 @@ switch (yykind)
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.template destroy< ASTNode* > ();
@@ -839,7 +863,7 @@ switch (yykind)
 #endif
       {
 #if !defined _MSC_VER || defined __clang__
-        YY_ASSERT ((token::TOK_PLUS <= tok && tok <= token::TOK_STATEMENT_SEPARATOR));
+        YY_ASSERT ((token::TOK_PLUS <= tok && tok <= token::TOK_INTEGER_LITERAL));
 #endif
       }
     };
@@ -1208,6 +1232,81 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_STATEMENT_SEPARATOR (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_STATEMENT_SEPARATOR, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STATEMENT_SEPARATOR (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_STATEMENT_SEPARATOR, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LEFT_ROUND_BRACKET (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_LEFT_ROUND_BRACKET, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LEFT_ROUND_BRACKET (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_LEFT_ROUND_BRACKET, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RIGHT_ROUND_BRACKET (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_RIGHT_ROUND_BRACKET, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RIGHT_ROUND_BRACKET (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_RIGHT_ROUND_BRACKET, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LEFT_CURLY_BRACKET (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_LEFT_CURLY_BRACKET, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LEFT_CURLY_BRACKET (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_LEFT_CURLY_BRACKET, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RIGHT_CURLY_BRACKET (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_RIGHT_CURLY_BRACKET, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RIGHT_CURLY_BRACKET (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_RIGHT_CURLY_BRACKET, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IDENTIFIER (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_IDENTIFIER, std::move (v), std::move (l));
@@ -1233,21 +1332,6 @@ switch (yykind)
       make_INTEGER_LITERAL (const ASTNode*& v, const location_type& l)
       {
         return symbol_type (token::TOK_INTEGER_LITERAL, v, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_STATEMENT_SEPARATOR (ASTNode* v, location_type l)
-      {
-        return symbol_type (token::TOK_STATEMENT_SEPARATOR, std::move (v), std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_STATEMENT_SEPARATOR (const ASTNode*& v, const location_type& l)
-      {
-        return symbol_type (token::TOK_STATEMENT_SEPARATOR, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1403,7 +1487,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const signed char yyrline_[];
+    static const unsigned char yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -1639,8 +1723,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 160,     ///< Last index in yytable_.
-      yynnts_ = 10,  ///< Number of nonterminal symbols.
+      yylast_ = 186,     ///< Last index in yytable_.
+      yynnts_ = 11,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -1684,15 +1768,20 @@ switch (yykind)
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.copy< ASTNode* > (YY_MOVE (that.value));
@@ -1745,15 +1834,20 @@ switch (yykind)
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (YY_MOVE (s.value));
@@ -1821,7 +1915,7 @@ switch (yykind)
   }
 
 } // yy
-#line 1825 "parser.hh"
+#line 1919 "parser.hh"
 
 
 

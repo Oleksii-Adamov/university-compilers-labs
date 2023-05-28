@@ -225,15 +225,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.YY_MOVE_OR_COPY< ASTNode* > (YY_MOVE (that.value));
@@ -272,15 +277,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (YY_MOVE (that.value));
@@ -319,15 +329,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.copy< ASTNode* > (that.value);
@@ -365,15 +380,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         value.move< ASTNode* > (that.value);
@@ -416,177 +436,207 @@ namespace yy {
         switch (yykind)
     {
       case symbol_kind::S_PLUS: // "+"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 422 "parser.cc"
+#line 442 "parser.cc"
         break;
 
       case symbol_kind::S_MINUS: // "-"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 428 "parser.cc"
+#line 448 "parser.cc"
         break;
 
       case symbol_kind::S_MULTIPLICATION: // "*"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 434 "parser.cc"
+#line 454 "parser.cc"
         break;
 
       case symbol_kind::S_DIVISION: // "/"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 440 "parser.cc"
+#line 460 "parser.cc"
         break;
 
       case symbol_kind::S_MODULUS: // "%"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 446 "parser.cc"
+#line 466 "parser.cc"
         break;
 
       case symbol_kind::S_EXPONENTIATION: // "**"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 452 "parser.cc"
+#line 472 "parser.cc"
         break;
 
       case symbol_kind::S_BITWISE_COMPLEMENT: // "~"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 458 "parser.cc"
+#line 478 "parser.cc"
         break;
 
       case symbol_kind::S_BITWISE_AND: // "&"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 464 "parser.cc"
+#line 484 "parser.cc"
         break;
 
       case symbol_kind::S_BITWISE_OR: // "|"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 470 "parser.cc"
+#line 490 "parser.cc"
         break;
 
       case symbol_kind::S_BITWISE_XOR: // "^"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 476 "parser.cc"
+#line 496 "parser.cc"
         break;
 
       case symbol_kind::S_BITWISE_SHIFT: // BITWISE_SHIFT
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 482 "parser.cc"
+#line 502 "parser.cc"
         break;
 
       case symbol_kind::S_EXCLAMATION_MARK: // "!"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 488 "parser.cc"
+#line 508 "parser.cc"
         break;
 
       case symbol_kind::S_LOGICAL_AND: // "&&"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 494 "parser.cc"
+#line 514 "parser.cc"
         break;
 
       case symbol_kind::S_LOGICAL_OR: // "||"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 500 "parser.cc"
+#line 520 "parser.cc"
         break;
 
       case symbol_kind::S_ORDERED_COMP: // ORDERED_COMP
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 506 "parser.cc"
+#line 526 "parser.cc"
         break;
 
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 512 "parser.cc"
+#line 532 "parser.cc"
         break;
 
       case symbol_kind::S_BY: // "by"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 518 "parser.cc"
+#line 538 "parser.cc"
         break;
 
       case symbol_kind::S_RANGE_COUNT: // "#"
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 524 "parser.cc"
+#line 544 "parser.cc"
+        break;
+
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 550 "parser.cc"
+        break;
+
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 556 "parser.cc"
+        break;
+
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 562 "parser.cc"
+        break;
+
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 568 "parser.cc"
+        break;
+
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 574 "parser.cc"
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 530 "parser.cc"
+#line 580 "parser.cc"
         break;
 
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 536 "parser.cc"
-        break;
-
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
-#line 63 "parser.yy"
-                 { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 542 "parser.cc"
+#line 586 "parser.cc"
         break;
 
       case symbol_kind::S_statements: // statements
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 548 "parser.cc"
+#line 592 "parser.cc"
         break;
 
       case symbol_kind::S_statement: // statement
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 554 "parser.cc"
+#line 598 "parser.cc"
         break;
 
       case symbol_kind::S_expression_statement: // expression_statement
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 560 "parser.cc"
+#line 604 "parser.cc"
         break;
 
       case symbol_kind::S_expression: // expression
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 566 "parser.cc"
+#line 610 "parser.cc"
         break;
 
       case symbol_kind::S_literal_expression: // literal_expression
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 572 "parser.cc"
+#line 616 "parser.cc"
         break;
 
       case symbol_kind::S_variable_expression: // variable_expression
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 578 "parser.cc"
+#line 622 "parser.cc"
+        break;
+
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
+#line 68 "parser.yy"
+                 { yyo << *yysym.value.template as < ASTNode* > (); }
+#line 628 "parser.cc"
         break;
 
       case symbol_kind::S_unary_expression: // unary_expression
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 584 "parser.cc"
+#line 634 "parser.cc"
         break;
 
       case symbol_kind::S_binary_expression: // binary_expression
-#line 63 "parser.yy"
+#line 68 "parser.yy"
                  { yyo << *yysym.value.template as < ASTNode* > (); }
-#line 590 "parser.cc"
+#line 640 "parser.cc"
         break;
 
       default:
@@ -844,15 +894,20 @@ namespace yy {
       case symbol_kind::S_EQUALITY_COMP: // EQUALITY_COMP
       case symbol_kind::S_BY: // "by"
       case symbol_kind::S_RANGE_COUNT: // "#"
+      case symbol_kind::S_STATEMENT_SEPARATOR: // ";"
+      case symbol_kind::S_LEFT_ROUND_BRACKET: // "("
+      case symbol_kind::S_RIGHT_ROUND_BRACKET: // ")"
+      case symbol_kind::S_LEFT_CURLY_BRACKET: // "{"
+      case symbol_kind::S_RIGHT_CURLY_BRACKET: // "}"
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_INTEGER_LITERAL: // INTEGER_LITERAL
-      case symbol_kind::S_STATEMENT_SEPARATOR: // STATEMENT_SEPARATOR
       case symbol_kind::S_statements: // statements
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_expression_statement: // expression_statement
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_variable_expression: // variable_expression
+      case symbol_kind::S_parenthesized_expression: // parenthesized_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
         yylhs.value.emplace< ASTNode* > ();
@@ -879,193 +934,205 @@ namespace yy {
           switch (yyn)
             {
   case 2: // unit: statements
-#line 83 "parser.yy"
+#line 88 "parser.yy"
                   { drv.result = yystack_[0].value.as < ASTNode* > ();}
-#line 885 "parser.cc"
+#line 940 "parser.cc"
     break;
 
   case 3: // statements: %empty
-#line 86 "parser.yy"
+#line 91 "parser.yy"
                          {yylhs.value.as < ASTNode* > () = nullptr;}
-#line 891 "parser.cc"
+#line 946 "parser.cc"
     break;
 
   case 4: // statements: statements statement
-#line 87 "parser.yy"
+#line 92 "parser.yy"
                        {yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::Statements, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 897 "parser.cc"
+#line 952 "parser.cc"
     break;
 
   case 5: // statement: expression_statement
-#line 89 "parser.yy"
+#line 94 "parser.yy"
            { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > (); }
-#line 903 "parser.cc"
+#line 958 "parser.cc"
     break;
 
-  case 6: // expression_statement: expression STATEMENT_SEPARATOR
-#line 91 "parser.yy"
-                                                     { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::ExpressionStatement, {yystack_[1].value.as < ASTNode* > ()}); delete yystack_[0].value.as < ASTNode* > ();}
-#line 909 "parser.cc"
+  case 6: // expression_statement: expression ";"
+#line 96 "parser.yy"
+                                     { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::ExpressionStatement, {yystack_[1].value.as < ASTNode* > ()}); delete yystack_[0].value.as < ASTNode* > ();}
+#line 964 "parser.cc"
     break;
 
   case 7: // expression: literal_expression
-#line 94 "parser.yy"
+#line 99 "parser.yy"
                      { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 915 "parser.cc"
+#line 970 "parser.cc"
     break;
 
   case 8: // expression: variable_expression
-#line 95 "parser.yy"
-                      { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 921 "parser.cc"
-    break;
-
-  case 9: // expression: unary_expression
-#line 96 "parser.yy"
-                   { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 927 "parser.cc"
-    break;
-
-  case 10: // expression: binary_expression
-#line 97 "parser.yy"
-                    { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 933 "parser.cc"
-    break;
-
-  case 11: // literal_expression: INTEGER_LITERAL
-#line 99 "parser.yy"
-                                    { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 939 "parser.cc"
-    break;
-
-  case 12: // variable_expression: IDENTIFIER
 #line 100 "parser.yy"
-                                { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
-#line 945 "parser.cc"
+                      { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 976 "parser.cc"
     break;
 
-  case 13: // unary_expression: "+" expression
+  case 9: // expression: parenthesized_expression
+#line 101 "parser.yy"
+                           { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 982 "parser.cc"
+    break;
+
+  case 10: // expression: unary_expression
 #line 102 "parser.yy"
-                                         { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 951 "parser.cc"
+                   { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 988 "parser.cc"
     break;
 
-  case 14: // unary_expression: "-" expression
+  case 11: // expression: binary_expression
 #line 103 "parser.yy"
-                           { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 957 "parser.cc"
+                    { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 994 "parser.cc"
     break;
 
-  case 15: // unary_expression: "~" expression
-#line 104 "parser.yy"
-                 { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 963 "parser.cc"
-    break;
-
-  case 16: // unary_expression: "!" expression
+  case 12: // literal_expression: INTEGER_LITERAL
 #line 105 "parser.yy"
-                 { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 969 "parser.cc"
+                                    { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 1000 "parser.cc"
     break;
 
-  case 17: // binary_expression: expression "+" expression
+  case 13: // variable_expression: IDENTIFIER
+#line 106 "parser.yy"
+                                { yylhs.value.as < ASTNode* > () = yystack_[0].value.as < ASTNode* > ();}
+#line 1006 "parser.cc"
+    break;
+
+  case 14: // parenthesized_expression: "(" expression ")"
 #line 107 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 975 "parser.cc"
+                                                                { yylhs.value.as < ASTNode* > () = yystack_[1].value.as < ASTNode* > (); delete yystack_[2].value.as < ASTNode* > (); delete yystack_[0].value.as < ASTNode* > ();}
+#line 1012 "parser.cc"
     break;
 
-  case 18: // binary_expression: expression "-" expression
-#line 108 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 981 "parser.cc"
-    break;
-
-  case 19: // binary_expression: expression "*" expression
+  case 15: // unary_expression: "+" expression
 #line 109 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 987 "parser.cc"
+                                         { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1018 "parser.cc"
     break;
 
-  case 20: // binary_expression: expression "/" expression
+  case 16: // unary_expression: "-" expression
 #line 110 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 993 "parser.cc"
+                           { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1024 "parser.cc"
     break;
 
-  case 21: // binary_expression: expression "%" expression
+  case 17: // unary_expression: "~" expression
 #line 111 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 999 "parser.cc"
+                 { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1030 "parser.cc"
     break;
 
-  case 22: // binary_expression: expression "**" expression
+  case 18: // unary_expression: "!" expression
 #line 112 "parser.yy"
-                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1005 "parser.cc"
+                 { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::UnaryExpression, {yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1036 "parser.cc"
     break;
 
-  case 23: // binary_expression: expression "&" expression
-#line 113 "parser.yy"
-                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1011 "parser.cc"
-    break;
-
-  case 24: // binary_expression: expression "|" expression
+  case 19: // binary_expression: expression "+" expression
 #line 114 "parser.yy"
                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1017 "parser.cc"
+#line 1042 "parser.cc"
     break;
 
-  case 25: // binary_expression: expression "^" expression
+  case 20: // binary_expression: expression "-" expression
 #line 115 "parser.yy"
                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1023 "parser.cc"
+#line 1048 "parser.cc"
     break;
 
-  case 26: // binary_expression: expression BITWISE_SHIFT expression
+  case 21: // binary_expression: expression "*" expression
 #line 116 "parser.yy"
-                                      { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1029 "parser.cc"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1054 "parser.cc"
     break;
 
-  case 27: // binary_expression: expression "&&" expression
+  case 22: // binary_expression: expression "/" expression
 #line 117 "parser.yy"
-                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1035 "parser.cc"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1060 "parser.cc"
     break;
 
-  case 28: // binary_expression: expression "||" expression
+  case 23: // binary_expression: expression "%" expression
 #line 118 "parser.yy"
-                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1041 "parser.cc"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1066 "parser.cc"
     break;
 
-  case 29: // binary_expression: expression EQUALITY_COMP expression
+  case 24: // binary_expression: expression "**" expression
 #line 119 "parser.yy"
-                                      { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1047 "parser.cc"
-    break;
-
-  case 30: // binary_expression: expression ORDERED_COMP expression
-#line 120 "parser.yy"
-                                     { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1053 "parser.cc"
-    break;
-
-  case 31: // binary_expression: expression "by" expression
-#line 121 "parser.yy"
                              { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1059 "parser.cc"
+#line 1072 "parser.cc"
     break;
 
-  case 32: // binary_expression: expression "#" expression
+  case 25: // binary_expression: expression "&" expression
+#line 120 "parser.yy"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1078 "parser.cc"
+    break;
+
+  case 26: // binary_expression: expression "|" expression
+#line 121 "parser.yy"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1084 "parser.cc"
+    break;
+
+  case 27: // binary_expression: expression "^" expression
 #line 122 "parser.yy"
                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
-#line 1065 "parser.cc"
+#line 1090 "parser.cc"
+    break;
+
+  case 28: // binary_expression: expression BITWISE_SHIFT expression
+#line 123 "parser.yy"
+                                      { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1096 "parser.cc"
+    break;
+
+  case 29: // binary_expression: expression "&&" expression
+#line 124 "parser.yy"
+                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1102 "parser.cc"
+    break;
+
+  case 30: // binary_expression: expression "||" expression
+#line 125 "parser.yy"
+                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1108 "parser.cc"
+    break;
+
+  case 31: // binary_expression: expression EQUALITY_COMP expression
+#line 126 "parser.yy"
+                                      { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1114 "parser.cc"
+    break;
+
+  case 32: // binary_expression: expression ORDERED_COMP expression
+#line 127 "parser.yy"
+                                     { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1120 "parser.cc"
+    break;
+
+  case 33: // binary_expression: expression "by" expression
+#line 128 "parser.yy"
+                             { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1126 "parser.cc"
+    break;
+
+  case 34: // binary_expression: expression "#" expression
+#line 129 "parser.yy"
+                            { yylhs.value.as < ASTNode* > () = new ASTNode(ASTNodeType::BinaryExpression, {yystack_[2].value.as < ASTNode* > (), yystack_[1].value.as < ASTNode* > (), yystack_[0].value.as < ASTNode* > ()});}
+#line 1132 "parser.cc"
     break;
 
 
-#line 1069 "parser.cc"
+#line 1136 "parser.cc"
 
             default:
               break;
@@ -1251,10 +1318,10 @@ namespace yy {
     {
     "end of file", "error", "invalid token", "+", "-", "*", "/", "%", "**",
   "~", "&", "|", "^", "BITWISE_SHIFT", "!", "&&", "||", "ORDERED_COMP",
-  "EQUALITY_COMP", "by", "#", "IDENTIFIER", "INTEGER_LITERAL",
-  "STATEMENT_SEPARATOR", "NEG", "POSITIVE_IDENTITY", "HIGHEST_PREC",
-  "$accept", "unit", "statements", "statement", "expression_statement",
-  "expression", "literal_expression", "variable_expression",
+  "EQUALITY_COMP", "by", "#", ";", "(", ")", "{", "}", "IDENTIFIER",
+  "INTEGER_LITERAL", "NEG", "POSITIVE_IDENTITY", "HIGHEST_PREC", "$accept",
+  "unit", "statements", "statement", "expression_statement", "expression",
+  "literal_expression", "variable_expression", "parenthesized_expression",
   "unary_expression", "binary_expression", YY_NULLPTR
     };
     return yy_sname[yysymbol];
@@ -1531,121 +1598,127 @@ namespace yy {
   const short
   parser::yypact_[] =
   {
-      -5,    10,    48,    -5,    48,    48,    48,    48,    -5,    -5,
-      -5,    -5,    30,    -5,    -5,    -5,    -5,   151,   151,     7,
-       7,    48,    48,    48,    48,    48,    48,    48,    48,    48,
-      48,    48,    48,    48,    48,    48,    48,    -5,    53,    53,
-       7,     7,     7,     7,   147,   129,   138,   151,   100,    84,
-       1,   116,    68,    68
+      -5,    11,    33,    -5,    33,    33,    33,    33,    33,    -5,
+      -5,    -5,    -5,    79,    -5,    -5,    -5,    -5,    -5,   177,
+     177,     8,     8,    58,    33,    33,    33,    33,    33,    33,
+      33,    33,    33,    33,    33,    33,    33,    33,    33,    33,
+      -5,    -5,    38,    38,     8,     8,     8,     8,   173,   155,
+     164,   177,   130,   114,   146,     2,    98,    98
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       3,     0,     2,     1,     0,     0,     0,     0,    12,    11,
-       4,     5,     0,     7,     8,     9,    10,    13,    14,    15,
-      16,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     6,    17,    18,
-      19,    20,    21,    22,    23,    24,    25,    26,    27,    28,
-      30,    29,    31,    32
+       3,     0,     2,     1,     0,     0,     0,     0,     0,    13,
+      12,     4,     5,     0,     7,     8,     9,    10,    11,    15,
+      16,    17,    18,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       6,    14,    19,    20,    21,    22,    23,    24,    25,    26,
+      27,    28,    29,    30,    32,    31,    33,    34
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-      -5,    -5,    -5,    -5,    -5,    -4,    -5,    -5,    -5,    -5
+      -5,    -5,    -5,    -5,    -5,    -4,    -5,    -5,    -5,    -5,
+      -5
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-       0,     1,     2,    10,    11,    12,    13,    14,    15,    16
+       0,     1,     2,    11,    12,    13,    14,    15,    16,    17,
+      18
   };
 
   const signed char
   parser::yytable_[] =
   {
-      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-       3,    27,    28,    29,    30,    26,     0,    38,    39,    40,
-      41,    42,    43,    44,    45,    46,    47,    48,    49,    50,
-      51,    52,    53,    21,    22,    23,    24,    25,    26,     0,
-      27,    28,    29,    30,     0,    31,    32,    33,    34,    35,
-      36,     4,     5,    37,     0,     0,     0,     6,    23,    24,
-      25,    26,     7,    27,    28,    29,    30,     0,     0,     8,
-       9,    21,    22,    23,    24,    25,    26,     0,    27,    28,
-      29,    30,     0,    31,    32,    33,    34,    21,    22,    23,
-      24,    25,    26,     0,    27,    28,    29,    30,     0,    31,
-       0,    33,    34,    21,    22,    23,    24,    25,    26,     0,
-      27,    28,    29,    30,     0,     0,     0,    33,    34,    21,
-      22,    23,    24,    25,    26,     0,    27,    28,    29,    30,
-       0,     0,     0,    33,    23,    24,    25,    26,     0,    27,
-       0,    29,    30,    23,    24,    25,    26,     0,    27,     0,
-       0,    30,    23,    24,    25,    26,    23,    24,    25,    26,
-      30
+      19,    20,    21,    22,    23,    24,    25,    26,    27,    28,
+      29,     3,    30,    31,    32,    33,    29,     0,     0,    36,
+      42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
+      52,    53,    54,    55,    56,    57,     4,     5,     0,     0,
+       0,     0,     6,    26,    27,    28,    29,     7,    30,    31,
+      32,    33,     0,     0,     0,     8,     0,     0,     0,     9,
+      10,    24,    25,    26,    27,    28,    29,     0,    30,    31,
+      32,    33,     0,    34,    35,    36,    37,    38,    39,     0,
+       0,    41,    24,    25,    26,    27,    28,    29,     0,    30,
+      31,    32,    33,     0,    34,    35,    36,    37,    38,    39,
+      40,    24,    25,    26,    27,    28,    29,     0,    30,    31,
+      32,    33,     0,    34,    35,    36,    37,    24,    25,    26,
+      27,    28,    29,     0,    30,    31,    32,    33,     0,    34,
+       0,    36,    37,    24,    25,    26,    27,    28,    29,     0,
+      30,    31,    32,    33,     0,     0,     0,    36,    37,    24,
+      25,    26,    27,    28,    29,     0,    30,    31,    32,    33,
+      26,    27,    28,    29,     0,    30,     0,    32,    33,    26,
+      27,    28,    29,     0,    30,     0,     0,    33,    26,    27,
+      28,    29,    26,    27,    28,    29,    33
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       4,     5,     6,     7,     3,     4,     5,     6,     7,     8,
-       0,    10,    11,    12,    13,     8,    -1,    21,    22,    23,
+       4,     5,     6,     7,     8,     3,     4,     5,     6,     7,
+       8,     0,    10,    11,    12,    13,     8,    -1,    -1,    17,
       24,    25,    26,    27,    28,    29,    30,    31,    32,    33,
-      34,    35,    36,     3,     4,     5,     6,     7,     8,    -1,
-      10,    11,    12,    13,    -1,    15,    16,    17,    18,    19,
-      20,     3,     4,    23,    -1,    -1,    -1,     9,     5,     6,
-       7,     8,    14,    10,    11,    12,    13,    -1,    -1,    21,
-      22,     3,     4,     5,     6,     7,     8,    -1,    10,    11,
+      34,    35,    36,    37,    38,    39,     3,     4,    -1,    -1,
+      -1,    -1,     9,     5,     6,     7,     8,    14,    10,    11,
+      12,    13,    -1,    -1,    -1,    22,    -1,    -1,    -1,    26,
+      27,     3,     4,     5,     6,     7,     8,    -1,    10,    11,
+      12,    13,    -1,    15,    16,    17,    18,    19,    20,    -1,
+      -1,    23,     3,     4,     5,     6,     7,     8,    -1,    10,
+      11,    12,    13,    -1,    15,    16,    17,    18,    19,    20,
+      21,     3,     4,     5,     6,     7,     8,    -1,    10,    11,
       12,    13,    -1,    15,    16,    17,    18,     3,     4,     5,
        6,     7,     8,    -1,    10,    11,    12,    13,    -1,    15,
       -1,    17,    18,     3,     4,     5,     6,     7,     8,    -1,
       10,    11,    12,    13,    -1,    -1,    -1,    17,    18,     3,
        4,     5,     6,     7,     8,    -1,    10,    11,    12,    13,
-      -1,    -1,    -1,    17,     5,     6,     7,     8,    -1,    10,
-      -1,    12,    13,     5,     6,     7,     8,    -1,    10,    -1,
-      -1,    13,     5,     6,     7,     8,     5,     6,     7,     8,
-      13
+       5,     6,     7,     8,    -1,    10,    -1,    12,    13,     5,
+       6,     7,     8,    -1,    10,    -1,    -1,    13,     5,     6,
+       7,     8,     5,     6,     7,     8,    13
   };
 
   const signed char
   parser::yystos_[] =
   {
-       0,    28,    29,     0,     3,     4,     9,    14,    21,    22,
-      30,    31,    32,    33,    34,    35,    36,    32,    32,    32,
-      32,     3,     4,     5,     6,     7,     8,    10,    11,    12,
-      13,    15,    16,    17,    18,    19,    20,    23,    32,    32,
-      32,    32,    32,    32,    32,    32,    32,    32,    32,    32,
-      32,    32,    32,    32
+       0,    32,    33,     0,     3,     4,     9,    14,    22,    26,
+      27,    34,    35,    36,    37,    38,    39,    40,    41,    36,
+      36,    36,    36,    36,     3,     4,     5,     6,     7,     8,
+      10,    11,    12,    13,    15,    16,    17,    18,    19,    20,
+      21,    23,    36,    36,    36,    36,    36,    36,    36,    36,
+      36,    36,    36,    36,    36,    36,    36,    36
   };
 
   const signed char
   parser::yyr1_[] =
   {
-       0,    27,    28,    29,    29,    30,    31,    32,    32,    32,
-      32,    33,    34,    35,    35,    35,    35,    36,    36,    36,
-      36,    36,    36,    36,    36,    36,    36,    36,    36,    36,
-      36,    36,    36
+       0,    31,    32,    33,    33,    34,    35,    36,    36,    36,
+      36,    36,    37,    38,    39,    40,    40,    40,    40,    41,
+      41,    41,    41,    41,    41,    41,    41,    41,    41,    41,
+      41,    41,    41,    41,    41
   };
 
   const signed char
   parser::yyr2_[] =
   {
        0,     2,     1,     0,     2,     1,     2,     1,     1,     1,
-       1,     1,     1,     2,     2,     2,     2,     3,     3,     3,
+       1,     1,     1,     1,     3,     2,     2,     2,     2,     3,
        3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3
+       3,     3,     3,     3,     3
   };
 
 
 
 
 #if YYDEBUG
-  const signed char
+  const unsigned char
   parser::yyrline_[] =
   {
-       0,    83,    83,    86,    87,    89,    91,    94,    95,    96,
-      97,    99,   100,   102,   103,   104,   105,   107,   108,   109,
-     110,   111,   112,   113,   114,   115,   116,   117,   118,   119,
-     120,   121,   122
+       0,    88,    88,    91,    92,    94,    96,    99,   100,   101,
+     102,   103,   105,   106,   107,   109,   110,   111,   112,   114,
+     115,   116,   117,   118,   119,   120,   121,   122,   123,   124,
+     125,   126,   127,   128,   129
   };
 
   void
@@ -1677,9 +1750,9 @@ namespace yy {
 
 
 } // yy
-#line 1681 "parser.cc"
+#line 1754 "parser.cc"
 
-#line 123 "parser.yy"
+#line 130 "parser.yy"
 
 
 void yy::parser::error (const location_type& l, const std::string& m)

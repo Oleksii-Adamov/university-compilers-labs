@@ -127,7 +127,10 @@ integer_literal  {digits}
 "by" return yy::parser::make_BY (new ASTNode(ASTNodeType::By, yytext), loc);
 "#" return yy::parser::make_RANGE_COUNT (new ASTNode(ASTNodeType::RangeCount, yytext), loc);
 ";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode(ASTNodeType::StatementSeparator, yytext), loc);
-
+"(" return yy::parser::make_LEFT_ROUND_BRACKET (new ASTNode(ASTNodeType::LeftRoundBracket, yytext), loc);
+")" return yy::parser::make_RIGHT_ROUND_BRACKET (new ASTNode(ASTNodeType::RightRoundBracket, yytext), loc);
+"{" return yy::parser::make_LEFT_CURLY_BRACKET (new ASTNode(ASTNodeType::LeftCurlyBracket, yytext), loc);
+"}" return yy::parser::make_RIGHT_CURLY_BRACKET (new ASTNode(ASTNodeType::RightCurlyBracket, yytext), loc);
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
 {integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);

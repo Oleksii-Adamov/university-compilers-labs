@@ -48,12 +48,17 @@
 %token <ASTNode*> EQUALITY_COMP
 %token <ASTNode*> BY "by"
 %token <ASTNode*> RANGE_COUNT "#"
+%token <ASTNode*> STATEMENT_SEPARATOR ";"
+%token <ASTNode*> LEFT_ROUND_BRACKET "("
+%token <ASTNode*> RIGHT_ROUND_BRACKET ")"
+%token <ASTNode*> LEFT_CURLY_BRACKET "{"
+%token <ASTNode*> RIGHT_CURLY_BRACKET "}"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
-%token <ASTNode*> STATEMENT_SEPARATOR
 %nterm <ASTNode*> literal_expression
 %nterm <ASTNode*> variable_expression
 %nterm <ASTNode*> expression
+%nterm <ASTNode*> parenthesized_expression
 %nterm <ASTNode*> unary_expression
 %nterm <ASTNode*> binary_expression
 %nterm <ASTNode*> expression_statement
@@ -88,16 +93,18 @@ statements:
 
 statement: expression_statement
 
-expression_statement: expression STATEMENT_SEPARATOR { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+expression_statement: expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 expression:
   literal_expression { $$ = $1;}
 | variable_expression { $$ = $1;}
+| parenthesized_expression { $$ = $1;}
 | unary_expression { $$ = $1;}
 | binary_expression { $$ = $1;};
 
 literal_expression: INTEGER_LITERAL { $$ = $1;};
 variable_expression: IDENTIFIER { $$ = $1;};
+parenthesized_expression: "(" expression ")" %prec HIGHEST_PREC { $$ = $2; delete $1; delete $3;};
 unary_expression:
   "+" expression %prec POSITIVE_IDENTITY { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
 | "-" expression %prec NEG { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
