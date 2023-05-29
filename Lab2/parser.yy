@@ -126,7 +126,7 @@ conditional_statement:
 | "if" ctrl_decl "then" statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $4, $5}); delete $1; delete $3;}
 | "if" ctrl_decl block_statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $3, $4}); delete $1;};
 else_part_opt:
-  %empty {$$ = nullptr;}
+  %empty %prec "then" {$$ = nullptr;}
 | "else" statement {$$ = $2; delete $1;};
 ctrl_decl:
   "var" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;}
@@ -142,8 +142,6 @@ do_while_statement: "do" statement "while" expression ";" { $$ = new ASTNode(AST
 
 expression:
   literal_expression
-| variable_expression
-| parenthesized_expression
 | lvalue_expression
 | unary_expression
 | binary_expression;
