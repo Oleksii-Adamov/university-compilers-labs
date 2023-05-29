@@ -60,6 +60,8 @@
 %token <ASTNode*> ELSE "else"
 %token <ASTNode*> VAR "var"
 %token <ASTNode*> CONST "const"
+%token <ASTNode*> WHILE "while"
+%token <ASTNode*> DO "do"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
 
@@ -77,6 +79,8 @@
 %nterm <ASTNode*> conditional_statement
 %nterm <ASTNode*> else_part_opt
 %nterm <ASTNode*> ctrl_decl
+%nterm <ASTNode*> while_do_statement
+%nterm <ASTNode*> do_while_statement
 %nterm <ASTNode*> statement
 %nterm <ASTNode*> statements_opt
 
@@ -108,7 +112,8 @@ statements_opt:
   %empty                 {$$ = nullptr;}
 | statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
-statement: block_statement | expression_statement | assignment_statement | conditional_statement;
+statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
+| do_while_statement;
 block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
 expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 assignment_statement:
@@ -126,6 +131,14 @@ else_part_opt:
 ctrl_decl:
   "var" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;}
 | "const" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;};
+
+while_do_statement:
+  "while" expression "do" statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $4}); delete $1; delete $3;}
+| "while" expression block_statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $3}); delete $1;}
+| "while" ctrl_decl "do" statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $4}); delete $1; delete $3;}
+| "while" ctrl_decl block_statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $3}); delete $1;}
+
+do_while_statement: "do" statement "while" expression ";" { $$ = new ASTNode(ASTNodeType::DoWhileStatement, {$2, $4}); delete $1; delete $3; delete $5;}
 
 expression:
   literal_expression

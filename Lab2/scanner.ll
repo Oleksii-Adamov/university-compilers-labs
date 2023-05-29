@@ -121,6 +121,8 @@ integer_literal  {digits}
 "else" return yy::parser::make_ELSE (new ASTNode(ASTNodeType::Else), loc);
 "var" return yy::parser::make_VAR (new ASTNode(ASTNodeType::Var), loc);
 "const" return yy::parser::make_CONST (new ASTNode(ASTNodeType::Const), loc);
+"while" return yy::parser::make_WHILE (new ASTNode(ASTNodeType::While), loc);
+"do" return yy::parser::make_DO (new ASTNode(ASTNodeType::Do), loc);
 
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 

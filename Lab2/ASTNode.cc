@@ -1,18 +1,24 @@
 #include "ASTNode.hh"
 #include <initializer_list>
+#include <utility>
 
 ASTNode::ASTNode() {
 }
 
-ASTNode::ASTNode(ASTNodeType type_, std::string val_) {
+ASTNode::ASTNode(ASTNodeType type_, std::string val_)
+{
     type = type_;
-    val = val_;
+    val = std::move(val_);
 }
 
 ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
     type = type_;
     for (ASTNode* son: sons_) {
-        sons.push_back(son);
+        if (son != nullptr && type == ASTNodeType::Statements && son->type == ASTNodeType::Statements) {
+            sons.insert(sons.end(), son->sons.begin(), son->sons.end());
+            delete son;
+        } else
+            sons.push_back(son);
     }
 }
 
@@ -22,9 +28,16 @@ ASTNode::~ASTNode() {
 //    }
 }
 
+void ASTNode::free_tree() {
+    for (std::size_t i = 0; i < sons.size(); i++) {
+        sons[i]->free_tree();
+        delete sons[i];
+    }
+}
+
 std::ostream& operator<<(std::ostream& out, ASTNode const& node) {
     out << "(" << node.type << ", ";
-    if (node.sons.size() == 0) {
+    if (node.sons.empty()) {
         out << node.val;
     } else {
         for (std::size_t i = 0; i < node.sons.size(); i++) {
@@ -43,7 +56,7 @@ void ASTNode::print(std::ostream& out, const std::string& prefix, bool isLast)
     out << (isLast ? "└──" : "├──");
 
     // print the value of the node
-    if (val.size() == 0) {
+    if (val.empty()) {
         out << type << "\n";
     } else {
         out << "(" << type << ", " << val << ")\n";

@@ -56,6 +56,8 @@ enum class ASTNodeType {
     Else,
     Var,
     Const,
+    While,
+    Do,
 
     UnaryExpression,
     BinaryExpression,
@@ -64,6 +66,8 @@ enum class ASTNodeType {
     AssignmentStatement,
     ConditionalStatement,
     CtrlDecl,
+    WhileDoStatement,
+    DoWhileStatement,
     Statements,
 
 };

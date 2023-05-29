@@ -51,6 +51,8 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Else: s = "Else"; break;
         case ASTNodeType::Var: s = "Var"; break;
         case ASTNodeType::Const: s = "Const"; break;
+        case ASTNodeType::While: s = "While"; break;
+        case ASTNodeType::Do: s = "Do"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
         case ASTNodeType::BlockStatement: s = "BlockStatement"; break;
@@ -58,6 +60,8 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;
         case ASTNodeType::ConditionalStatement: s = "ConditionalStatement"; break;
         case ASTNodeType::CtrlDecl: s = "CtrlDecl"; break;
+        case ASTNodeType::WhileDoStatement: s = "WhileDoStatement"; break;
+        case ASTNodeType::DoWhileStatement: s = "DoWhileStatement"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }
 
