@@ -23,15 +23,14 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
 }
 
 ASTNode::~ASTNode() {
-//    for (std::size_t i = 0; i < sons.size(); i++) {
-//        delete sons[i];
-//    }
 }
 
-void ASTNode::free_tree() {
+void ASTNode::clean_tree() {
     for (std::size_t i = 0; i < sons.size(); i++) {
-        sons[i]->free_tree();
-        delete sons[i];
+        if (sons[i] != nullptr) {
+            sons[i]->clean_tree();
+            delete sons[i];
+        }
     }
 }
 

@@ -12,7 +12,6 @@ int main (int argc, char *argv[])
       drv.trace_scanning = true;
     else if (!drv.parse (argv[i])) {
         drv.result->print(std::cout, "", true);
-        //std::cout << *drv.result << '\n';
     }
     else
       res = 1;

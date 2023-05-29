@@ -20,6 +20,8 @@ int driver::parse (const std::string &f)
 }
 
 driver::~driver() {
-//    if (result != nullptr)
-//        delete result;
+    if (result != nullptr) {
+        result->clean_tree();
+        delete result;
+    }
 }

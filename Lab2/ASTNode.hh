@@ -19,7 +19,7 @@ public:
     ~ASTNode();
     friend std::ostream& operator<<(std::ostream& out, const ASTNode& node);
     void print(std::ostream& out, const std::string& prefix, bool isLast);
-    void free_tree();
+    void clean_tree();
 };
 
 
