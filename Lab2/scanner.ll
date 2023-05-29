@@ -112,6 +112,7 @@ integer_literal  {digits}
 "=" return yy::parser::make_ASSIGNMENT (new ASTNode(ASTNodeType::Assignment, yytext), loc);
 "+="|"-="|"*="|"/="|"%="|"**="|"&="|"|="|"^="|"&&="|"||="|"<<="|">>=" return yy::parser::make_COMPOUND_ASSIGNMENT (new ASTNode(ASTNodeType::CompoundAssignment, yytext), loc);
 ";" return yy::parser::make_STATEMENT_SEPARATOR (new ASTNode(ASTNodeType::StatementSeparator), loc);
+"," return yy::parser::make_EXPRESSION_SEPARATOR (new ASTNode(ASTNodeType::ExpressionSeparator), loc);
 "(" return yy::parser::make_LEFT_ROUND_BRACKET (new ASTNode(ASTNodeType::LeftRoundBracket), loc);
 ")" return yy::parser::make_RIGHT_ROUND_BRACKET (new ASTNode(ASTNodeType::RightRoundBracket), loc);
 "{" return yy::parser::make_LEFT_CURLY_BRACKET (new ASTNode(ASTNodeType::LeftCurlyBracket), loc);
@@ -123,6 +124,9 @@ integer_literal  {digits}
 "const" return yy::parser::make_CONST (new ASTNode(ASTNodeType::Const), loc);
 "while" return yy::parser::make_WHILE (new ASTNode(ASTNodeType::While), loc);
 "do" return yy::parser::make_DO (new ASTNode(ASTNodeType::Do), loc);
+"for" return yy::parser::make_FOR (new ASTNode(ASTNodeType::For), loc);
+"in" return yy::parser::make_IN (new ASTNode(ASTNodeType::In), loc);
+"zip" return yy::parser::make_ZIP (new ASTNode(ASTNodeType::Zip), loc);
 
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 

@@ -51,6 +51,7 @@
 %token <ASTNode*> ASSIGNMENT "="
 %token <ASTNode*> COMPOUND_ASSIGNMENT
 %token <ASTNode*> STATEMENT_SEPARATOR ";"
+%token <ASTNode*> EXPRESSION_SEPARATOR ","
 %token <ASTNode*> LEFT_ROUND_BRACKET "("
 %token <ASTNode*> RIGHT_ROUND_BRACKET ")"
 %token <ASTNode*> LEFT_CURLY_BRACKET "{"
@@ -62,6 +63,9 @@
 %token <ASTNode*> CONST "const"
 %token <ASTNode*> WHILE "while"
 %token <ASTNode*> DO "do"
+%token <ASTNode*> FOR "for"
+%token <ASTNode*> IN "in"
+%token <ASTNode*> ZIP "zip"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
 
@@ -81,6 +85,11 @@
 %nterm <ASTNode*> ctrl_decl
 %nterm <ASTNode*> while_do_statement
 %nterm <ASTNode*> do_while_statement
+%nterm <ASTNode*> for_statement
+%nterm <ASTNode*> index_var_decl
+%nterm <ASTNode*> identifier_list
+%nterm <ASTNode*> iterable_expression
+%nterm <ASTNode*> expression_list
 %nterm <ASTNode*> statement
 %nterm <ASTNode*> statements_opt
 
@@ -114,8 +123,11 @@ statements_opt:
 
 statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
 | do_while_statement;
+
 block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
+
 expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+
 assignment_statement:
   lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
 | lvalue_expression COMPOUND_ASSIGNMENT expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});};
@@ -125,9 +137,11 @@ conditional_statement:
 | "if" expression block_statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $3, $4}); delete $1;}
 | "if" ctrl_decl "then" statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $4, $5}); delete $1; delete $3;}
 | "if" ctrl_decl block_statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $3, $4}); delete $1;};
+
 else_part_opt:
   %empty %prec "then" {$$ = nullptr;}
 | "else" statement {$$ = $2; delete $1;};
+
 ctrl_decl:
   "var" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;}
 | "const" IDENTIFIER "=" expression { $$ = new ASTNode(ASTNodeType::CtrlDecl, {$1, $2, $4}); delete $3;};
@@ -140,6 +154,28 @@ while_do_statement:
 
 do_while_statement: "do" statement "while" expression ";" { $$ = new ASTNode(ASTNodeType::DoWhileStatement, {$2, $4}); delete $1; delete $3; delete $5;}
 
+for_statement:
+  "for" index_var_decl "in" iterable_expression "do" statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4, $6}); delete $1; delete $3; delete $5;}
+| "for" index_var_decl "in" iterable_expression block_statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4, $5}); delete $1; delete $3;}
+| "for" iterable_expression "do" statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4}); delete $1; delete $3;}
+| "for" iterable_expression block_statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $3}); delete $1;}
+
+index_var_decl:
+  IDENTIFIER
+| "(" identifier_list ")" { $$ = $2; delete $1; delete $3;}
+
+identifier_list:
+  IDENTIFIER { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1});}
+| IDENTIFIER "," identifier_list { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1, $3}); delete $2;}
+
+iterable_expression:
+  expression
+| "zip" "(" expression_list ")" { $$ = $3; delete $1; delete $2; delete $4;}
+
+expression_list:
+  expression { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1});}
+| expression "," expression_list { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1, $3}); delete $2;}
+
 expression:
   literal_expression
 | lvalue_expression
@@ -148,7 +184,9 @@ expression:
 
 literal_expression: INTEGER_LITERAL;
 variable_expression: IDENTIFIER;
+
 parenthesized_expression: "(" expression ")" %prec HIGHEST_PREC { $$ = $2; delete $1; delete $3;};
+
 lvalue_expression:
   variable_expression
 | parenthesized_expression;
@@ -158,6 +196,7 @@ unary_expression:
 | "-" expression %prec NEG { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
 | "~" expression { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
 | "!" expression { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
+
 binary_expression:
   expression "+" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
 | expression "-" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}

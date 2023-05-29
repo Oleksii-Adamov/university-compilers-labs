@@ -1,9 +1,7 @@
 #include "ASTNode.hh"
 #include <initializer_list>
-#include <utility>
 
-ASTNode::ASTNode() {
-}
+ASTNode::ASTNode() = default;
 
 ASTNode::ASTNode(ASTNodeType type_, std::string val_)
 {
@@ -14,7 +12,9 @@ ASTNode::ASTNode(ASTNodeType type_, std::string val_)
 ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
     type = type_;
     for (ASTNode* son: sons_) {
-        if (son != nullptr && type == ASTNodeType::Statements && son->type == ASTNodeType::Statements) {
+        if (son != nullptr && (type == ASTNodeType::Statements && son->type == ASTNodeType::Statements)
+        || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
+        || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)) {
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;
         } else
@@ -22,8 +22,7 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
     }
 }
 
-ASTNode::~ASTNode() {
-}
+ASTNode::~ASTNode() = default;
 
 void ASTNode::clean_tree() {
     for (std::size_t i = 0; i < sons.size(); i++) {

@@ -58,6 +58,9 @@ enum class ASTNodeType {
     Const,
     While,
     Do,
+    For,
+    In,
+    Zip,
 
     UnaryExpression,
     BinaryExpression,
@@ -68,6 +71,9 @@ enum class ASTNodeType {
     CtrlDecl,
     WhileDoStatement,
     DoWhileStatement,
+    ForStatement,
+    IdentifierList,
+    ExpressionList,
     Statements,
 
 };
