@@ -68,6 +68,8 @@ enum class ASTNodeType {
     BinaryExpression,
     CallExpression,
     NamedExpressionList,
+    FieldAccessExpression,
+    MethodCallExpression,
     BlockStatement,
     ExpressionStatement,
     AssignmentStatement,

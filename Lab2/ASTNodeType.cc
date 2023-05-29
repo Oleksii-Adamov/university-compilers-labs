@@ -62,6 +62,8 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
         case ASTNodeType::CallExpression: s = "CallExpression"; break;
         case ASTNodeType::NamedExpressionList: s = "NamedExpressionList"; break;
+        case ASTNodeType::FieldAccessExpression: s = "FieldAccessExpression"; break;
+        case ASTNodeType::MethodCallExpression: s = "MethodCallExpression"; break;
         case ASTNodeType::BlockStatement: s = "BlockStatement"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
         case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;

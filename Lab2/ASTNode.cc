@@ -1,5 +1,6 @@
 #include "ASTNode.hh"
 #include <initializer_list>
+#include <iostream>
 
 ASTNode::ASTNode() = default;
 
@@ -12,14 +13,22 @@ ASTNode::ASTNode(ASTNodeType type_, std::string val_)
 ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
     type = type_;
     for (ASTNode* son: sons_) {
-        if (son != nullptr && (type == ASTNodeType::Statements && son->type == ASTNodeType::Statements)
+        if (son != nullptr && ((type == ASTNodeType::Statements && son->type == ASTNodeType::Statements)
         || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
         || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)
-        || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList)) {
+        || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList))) {
+            //std::cout << "getting rid of " << *son << "\n";
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;
-        } else
+        } else {
+            if (son != nullptr) {
+                //std::cout << "pushing " << son << "\n";
+            }
+            else {
+                //std::cout << "pushing " << "nullptr" << "\n";
+            }
             sons.push_back(son);
+        }
     }
 }
 

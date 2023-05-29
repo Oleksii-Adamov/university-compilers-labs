@@ -441,6 +441,8 @@ namespace yy {
       // "]"
       // ".."
       // "..<"
+      // "."
+      // "..."
       // "if"
       // "then"
       // "else"
@@ -477,9 +479,12 @@ namespace yy {
       // lvalue_expression
       // unary_expression
       // binary_expression
+      // method_call_expression
       // call_expression
       // named_expression_list
       // named_expression
+      // member_access_expression
+      // field_access_expression
       char dummy1[sizeof (ASTNode*)];
     };
 
@@ -562,21 +567,22 @@ namespace yy {
     TOK_RIGHT_SQUARE_BRACKET = 30, // "]"
     TOK_RANGE_SPECIFIER = 31,      // ".."
     TOK_HALF_OPEN_RANGE_SPECIFIER = 32, // "..<"
-    TOK_IF = 33,                   // "if"
-    TOK_THEN = 34,                 // "then"
-    TOK_ELSE = 35,                 // "else"
-    TOK_VAR = 36,                  // "var"
-    TOK_CONST = 37,                // "const"
-    TOK_WHILE = 38,                // "while"
-    TOK_DO = 39,                   // "do"
-    TOK_FOR = 40,                  // "for"
-    TOK_IN = 41,                   // "in"
-    TOK_ZIP = 42,                  // "zip"
-    TOK_IDENTIFIER = 43,           // IDENTIFIER
-    TOK_INTEGER_LITERAL = 44,      // INTEGER_LITERAL
-    TOK_NEG = 45,                  // NEG
-    TOK_POSITIVE_IDENTITY = 46,    // POSITIVE_IDENTITY
-    TOK_HIGHEST_PREC = 47          // HIGHEST_PREC
+    TOK_MEMBER_ACCESS = 33,        // "."
+    TOK_VARIABLE_ARGUMENT_LISTS = 34, // "..."
+    TOK_IF = 35,                   // "if"
+    TOK_THEN = 36,                 // "then"
+    TOK_ELSE = 37,                 // "else"
+    TOK_VAR = 38,                  // "var"
+    TOK_CONST = 39,                // "const"
+    TOK_WHILE = 40,                // "while"
+    TOK_DO = 41,                   // "do"
+    TOK_FOR = 42,                  // "for"
+    TOK_IN = 43,                   // "in"
+    TOK_ZIP = 44,                  // "zip"
+    TOK_IDENTIFIER = 45,           // IDENTIFIER
+    TOK_INTEGER_LITERAL = 46,      // INTEGER_LITERAL
+    TOK_NEG = 47,                  // NEG
+    TOK_POSITIVE_IDENTITY = 48     // POSITIVE_IDENTITY
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -593,7 +599,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 48, ///< Number of tokens.
+        YYNTOKENS = 49, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -628,50 +634,54 @@ namespace yy {
         S_RIGHT_SQUARE_BRACKET = 30,             // "]"
         S_RANGE_SPECIFIER = 31,                  // ".."
         S_HALF_OPEN_RANGE_SPECIFIER = 32,        // "..<"
-        S_IF = 33,                               // "if"
-        S_THEN = 34,                             // "then"
-        S_ELSE = 35,                             // "else"
-        S_VAR = 36,                              // "var"
-        S_CONST = 37,                            // "const"
-        S_WHILE = 38,                            // "while"
-        S_DO = 39,                               // "do"
-        S_FOR = 40,                              // "for"
-        S_IN = 41,                               // "in"
-        S_ZIP = 42,                              // "zip"
-        S_IDENTIFIER = 43,                       // IDENTIFIER
-        S_INTEGER_LITERAL = 44,                  // INTEGER_LITERAL
-        S_NEG = 45,                              // NEG
-        S_POSITIVE_IDENTITY = 46,                // POSITIVE_IDENTITY
-        S_HIGHEST_PREC = 47,                     // HIGHEST_PREC
-        S_YYACCEPT = 48,                         // $accept
-        S_unit = 49,                             // unit
-        S_statements_opt = 50,                   // statements_opt
-        S_statement = 51,                        // statement
-        S_block_statement = 52,                  // block_statement
-        S_expression_statement = 53,             // expression_statement
-        S_assignment_statement = 54,             // assignment_statement
-        S_conditional_statement = 55,            // conditional_statement
-        S_else_part_opt = 56,                    // else_part_opt
-        S_ctrl_decl = 57,                        // ctrl_decl
-        S_while_do_statement = 58,               // while_do_statement
-        S_do_while_statement = 59,               // do_while_statement
-        S_for_statement = 60,                    // for_statement
-        S_index_var_decl = 61,                   // index_var_decl
-        S_tuple_grouped_identifier_list = 62,    // tuple_grouped_identifier_list
-        S_identifier_list = 63,                  // identifier_list
-        S_iterable_expression = 64,              // iterable_expression
-        S_expression_list = 65,                  // expression_list
-        S_expression = 66,                       // expression
-        S_literal_expression = 67,               // literal_expression
-        S_range_literal = 68,                    // range_literal
-        S_variable_expression = 69,              // variable_expression
-        S_parenthesized_expression = 70,         // parenthesized_expression
-        S_lvalue_expression = 71,                // lvalue_expression
-        S_unary_expression = 72,                 // unary_expression
-        S_binary_expression = 73,                // binary_expression
-        S_call_expression = 74,                  // call_expression
-        S_named_expression_list = 75,            // named_expression_list
-        S_named_expression = 76                  // named_expression
+        S_MEMBER_ACCESS = 33,                    // "."
+        S_VARIABLE_ARGUMENT_LISTS = 34,          // "..."
+        S_IF = 35,                               // "if"
+        S_THEN = 36,                             // "then"
+        S_ELSE = 37,                             // "else"
+        S_VAR = 38,                              // "var"
+        S_CONST = 39,                            // "const"
+        S_WHILE = 40,                            // "while"
+        S_DO = 41,                               // "do"
+        S_FOR = 42,                              // "for"
+        S_IN = 43,                               // "in"
+        S_ZIP = 44,                              // "zip"
+        S_IDENTIFIER = 45,                       // IDENTIFIER
+        S_INTEGER_LITERAL = 46,                  // INTEGER_LITERAL
+        S_NEG = 47,                              // NEG
+        S_POSITIVE_IDENTITY = 48,                // POSITIVE_IDENTITY
+        S_YYACCEPT = 49,                         // $accept
+        S_unit = 50,                             // unit
+        S_statements_opt = 51,                   // statements_opt
+        S_statement = 52,                        // statement
+        S_block_statement = 53,                  // block_statement
+        S_expression_statement = 54,             // expression_statement
+        S_assignment_statement = 55,             // assignment_statement
+        S_conditional_statement = 56,            // conditional_statement
+        S_else_part_opt = 57,                    // else_part_opt
+        S_ctrl_decl = 58,                        // ctrl_decl
+        S_while_do_statement = 59,               // while_do_statement
+        S_do_while_statement = 60,               // do_while_statement
+        S_for_statement = 61,                    // for_statement
+        S_index_var_decl = 62,                   // index_var_decl
+        S_tuple_grouped_identifier_list = 63,    // tuple_grouped_identifier_list
+        S_identifier_list = 64,                  // identifier_list
+        S_iterable_expression = 65,              // iterable_expression
+        S_expression_list = 66,                  // expression_list
+        S_expression = 67,                       // expression
+        S_literal_expression = 68,               // literal_expression
+        S_range_literal = 69,                    // range_literal
+        S_variable_expression = 70,              // variable_expression
+        S_parenthesized_expression = 71,         // parenthesized_expression
+        S_lvalue_expression = 72,                // lvalue_expression
+        S_unary_expression = 73,                 // unary_expression
+        S_binary_expression = 74,                // binary_expression
+        S_method_call_expression = 75,           // method_call_expression
+        S_call_expression = 76,                  // call_expression
+        S_named_expression_list = 77,            // named_expression_list
+        S_named_expression = 78,                 // named_expression
+        S_member_access_expression = 79,         // member_access_expression
+        S_field_access_expression = 80           // field_access_expression
       };
     };
 
@@ -738,6 +748,8 @@ namespace yy {
       case symbol_kind::S_RIGHT_SQUARE_BRACKET: // "]"
       case symbol_kind::S_RANGE_SPECIFIER: // ".."
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
+      case symbol_kind::S_MEMBER_ACCESS: // "."
+      case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -774,9 +786,12 @@ namespace yy {
       case symbol_kind::S_lvalue_expression: // lvalue_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
+      case symbol_kind::S_method_call_expression: // method_call_expression
       case symbol_kind::S_call_expression: // call_expression
       case symbol_kind::S_named_expression_list: // named_expression_list
       case symbol_kind::S_named_expression: // named_expression
+      case symbol_kind::S_member_access_expression: // member_access_expression
+      case symbol_kind::S_field_access_expression: // field_access_expression
         value.move< ASTNode* > (std::move (that.value));
         break;
 
@@ -869,6 +884,8 @@ switch (yykind)
       case symbol_kind::S_RIGHT_SQUARE_BRACKET: // "]"
       case symbol_kind::S_RANGE_SPECIFIER: // ".."
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
+      case symbol_kind::S_MEMBER_ACCESS: // "."
+      case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -905,9 +922,12 @@ switch (yykind)
       case symbol_kind::S_lvalue_expression: // lvalue_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
+      case symbol_kind::S_method_call_expression: // method_call_expression
       case symbol_kind::S_call_expression: // call_expression
       case symbol_kind::S_named_expression_list: // named_expression_list
       case symbol_kind::S_named_expression: // named_expression
+      case symbol_kind::S_member_access_expression: // member_access_expression
+      case symbol_kind::S_field_access_expression: // field_access_expression
         value.template destroy< ASTNode* > ();
         break;
 
@@ -1008,7 +1028,7 @@ switch (yykind)
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_YYEOF
                    || (token::TOK_YYerror <= tok && tok <= token::TOK_YYUNDEF)
-                   || (token::TOK_NEG <= tok && tok <= token::TOK_HIGHEST_PREC));
+                   || (token::TOK_NEG <= tok && tok <= token::TOK_POSITIVE_IDENTITY));
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -1569,6 +1589,36 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_MEMBER_ACCESS (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_MEMBER_ACCESS, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MEMBER_ACCESS (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_MEMBER_ACCESS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VARIABLE_ARGUMENT_LISTS (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_VARIABLE_ARGUMENT_LISTS, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_VARIABLE_ARGUMENT_LISTS (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_VARIABLE_ARGUMENT_LISTS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IF (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_IF, std::move (v), std::move (l));
@@ -1776,21 +1826,6 @@ switch (yykind)
         return symbol_type (token::TOK_POSITIVE_IDENTITY, l);
       }
 #endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_HIGHEST_PREC (location_type l)
-      {
-        return symbol_type (token::TOK_HIGHEST_PREC, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_HIGHEST_PREC (const location_type& l)
-      {
-        return symbol_type (token::TOK_HIGHEST_PREC, l);
-      }
-#endif
 
 
     class context
@@ -1853,7 +1888,7 @@ switch (yykind)
     /// \param yyvalue   the value to check
     static bool yy_table_value_is_error_ (int yyvalue);
 
-    static const short yypact_ninf_;
+    static const signed char yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token kind \a t to a symbol kind.
@@ -1899,7 +1934,7 @@ switch (yykind)
 
 #if YYDEBUG
     // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-    static const unsigned char yyrline_[];
+    static const short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r) const;
     /// Print the state stack on the debug stream.
@@ -2135,8 +2170,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 617,     ///< Last index in yytable_.
-      yynnts_ = 29,  ///< Number of nonterminal symbols.
+      yylast_ = 743,     ///< Last index in yytable_.
+      yynnts_ = 32,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -2192,6 +2227,8 @@ switch (yykind)
       case symbol_kind::S_RIGHT_SQUARE_BRACKET: // "]"
       case symbol_kind::S_RANGE_SPECIFIER: // ".."
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
+      case symbol_kind::S_MEMBER_ACCESS: // "."
+      case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -2228,9 +2265,12 @@ switch (yykind)
       case symbol_kind::S_lvalue_expression: // lvalue_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
+      case symbol_kind::S_method_call_expression: // method_call_expression
       case symbol_kind::S_call_expression: // call_expression
       case symbol_kind::S_named_expression_list: // named_expression_list
       case symbol_kind::S_named_expression: // named_expression
+      case symbol_kind::S_member_access_expression: // member_access_expression
+      case symbol_kind::S_field_access_expression: // field_access_expression
         value.copy< ASTNode* > (YY_MOVE (that.value));
         break;
 
@@ -2293,6 +2333,8 @@ switch (yykind)
       case symbol_kind::S_RIGHT_SQUARE_BRACKET: // "]"
       case symbol_kind::S_RANGE_SPECIFIER: // ".."
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
+      case symbol_kind::S_MEMBER_ACCESS: // "."
+      case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -2329,9 +2371,12 @@ switch (yykind)
       case symbol_kind::S_lvalue_expression: // lvalue_expression
       case symbol_kind::S_unary_expression: // unary_expression
       case symbol_kind::S_binary_expression: // binary_expression
+      case symbol_kind::S_method_call_expression: // method_call_expression
       case symbol_kind::S_call_expression: // call_expression
       case symbol_kind::S_named_expression_list: // named_expression_list
       case symbol_kind::S_named_expression: // named_expression
+      case symbol_kind::S_member_access_expression: // member_access_expression
+      case symbol_kind::S_field_access_expression: // field_access_expression
         value.move< ASTNode* > (YY_MOVE (s.value));
         break;
 
@@ -2397,7 +2442,7 @@ switch (yykind)
   }
 
 } // yy
-#line 2401 "parser.tab.hh"
+#line 2446 "parser.tab.hh"
 
 
 

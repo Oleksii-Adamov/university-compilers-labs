@@ -60,6 +60,8 @@
 %token <ASTNode*> RIGHT_SQUARE_BRACKET "]"
 %token <ASTNode*> RANGE_SPECIFIER ".."
 %token <ASTNode*> HALF_OPEN_RANGE_SPECIFIER "..<"
+%token <ASTNode*> MEMBER_ACCESS "."
+%token <ASTNode*> VARIABLE_ARGUMENT_LISTS "..."
 %token <ASTNode*> IF "if"
 %token <ASTNode*> THEN "then"
 %token <ASTNode*> ELSE "else"
@@ -84,7 +86,9 @@
 %nterm <ASTNode*> call_expression
 %nterm <ASTNode*> named_expression_list
 %nterm <ASTNode*> named_expression
-
+%nterm <ASTNode*> member_access_expression
+%nterm <ASTNode*> field_access_expression
+%nterm <ASTNode*> method_call_expression
 %nterm <ASTNode*> block_statement
 %nterm <ASTNode*> expression_statement
 %nterm <ASTNode*> assignment_statement
@@ -105,8 +109,12 @@
 %printer { yyo << *$$; } <*>;
 
 %%
+%precedence ",";
+%precedence "for";
+%precedence "do";
 %precedence "then";
 %precedence "else";
+%left "in";
 %left "by" "#";
 %left "||";
 %left "&&";
@@ -122,13 +130,15 @@
 %left "*" "/" "%";
 %right "!" "~";
 %right "**";
-%left HIGHEST_PREC;
+%left "]";
+%left ")";
+%left ".";
 
 %start unit;
 unit: statements_opt  { drv.result = $1;};
 
 statements_opt:
-  %empty                 {$$ = nullptr;}
+  %empty                 {$$ = new ASTNode(ASTNodeType::Statements, {nullptr})/*nullptr*/;}
 | statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
 statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
@@ -137,7 +147,8 @@ statement: block_statement | expression_statement | assignment_statement | condi
 block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
 
 expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
-| call_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+| call_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
+| member_access_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 assignment_statement:
   lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
@@ -205,9 +216,9 @@ range_literal:
 
 variable_expression: IDENTIFIER;
 
-parenthesized_expression: "(" expression ")" %prec HIGHEST_PREC { $$ = $2; delete $1; delete $3;};
+parenthesized_expression: "(" expression ")" { $$ = $2; delete $1; delete $3;};
 
-lvalue_expression: variable_expression | parenthesized_expression | call_expression;
+lvalue_expression: variable_expression | parenthesized_expression | call_expression | member_access_expression;
 
 unary_expression:
   "+" expression %prec POSITIVE_IDENTITY { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
@@ -233,6 +244,11 @@ binary_expression:
 | expression "by" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
 | expression "#" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});};
 
+method_call_expression:
+  expression "." IDENTIFIER "(" named_expression_list ")" %prec "." {$$ = new ASTNode(ASTNodeType::MethodCallExpression, {$1, $3, $5}); delete $2; delete $4; delete $6;}
+| expression "." IDENTIFIER "[" named_expression_list "]" %prec "." {$$ = new ASTNode(ASTNodeType::MethodCallExpression, {$1, $3, $5}); delete $2; delete $4; delete $6;};
+
+
 call_expression:
   lvalue_expression "(" named_expression_list ")" { $$ = new ASTNode(ASTNodeType::CallExpression, {$1, $3}); delete $2; delete $4;}
 | lvalue_expression "[" named_expression_list "]" { $$ = new ASTNode(ASTNodeType::CallExpression, {$1, $3}); delete $2; delete $4;};
@@ -244,6 +260,11 @@ named_expression_list:
 named_expression:
   expression
 | IDENTIFIER "=" expression;
+
+member_access_expression: field_access_expression | method_call_expression;
+
+
+field_access_expression: expression "." IDENTIFIER {$$ = new ASTNode(ASTNodeType::  FieldAccessExpression, {$1, $3}); delete $2;};
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m)
