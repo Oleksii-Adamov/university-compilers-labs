@@ -56,6 +56,10 @@
 %token <ASTNode*> RIGHT_ROUND_BRACKET ")"
 %token <ASTNode*> LEFT_CURLY_BRACKET "{"
 %token <ASTNode*> RIGHT_CURLY_BRACKET "}"
+%token <ASTNode*> LEFT_SQUARE_BRACKET "["
+%token <ASTNode*> RIGHT_SQUARE_BRACKET "]"
+%token <ASTNode*> RANGE_SPECIFIER ".."
+%token <ASTNode*> HALF_OPEN_RANGE_SPECIFIER "..<"
 %token <ASTNode*> IF "if"
 %token <ASTNode*> THEN "then"
 %token <ASTNode*> ELSE "else"
@@ -70,12 +74,16 @@
 %token <ASTNode*> INTEGER_LITERAL
 
 %nterm <ASTNode*> literal_expression
+%nterm <ASTNode*> range_literal
 %nterm <ASTNode*> variable_expression
 %nterm <ASTNode*> expression
 %nterm <ASTNode*> parenthesized_expression
 %nterm <ASTNode*> unary_expression
 %nterm <ASTNode*> binary_expression
 %nterm <ASTNode*> lvalue_expression
+%nterm <ASTNode*> call_expression
+%nterm <ASTNode*> named_expression_list
+%nterm <ASTNode*> named_expression
 
 %nterm <ASTNode*> block_statement
 %nterm <ASTNode*> expression_statement
@@ -87,6 +95,7 @@
 %nterm <ASTNode*> do_while_statement
 %nterm <ASTNode*> for_statement
 %nterm <ASTNode*> index_var_decl
+%nterm <ASTNode*> tuple_grouped_identifier_list
 %nterm <ASTNode*> identifier_list
 %nterm <ASTNode*> iterable_expression
 %nterm <ASTNode*> expression_list
@@ -103,6 +112,7 @@
 %left "&&";
 %left EQUALITY_COMP;
 %left ORDERED_COMP;
+%left ".." "..<";
 %left "+" "-";
 %left "|";
 %left "^";
@@ -122,11 +132,12 @@ statements_opt:
 | statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
 statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
-| do_while_statement;
+| do_while_statement | for_statement;
 
 block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
 
-expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
+| call_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 assignment_statement:
   lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
@@ -150,46 +161,53 @@ while_do_statement:
   "while" expression "do" statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $4}); delete $1; delete $3;}
 | "while" expression block_statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $3}); delete $1;}
 | "while" ctrl_decl "do" statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $4}); delete $1; delete $3;}
-| "while" ctrl_decl block_statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $3}); delete $1;}
+| "while" ctrl_decl block_statement { $$ = new ASTNode(ASTNodeType::WhileDoStatement, {$2, $3}); delete $1;};
 
-do_while_statement: "do" statement "while" expression ";" { $$ = new ASTNode(ASTNodeType::DoWhileStatement, {$2, $4}); delete $1; delete $3; delete $5;}
+do_while_statement: "do" statement "while" expression ";" { $$ = new ASTNode(ASTNodeType::DoWhileStatement, {$2, $4}); delete $1; delete $3; delete $5;};
 
 for_statement:
   "for" index_var_decl "in" iterable_expression "do" statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4, $6}); delete $1; delete $3; delete $5;}
 | "for" index_var_decl "in" iterable_expression block_statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4, $5}); delete $1; delete $3;}
 | "for" iterable_expression "do" statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $4}); delete $1; delete $3;}
-| "for" iterable_expression block_statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $3}); delete $1;}
+| "for" iterable_expression block_statement { $$ = new ASTNode(ASTNodeType::ForStatement, {$2, $3}); delete $1;};
 
 index_var_decl:
   IDENTIFIER
-| "(" identifier_list ")" { $$ = $2; delete $1; delete $3;}
+| tuple_grouped_identifier_list ;
+
+tuple_grouped_identifier_list: "(" identifier_list ")" { $$ = new ASTNode(ASTNodeType::TupleGroupedIdentifierList, {$2}); delete $1; delete $3;};
 
 identifier_list:
   IDENTIFIER { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1});}
 | IDENTIFIER "," identifier_list { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1, $3}); delete $2;}
+| tuple_grouped_identifier_list
+| tuple_grouped_identifier_list "," identifier_list { $$ = new ASTNode(ASTNodeType::TupleGroupedIdentifierList, {$1, $3}); delete $2;}
 
 iterable_expression:
   expression
-| "zip" "(" expression_list ")" { $$ = $3; delete $1; delete $2; delete $4;}
+| "zip" "(" expression_list ")" { $$ = $3; delete $1; delete $2; delete $4;};
 
 expression_list:
   expression { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1});}
-| expression "," expression_list { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1, $3}); delete $2;}
+| expression "," expression_list { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1, $3}); delete $2;};
 
-expression:
-  literal_expression
-| lvalue_expression
-| unary_expression
-| binary_expression;
+expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
 
-literal_expression: INTEGER_LITERAL;
+literal_expression: INTEGER_LITERAL | range_literal;
+
+range_literal:
+  expression ".." expression { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2, $3});}
+| expression "..<" expression { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2, $3});}
+| expression ".." { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2});}
+| ".." expression { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2});}
+| "..<" expression { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2});}
+| ".." { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1});};
+
 variable_expression: IDENTIFIER;
 
 parenthesized_expression: "(" expression ")" %prec HIGHEST_PREC { $$ = $2; delete $1; delete $3;};
 
-lvalue_expression:
-  variable_expression
-| parenthesized_expression;
+lvalue_expression: variable_expression | parenthesized_expression | call_expression;
 
 unary_expression:
   "+" expression %prec POSITIVE_IDENTITY { $$ = new ASTNode(ASTNodeType::UnaryExpression, {$1, $2});}
@@ -214,6 +232,18 @@ binary_expression:
 | expression ORDERED_COMP expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
 | expression "by" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});}
 | expression "#" expression { $$ = new ASTNode(ASTNodeType::BinaryExpression, {$1, $2, $3});};
+
+call_expression:
+  lvalue_expression "(" named_expression_list ")" { $$ = new ASTNode(ASTNodeType::CallExpression, {$1, $3}); delete $2; delete $4;}
+| lvalue_expression "[" named_expression_list "]" { $$ = new ASTNode(ASTNodeType::CallExpression, {$1, $3}); delete $2; delete $4;};
+
+named_expression_list:
+  named_expression { $$ = new ASTNode(ASTNodeType::NamedExpressionList, {$1});}
+| named_expression "," named_expression_list { $$ = new ASTNode(ASTNodeType::NamedExpressionList, {$1, $3}); delete $2;};
+
+named_expression:
+  expression
+| IDENTIFIER "=" expression;
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m)

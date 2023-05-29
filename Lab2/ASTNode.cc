@@ -14,7 +14,8 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
     for (ASTNode* son: sons_) {
         if (son != nullptr && (type == ASTNodeType::Statements && son->type == ASTNodeType::Statements)
         || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
-        || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)) {
+        || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)
+        || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList)) {
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;
         } else

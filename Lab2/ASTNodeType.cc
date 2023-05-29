@@ -15,6 +15,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Assignment: s = "Assignment"; break;
         case ASTNodeType::CompoundAssignment: s = "CompoundAssignment"; break;
         case ASTNodeType::RangeSpecifier: s = "RangeSpecifier"; break;
+        case ASTNodeType::HalfOpenRangeSpecifier: s = "HalfOpenRangeSpecifier"; break;
         case ASTNodeType::RangeDomainStrideSpecifier: s = "RangeDomainStrideSpecifier"; break;
         case ASTNodeType::RangeCount: s = "RangeCount"; break;
         case ASTNodeType::VariableArgumentLists: s = "VariableArgumentLists"; break;
@@ -56,8 +57,11 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::For: s = "For"; break;
         case ASTNodeType::In: s = "In"; break;
         case ASTNodeType::Zip: s = "Zip"; break;
+        case ASTNodeType::RangeLiteral: s = "RangeLiteral"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
+        case ASTNodeType::CallExpression: s = "CallExpression"; break;
+        case ASTNodeType::NamedExpressionList: s = "NamedExpressionList"; break;
         case ASTNodeType::BlockStatement: s = "BlockStatement"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
         case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;
@@ -67,6 +71,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::DoWhileStatement: s = "DoWhileStatement"; break;
         case ASTNodeType::ForStatement: s = "ForStatement"; break;
         case ASTNodeType::IdentifierList: s = "IdentifierList"; break;
+        case ASTNodeType::TupleGroupedIdentifierList: s = "TupleGroupedIdentifierList"; break;
         case ASTNodeType::ExpressionList: s = "ExpressionList"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }

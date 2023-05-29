@@ -18,6 +18,7 @@ enum class ASTNodeType {
     Assignment,
     CompoundAssignment,
     RangeSpecifier,
+    HalfOpenRangeSpecifier,
     RangeDomainStrideSpecifier,
     RangeCount,
     VariableArgumentLists,
@@ -62,8 +63,11 @@ enum class ASTNodeType {
     In,
     Zip,
 
+    RangeLiteral,
     UnaryExpression,
     BinaryExpression,
+    CallExpression,
+    NamedExpressionList,
     BlockStatement,
     ExpressionStatement,
     AssignmentStatement,
@@ -73,6 +77,7 @@ enum class ASTNodeType {
     DoWhileStatement,
     ForStatement,
     IdentifierList,
+    TupleGroupedIdentifierList,
     ExpressionList,
     Statements,
 
