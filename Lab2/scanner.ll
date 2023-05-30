@@ -7,6 +7,7 @@
 # include "driver.hh"
 # include "parser.hh"
 # include "ASTNode.hh"
+# include <iostream>
 %}
 
 %{
@@ -79,18 +80,21 @@ hexadecimal_digits_opt [0-9A-Fa-f_]*
 octal_digits [0-7][0-7_]*
 binary_digits [0-1][0-1_]*
 integer_literal  {digits}|("0"[xX]{hexadecimal_digits})|("0"[oO]{octal_digits})|("0"[bB]{binary_digits})
-exponent_part [eE]([+-]{0,1}){digits}
+exponent_part [eE]([+-]?){digits}
 exponent_part_opt {exponent_part}{0,1}
-p_exponent_part [pP]([+-]{0,1}){digits}
-p_exponent_part_opt {p_exponent_part}{0,1}
-real_literal ({digits_opt}"."{digits}{exponent_part_opt})|({digits}("."{0,1}){exponent_part})|("0"[xX]{hexadecimal_digits_opt}"."{hexadecimal_digits}{p_exponent_part_opt})|("0"[xX]{hexadecimal_digits}("."{0,1}){p_exponent_part})
+p_exponent_part [pP]([+-]?){digits}
+p_exponent_part_opt {p_exponent_part}?
+real_literal ({digits_opt}"."{digits}{exponent_part_opt})|({digits}("."?){exponent_part})|("0"[xX]{hexadecimal_digits_opt}"."{hexadecimal_digits}{p_exponent_part_opt})|("0"[xX]{hexadecimal_digits}("."?){p_exponent_part})
 imaginary_literal ({integer_literal}"i")|({real_literal}"i")
+string_character [^"'\n]|"\\"((['"?\\abfnrtv])|([0-9A-Fa-f]{1,2}))
+interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_character}|"\"")*"'")
 
 %{
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
 %}
 %x comment
+%x uninterpreted_string_literal
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -106,6 +110,11 @@ imaginary_literal ({integer_literal}"i")|({real_literal}"i")
 <comment>\n             loc.lines();
 <comment>"*"+"/"        BEGIN(INITIAL);
 "//"[^\n]*              /*skip one line comments till the end of line*/
+"\"\"\"" {/*ECHO;std::cout << " rule 1 \n";*/ BEGIN(uninterpreted_string_literal); yymore();}
+<uninterpreted_string_literal>\n    {/*ECHO;std::cout << " rule 2 \n";*/ loc.lines(); yymore();}
+<uninterpreted_string_literal>[^\"\n]* {/*ECHO; std::cout << " rule 3 \n";*/ yymore(); /* remember anything that's not a '"'*/}
+<uninterpreted_string_literal>"\""{1,2}[^\"\n]* {/*ECHO; std::cout << " rule 4 \n";*/ yymore(); /* remember anything that's not a three '"' in a row*/}
+<uninterpreted_string_literal>"\"\"\""  {/*ECHO; std::cout << " rule 5 \n";*/ BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::UninterpretedStringLiteral, yytext), loc);}
 
 "+" return yy::parser::make_PLUS (new ASTNode(ASTNodeType::Plus), loc);
 "-" return yy::parser::make_MINUS (new ASTNode(ASTNodeType::Minus), loc);
@@ -179,6 +188,7 @@ imaginary_literal ({integer_literal}"i")|({real_literal}"i")
 {integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
 {real_literal} return yy::parser::make_REAL_LITERAL (new ASTNode(ASTNodeType::RealLiteral, yytext), loc);
 {imaginary_literal} return yy::parser::make_IMAGINARY_LITERAL (new ASTNode(ASTNodeType::ImaginaryLiteral, yytext), loc);
+{interpreted_string_literal} return yy::parser::make_INTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::InterpretedStringLiteral, yytext), loc);
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
 
