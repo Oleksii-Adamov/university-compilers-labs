@@ -1,22 +1,12 @@
-s = b'abc';
-s = b'ab"c"';
-s = b'''abc''';
-s = b'''a'b'c''';
+class C {
+  var id: int;
+  proc method(i: int) {
+    id = i;
+  }
+}
 
-s = b"""a""b""c""";
-s = """abc""";
-s = b"""abc\n""";
-s = b"""abc
-asd""";
-s = b"a'b'c";
-s = "abc\n";
-s = "ab\"c";
-s = "";
-l = 0.31;
-l = .31;
-l = 0.31e2;
-l = 0.31e-2;
-l = 31e2;
-l = 0x0.ffp-2;
-id = 0xffi;
-id = 0.31i;
+var c: C = new C(2);
+if 1 > 0 then c.method(1);
+else {
+    while true do print(2 + 2 * 2);
+}

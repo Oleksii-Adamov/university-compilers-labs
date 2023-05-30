@@ -90,6 +90,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Proc: s = "Proc"; break;
         case ASTNodeType::Iter: s = "Iter"; break;
         case ASTNodeType::Where: s = "Where"; break;
+        case ASTNodeType::New: s = "New"; break;
         case ASTNodeType::RangeLiteral: s = "RangeLiteral"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
@@ -97,6 +98,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::NamedExpressionList: s = "NamedExpressionList"; break;
         case ASTNodeType::FieldAccessExpression: s = "FieldAccessExpression"; break;
         case ASTNodeType::MethodCallExpression: s = "MethodCallExpression"; break;
+        case ASTNodeType::NewExpression: s = "NewExpression"; break;
         case ASTNodeType::BlockStatement: s = "BlockStatement"; break;
         case ASTNodeType::ExpressionStatement: s = "ExpressionStatement"; break;
         case ASTNodeType::AssignmentStatement: s = "AssignmentStatement"; break;
@@ -120,6 +122,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Formal: s = "Formal"; break;
         case ASTNodeType::DefaultExpression: s = "DefaultExpression"; break;
         case ASTNodeType::VariableArgumentExpression: s = "VariableArgumentExpression"; break;
+        case ASTNodeType::ArgumentList: s = "ArgumentList"; break;
         case ASTNodeType::TypeBinding: s = "TypeBinding"; break;
         case ASTNodeType::WhereClause: s = "WhereClause"; break;
         case ASTNodeType::ClassType: s = "ClassType"; break;

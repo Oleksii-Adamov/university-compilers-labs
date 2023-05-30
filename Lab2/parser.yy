@@ -104,6 +104,7 @@
 %token <ASTNode*> ITER "iter"
 %token <ASTNode*> WHERE "where"
 %token <ASTNode*> ZIP "zip"
+%token <ASTNode*> NEW "new"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
 %token <ASTNode*> BOOL_LITERAL
@@ -128,6 +129,7 @@
 %nterm <ASTNode*> member_access_expression
 %nterm <ASTNode*> field_access_expression
 %nterm <ASTNode*> method_call_expression
+%nterm <ASTNode*> new_expression
 %nterm <ASTNode*> block_statement
 %nterm <ASTNode*> expression_statement
 %nterm <ASTNode*> assignment_statement
@@ -156,6 +158,7 @@
 %nterm <ASTNode*> class_declaration_statement
 %nterm <ASTNode*> class_inherit_opt
 %nterm <ASTNode*> basic_class_type
+%nterm <ASTNode*> class_type
 %nterm <ASTNode*> class_statement_list_opt
 %nterm <ASTNode*> class_statement_list
 %nterm <ASTNode*> class_statement
@@ -172,7 +175,7 @@
 %nterm <ASTNode*> default_expression_opt
 %nterm <ASTNode*> variable_argument_expression
 %nterm <ASTNode*> return_intent_opt
-%nterm <ASTNode*> type_binding_opt
+%nterm <ASTNode*> type_binding
 %nterm <ASTNode*> where_clause_opt
 %nterm <ASTNode*> function_body
 %nterm <ASTNode*> type_declaration_statement
@@ -205,6 +208,8 @@
 %left "*" "/" "%";
 %right "!" "~";
 %right "**";
+%right "owned" "shared" "borrowed" "unmanaged";
+%right "new";
 %left "]";
 %left ")";
 %left ".";
@@ -213,7 +218,7 @@
 unit: statements_opt  { drv.result = $1;};
 
 statements_opt:
-  %empty                 {/*$$ = new ASTNode(ASTNodeType::Statements, {nullptr})*/nullptr;}
+  %empty                 {$$=nullptr;}
 | statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
 statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
@@ -223,7 +228,8 @@ block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockSta
 
 expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
 | call_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
-| member_access_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
+| member_access_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;}
+| new_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 assignment_statement:
   lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
@@ -304,7 +310,7 @@ type_part_opt:
   %empty %prec LOWEST_PREC {$$ = nullptr;}
 | ":" type_expression {$$ = $2; delete $1;};
 
-type_expression: primitive_type | expression;
+type_expression: primitive_type | class_type;
 
 primitive_type:
   "void" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
@@ -343,6 +349,13 @@ basic_class_type:
   IDENTIFIER { $$ = new ASTNode(ASTNodeType::ClassType, {$1});}
 | IDENTIFIER "(" named_expression_list ")" { $$ = new ASTNode(ASTNodeType::ClassType, {$1, $3}); delete $2; delete $4;};
 
+class_type:
+basic_class_type
+| "owned" basic_class_type { $$ = new ASTNode(ASTNodeType::ClassType, {$1, $2});}
+| "shared" basic_class_type { $$ = new ASTNode(ASTNodeType::ClassType, {$1, $2});}
+| "borrowed" basic_class_type { $$ = new ASTNode(ASTNodeType::ClassType, {$1, $2});}
+| "unmanaged" basic_class_type { $$ = new ASTNode(ASTNodeType::ClassType, {$1, $2});}
+
 class_statement_list_opt:
   %empty {$$ = nullptr;}
 | class_statement_list;
@@ -353,8 +366,10 @@ class_statement_list:
 
 class_statement: variable_declaration_statement | method_declaration_statement | type_declaration_statement;
 
-method_declaration_statement: procedure_kind_opt proc_or_iter this_intent_opt type_binding_opt IDENTIFIER argument_list_opt return_intent_opt type_part_opt where_clause_opt function_body
- { $$ = new ASTNode(ASTNodeType::MethodDeclarationStatement, {$1, $2, $3, $4, $5, $6, $7, $8, $9, $10});};
+method_declaration_statement: procedure_kind_opt proc_or_iter this_intent_opt IDENTIFIER argument_list_opt return_intent_opt type_part_opt where_clause_opt function_body
+ { $$ = new ASTNode(ASTNodeType::MethodDeclarationStatement, {$1, $2, $3, nullptr, $4, $5, $6, $7, $8, $9});}
+| procedure_kind_opt proc_or_iter this_intent_opt type_binding IDENTIFIER argument_list_opt return_intent_opt type_part_opt where_clause_opt function_body
+   { $$ = new ASTNode(ASTNodeType::MethodDeclarationStatement, {$1, $2, $3, $4, $5, $6, $7, $8, $9, $10});};
 
 procedure_kind_opt:
   %empty {$$ = nullptr;}
@@ -415,10 +430,9 @@ variable_argument_expression:
 
 return_intent_opt: this_intent_opt;
 
-type_binding_opt:
-%empty %prec LOWEST_PREC {$$ = nullptr;}
-| IDENTIFIER "." {$$ = new ASTNode(ASTNodeType::TypeBinding, {$1}); delete $2;}
-| parenthesized_expression "." {$$ = new ASTNode(ASTNodeType::TypeBinding, {$1}); delete $2;};
+type_binding:
+  IDENTIFIER "." {$$ = new ASTNode(ASTNodeType::TypeBinding, {$1}); delete $2;}
+| parenthesized_expression "." {$$ = new ASTNode(ASTNodeType::TypeBinding, {$1}); delete $2;}
 
 where_clause_opt:
   %empty {$$ = nullptr;}
@@ -430,7 +444,7 @@ function_body:
 
 type_declaration_statement: class_declaration_statement;
 
-expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
+expression: literal_expression | lvalue_expression | unary_expression | binary_expression | new_expression;
 
 literal_expression: INTEGER_LITERAL | range_literal | BOOL_LITERAL | REAL_LITERAL | IMAGINARY_LITERAL | INTERPRETED_STRING_LITERAL | UNINTERPRETED_STRING_LITERAL
 | INTERPRETED_BYTES_LITERAL | UNINTERPRETED_BYTES_LITERAL;
@@ -493,7 +507,9 @@ named_expression:
 member_access_expression: field_access_expression | method_call_expression;
 
 
-field_access_expression: expression "." IDENTIFIER {$$ = new ASTNode(ASTNodeType::  FieldAccessExpression, {$1, $3}); delete $2;};
+field_access_expression: expression "." IDENTIFIER {$$ = new ASTNode(ASTNodeType::FieldAccessExpression, {$1, $3}); delete $2;};
+
+new_expression: "new" type_expression {$$ = new ASTNode(ASTNodeType::NewExpression, {$2}); delete $1;};
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m)

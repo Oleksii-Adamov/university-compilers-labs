@@ -215,6 +215,7 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 "proc" return yy::parser::make_PROC (new ASTNode(ASTNodeType::Proc), loc);
 "iter" return yy::parser::make_ITER (new ASTNode(ASTNodeType::Iter), loc);
 "where" return yy::parser::make_WHERE (new ASTNode(ASTNodeType::Where), loc);
+"new" return yy::parser::make_NEW (new ASTNode(ASTNodeType::New), loc);
 
 "true"|"false" return yy::parser::make_BOOL_LITERAL (new ASTNode(ASTNodeType::BoolLiteral, yytext), loc);
 {integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
