@@ -96,6 +96,8 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 %x comment
 %x uninterpreted_string_literal_dq
 %x uninterpreted_string_literal_sq
+%x bytes_uninterpreted_string_literal_dq
+%x bytes_uninterpreted_string_literal_sq
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -114,12 +116,23 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 
 "//"[^\n]*              /*skip one line comments till the end of line*/
 
+"b\"\"\"" {BEGIN(bytes_uninterpreted_string_literal_dq); yymore();}
+<bytes_uninterpreted_string_literal_dq>\n    {loc.lines(); yymore();}
+<bytes_uninterpreted_string_literal_dq>[^\"\n]* {yymore(); /* remember anything that's not a '"'*/}
+<bytes_uninterpreted_string_literal_dq>"\""{1,2}[^\"\n]* {yymore(); /* remember anything that's not a three '"' in a row*/}
+<bytes_uninterpreted_string_literal_dq>"\"\"\""  {BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_BYTES_LITERAL (new ASTNode(ASTNodeType::UninterpretedBytesLiteral, yytext), loc);}
+
+"b'''"  {BEGIN(bytes_uninterpreted_string_literal_sq); yymore();}
+<bytes_uninterpreted_string_literal_sq>\n    {loc.lines(); yymore();}
+<bytes_uninterpreted_string_literal_sq>[^'\n]* {yymore(); /* remember anything that's not a "'"*/}
+<bytes_uninterpreted_string_literal_sq>"'"{1,2}[^'\n]* {yymore(); /* remember anything that's not a three "'" in a row*/}
+<bytes_uninterpreted_string_literal_sq>"'''"  {BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_BYTES_LITERAL (new ASTNode(ASTNodeType::UninterpretedBytesLiteral, yytext), loc);}
+
 "\"\"\"" {BEGIN(uninterpreted_string_literal_dq); yymore();}
 <uninterpreted_string_literal_dq>\n    {loc.lines(); yymore();}
 <uninterpreted_string_literal_dq>[^\"\n]* {yymore(); /* remember anything that's not a '"'*/}
 <uninterpreted_string_literal_dq>"\""{1,2}[^\"\n]* {yymore(); /* remember anything that's not a three '"' in a row*/}
 <uninterpreted_string_literal_dq>"\"\"\""  {BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::UninterpretedStringLiteral, yytext), loc);}
-
 
 "'''"  {BEGIN(uninterpreted_string_literal_sq); yymore();}
 <uninterpreted_string_literal_sq>\n    {loc.lines(); yymore();}
@@ -200,6 +213,7 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 {real_literal} return yy::parser::make_REAL_LITERAL (new ASTNode(ASTNodeType::RealLiteral, yytext), loc);
 {imaginary_literal} return yy::parser::make_IMAGINARY_LITERAL (new ASTNode(ASTNodeType::ImaginaryLiteral, yytext), loc);
 {interpreted_string_literal} return yy::parser::make_INTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::InterpretedStringLiteral, yytext), loc);
+"b"{interpreted_string_literal} return yy::parser::make_INTERPRETED_BYTES_LITERAL (new ASTNode(ASTNodeType::InterpretedBytesLiteral, yytext), loc);
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
 
