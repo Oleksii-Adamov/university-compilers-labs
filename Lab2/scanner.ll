@@ -80,6 +80,7 @@ integer_literal  {digits}
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
 %}
+%x comment
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -89,6 +90,11 @@ integer_literal  {digits}
 %}
 {white_space}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
+"/*"         BEGIN(comment);
+<comment>[^*\n]*        /* eat anything that's not a '*' */
+<comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<comment>\n             loc.lines();
+<comment>"*"+"/"        BEGIN(INITIAL);
 
 "+" return yy::parser::make_PLUS (new ASTNode(ASTNodeType::Plus), loc);
 "-" return yy::parser::make_MINUS (new ASTNode(ASTNodeType::Minus), loc);

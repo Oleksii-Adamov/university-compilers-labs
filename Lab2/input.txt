@@ -1,2 +1,7 @@
+/* comment1*/
 var x = 2;
-var x:int;
+/* comment2
+comment2
+*/
+/*cm3*/
+var x:int
