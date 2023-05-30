@@ -1,7 +1,11 @@
+// id = 2;
 /* comment1*/
 var x = 2;
+// id = 2;
 /* comment2
 comment2
 */
 /*cm3*/
-var x:int
+// id = 2;
+var x:int;
+// id = 2;

@@ -95,6 +95,7 @@ integer_literal  {digits}
 <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
 <comment>\n             loc.lines();
 <comment>"*"+"/"        BEGIN(INITIAL);
+"//"[^\n]*              /*skip one line comments till the end of line*/
 
 "+" return yy::parser::make_PLUS (new ASTNode(ASTNodeType::Plus), loc);
 "-" return yy::parser::make_MINUS (new ASTNode(ASTNodeType::Minus), loc);
