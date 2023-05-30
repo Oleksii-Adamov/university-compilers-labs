@@ -68,7 +68,7 @@
 
 %{
   // A number symbol corresponding to the value in S.
-  // yy::parser::symbol_type make_NUMBER (const std::string &s, const yy::parser::location_type& loc);
+  yy::parser::symbol_type make_INTEGER_LITERAL_WITH_CHECK (const std::string &s, const yy::parser::location_type& loc);
 %}
 
 white_space [ \t\r\f]
@@ -218,7 +218,7 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 "new" return yy::parser::make_NEW (new ASTNode(ASTNodeType::New), loc);
 
 "true"|"false" return yy::parser::make_BOOL_LITERAL (new ASTNode(ASTNodeType::BoolLiteral, yytext), loc);
-{integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
+{integer_literal} return make_INTEGER_LITERAL_WITH_CHECK (yytext, loc);
 {real_literal} return yy::parser::make_REAL_LITERAL (new ASTNode(ASTNodeType::RealLiteral, yytext), loc);
 {imaginary_literal} return yy::parser::make_IMAGINARY_LITERAL (new ASTNode(ASTNodeType::ImaginaryLiteral, yytext), loc);
 {interpreted_string_literal} return yy::parser::make_INTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::InterpretedStringLiteral, yytext), loc);
@@ -233,6 +233,19 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 }
 <<EOF>> return yy::parser::make_YYEOF (loc);
 %%
+
+yy::parser::symbol_type make_INTEGER_LITERAL_WITH_CHECK (const std::string &s, const yy::parser::location_type& loc) {
+    const std::string MAX_OCTAL_INTEGER = "1777777777777777777777";
+    const std::string MAX_DECIMAL_INTEGER = "18446744073709551615";
+    if ((s.size() > 2 && s[0] == '0' && (s[1] == 'b' || s[1] == 'B') && s.size()-2 > 64)
+    || (s.size() > 2 && s[0] == '0' && (s[1] == 'o' || s[1] == 'O') && (s.size()-2 > MAX_OCTAL_INTEGER.size() || s.substr(2) > MAX_OCTAL_INTEGER))
+    || (s.size() > 2 && s[0] == '0' && (s[1] == 'x' || s[1] == 'X') && s.size()-2 > 16)
+    || ((s.size() > MAX_DECIMAL_INTEGER.size() || s > MAX_DECIMAL_INTEGER) && s[1] >= '0' && s[1] <= '9'))
+    {
+        throw yy::parser::syntax_error (loc, "integer literal overflow: " + s);
+    }
+    return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, s), loc);
+}
 
 void driver::scan_begin ()
 {
