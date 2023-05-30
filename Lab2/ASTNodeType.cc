@@ -40,6 +40,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::StatementSeparator: s = "StatementSeparator"; break;
         case ASTNodeType::ExpressionSeparator: s = "ExpressionSeparator"; break;
         case ASTNodeType::MemberAccess: s = "MemberAccess"; break;
+        case ASTNodeType::Column: s = "Column"; break;
         case ASTNodeType::TypeQuery: s = "TypeQuery"; break;
         case ASTNodeType::LeftRoundBracket: s = "LeftRoundBracket"; break;
         case ASTNodeType::RightRoundBracket: s = "RightRoundBracket"; break;
@@ -56,7 +57,30 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Do: s = "Do"; break;
         case ASTNodeType::For: s = "For"; break;
         case ASTNodeType::In: s = "In"; break;
-        case ASTNodeType::Zip: s = "Zip"; break;
+        case ASTNodeType::Public: s = "Public"; break;
+        case ASTNodeType::Private: s = "Private"; break;
+        case ASTNodeType::Config: s = "Config"; break;
+        case ASTNodeType::Extern: s = "Extern"; break;
+        case ASTNodeType::Export: s = "Export"; break;
+        case ASTNodeType::Param: s = "Param"; break;
+        case ASTNodeType::Ref: s = "Ref"; break;
+        case ASTNodeType::Void: s = "Void"; break;
+        case ASTNodeType::Nothing: s = "Nothing"; break;
+        case ASTNodeType::Bool: s = "Bool"; break;
+        case ASTNodeType::Int: s = "Int"; break;
+        case ASTNodeType::Uint: s = "Uint"; break;
+        case ASTNodeType::Real: s = "Real"; break;
+        case ASTNodeType::Imag: s = "Imag"; break;
+        case ASTNodeType::Complex: s = "Complex"; break;
+        case ASTNodeType::String: s = "String"; break;
+        case ASTNodeType::Bytes: s = "Bytes"; break;
+        case ASTNodeType::Enum: s = "Enum"; break;
+        case ASTNodeType::Record: s = "Record"; break;
+        case ASTNodeType::Class: s = "Class"; break;
+        case ASTNodeType::Owned: s = "Owned"; break;
+        case ASTNodeType::Shared: s = "Shared"; break;
+        case ASTNodeType::Unmanaged: s = "Unmanaged"; break;
+        case ASTNodeType::Borrowed: s = "Borrowed"; break;
         case ASTNodeType::RangeLiteral: s = "RangeLiteral"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
@@ -75,6 +99,11 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::IdentifierList: s = "IdentifierList"; break;
         case ASTNodeType::TupleGroupedIdentifierList: s = "TupleGroupedIdentifierList"; break;
         case ASTNodeType::ExpressionList: s = "ExpressionList"; break;
+        case ASTNodeType::VariableDeclarationStatement: s = "VariableDeclarationStatement"; break;
+        case ASTNodeType::VariableKind: s = "VariableKind"; break;
+        case ASTNodeType::VariableDeclarationList: s = "VariableDeclarationList"; break;
+        case ASTNodeType::VariableDeclaration: s = "VariableDeclaration"; break;
+        case ASTNodeType::PrimitiveType: s = "PrimitiveType"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }
 

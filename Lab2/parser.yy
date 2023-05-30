@@ -3,7 +3,6 @@
 %header
 
 %define api.token.raw
-
 %define api.token.constructor
 %define api.value.type variant
 %define parse.assert
@@ -62,6 +61,31 @@
 %token <ASTNode*> HALF_OPEN_RANGE_SPECIFIER "..<"
 %token <ASTNode*> MEMBER_ACCESS "."
 %token <ASTNode*> VARIABLE_ARGUMENT_LISTS "..."
+%token <ASTNode*> COLUMN ":"
+%token <ASTNode*> PUBLIC "public"
+%token <ASTNode*> PRIVATE "private"
+%token <ASTNode*> CONFIG "config"
+%token <ASTNode*> EXTERN "extern"
+%token <ASTNode*> EXPORT "export"
+%token <ASTNode*> PARAM "param"
+%token <ASTNode*> REF "ref"
+%token <ASTNode*> VOID "void"
+%token <ASTNode*> NOTHING "nothing"
+%token <ASTNode*> BOOL "bool"
+%token <ASTNode*> INT "int"
+%token <ASTNode*> UINT "uint"
+%token <ASTNode*> REAL "real"
+%token <ASTNode*> IMAG "imag"
+%token <ASTNode*> COMPLEX "complex"
+%token <ASTNode*> STRING "string"
+%token <ASTNode*> BYTES "bytes"
+%token <ASTNode*> ENUM "enum"
+%token <ASTNode*> RECORD "record"
+%token <ASTNode*> CLASS "class"
+%token <ASTNode*> OWNED "owned"
+%token <ASTNode*> SHARED "shared"
+%token <ASTNode*> UNMANAGED "unmanaged"
+%token <ASTNode*> BORROWED "borrowed"
 %token <ASTNode*> IF "if"
 %token <ASTNode*> THEN "then"
 %token <ASTNode*> ELSE "else"
@@ -103,6 +127,17 @@
 %nterm <ASTNode*> identifier_list
 %nterm <ASTNode*> iterable_expression
 %nterm <ASTNode*> expression_list
+%nterm <ASTNode*> variable_declaration_statement
+%nterm <ASTNode*> privacy_specifier_opt
+%nterm <ASTNode*> config_extern_or_export_opt
+%nterm <ASTNode*> variable_kind
+%nterm <ASTNode*> variable_declaration_list
+%nterm <ASTNode*> variable_declaration
+%nterm <ASTNode*> type_part_opt
+%nterm <ASTNode*> type_expression
+%nterm <ASTNode*> primitive_type
+%nterm <ASTNode*> primitive_type_parameter_part_opt
+%nterm <ASTNode*> initialization_part_opt
 %nterm <ASTNode*> statement
 %nterm <ASTNode*> statements_opt
 
@@ -138,11 +173,11 @@
 unit: statements_opt  { drv.result = $1;};
 
 statements_opt:
-  %empty                 {$$ = new ASTNode(ASTNodeType::Statements, {nullptr})/*nullptr*/;}
+  %empty                 {/*$$ = new ASTNode(ASTNodeType::Statements, {nullptr})*/nullptr;}
 | statements_opt statement {$$ = new ASTNode(ASTNodeType::Statements, {$1, $2});};
 
 statement: block_statement | expression_statement | assignment_statement | conditional_statement | while_do_statement
-| do_while_statement | for_statement;
+| do_while_statement | for_statement | variable_declaration_statement;
 
 block_statement: "{" statements_opt "}" { $$ = new ASTNode(ASTNodeType::BlockStatement, {$2}); delete $1; delete $3;};
 
@@ -201,6 +236,62 @@ iterable_expression:
 expression_list:
   expression { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1});}
 | expression "," expression_list { $$ = new ASTNode(ASTNodeType::ExpressionList, {$1, $3}); delete $2;};
+
+variable_declaration_statement: privacy_specifier_opt config_extern_or_export_opt variable_kind variable_declaration_list ";" { $$ = new ASTNode(ASTNodeType::VariableDeclarationStatement, {$1, $2, $3, $4});};
+
+privacy_specifier_opt:
+  %empty {$$ = nullptr;}
+| "public" | "private";
+
+config_extern_or_export_opt:
+  %empty {$$ = nullptr;}
+| "config" | "extern" | "export";
+
+variable_kind:
+  "param" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1});}
+| "const" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1});}
+| "var" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1});}
+| "ref" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1});}
+| "const" "ref" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1, $2});};
+
+variable_declaration_list:
+  variable_declaration { $$ = new ASTNode(ASTNodeType::VariableDeclarationList, {$1});}
+| variable_declaration "," variable_declaration_list { $$ = new ASTNode(ASTNodeType::VariableDeclarationList, {$1, $3}); delete $2;};
+
+variable_declaration: identifier_list type_part_opt initialization_part_opt { $$ = new ASTNode(ASTNodeType::VariableDeclaration, {$1, $2, $3});};
+
+type_part_opt:
+  %empty {$$ = nullptr;}
+| ":" type_expression {$$ = $2; delete $1;};
+
+type_expression: primitive_type | expression;
+
+primitive_type:
+  "void" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "nothing" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "bool" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "int" primitive_type_parameter_part_opt { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1, $2});}
+| "uint" primitive_type_parameter_part_opt { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1, $2});}
+| "real" primitive_type_parameter_part_opt { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1, $2});}
+| "imag" primitive_type_parameter_part_opt { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1, $2});}
+| "complex" primitive_type_parameter_part_opt { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1, $2});}
+| "string" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "bytes" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "enum" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "record" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "class" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "owned" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "shared" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "unmanaged" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});}
+| "borrowed" { $$ = new ASTNode(ASTNodeType::PrimitiveType, {$1});};
+
+primitive_type_parameter_part_opt:
+  %empty {$$ = nullptr;}
+| parenthesized_expression;
+
+initialization_part_opt:
+  %empty {$$ = nullptr;}
+| "=" expression {$$ = $2; delete $1;};
 
 expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
 

@@ -16,7 +16,8 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
         if (son != nullptr && ((type == ASTNodeType::Statements && son->type == ASTNodeType::Statements)
         || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
         || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)
-        || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList))) {
+        || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList)
+        || (type == ASTNodeType::VariableDeclarationList && son->type == ASTNodeType::VariableDeclarationList))) {
             //std::cout << "getting rid of " << *son << "\n";
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;
@@ -74,5 +75,7 @@ void ASTNode::print(std::ostream& out, const std::string& prefix, bool isLast)
     for (std::size_t i = 0; i < sons.size(); i++) {
         if (sons[i] != nullptr)
             sons[i]->print(out, prefix + (isLast ? "    " : "│   "), i == sons.size() - 1);
+        else
+            out << prefix + (isLast ? "    " : "│   ") + (i == sons.size() - 1 ? "└──" : "├──") + "nullptr\n";
     }
 }

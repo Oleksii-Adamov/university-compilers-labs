@@ -45,7 +45,7 @@
 #ifndef YY_YY_PARSER_TAB_HH_INCLUDED
 # define YY_YY_PARSER_TAB_HH_INCLUDED
 // "%code requires" blocks.
-#line 11 "parser.yy"
+#line 10 "parser.yy"
 
   # include <string>
   # include "ASTNode.hh"
@@ -443,6 +443,31 @@ namespace yy {
       // "..<"
       // "."
       // "..."
+      // ":"
+      // "public"
+      // "private"
+      // "config"
+      // "extern"
+      // "export"
+      // "param"
+      // "ref"
+      // "void"
+      // "nothing"
+      // "bool"
+      // "int"
+      // "uint"
+      // "real"
+      // "imag"
+      // "complex"
+      // "string"
+      // "bytes"
+      // "enum"
+      // "record"
+      // "class"
+      // "owned"
+      // "shared"
+      // "unmanaged"
+      // "borrowed"
       // "if"
       // "then"
       // "else"
@@ -471,6 +496,17 @@ namespace yy {
       // identifier_list
       // iterable_expression
       // expression_list
+      // variable_declaration_statement
+      // privacy_specifier_opt
+      // config_extern_or_export_opt
+      // variable_kind
+      // variable_declaration_list
+      // variable_declaration
+      // type_part_opt
+      // type_expression
+      // primitive_type
+      // primitive_type_parameter_part_opt
+      // initialization_part_opt
       // expression
       // literal_expression
       // range_literal
@@ -569,20 +605,45 @@ namespace yy {
     TOK_HALF_OPEN_RANGE_SPECIFIER = 32, // "..<"
     TOK_MEMBER_ACCESS = 33,        // "."
     TOK_VARIABLE_ARGUMENT_LISTS = 34, // "..."
-    TOK_IF = 35,                   // "if"
-    TOK_THEN = 36,                 // "then"
-    TOK_ELSE = 37,                 // "else"
-    TOK_VAR = 38,                  // "var"
-    TOK_CONST = 39,                // "const"
-    TOK_WHILE = 40,                // "while"
-    TOK_DO = 41,                   // "do"
-    TOK_FOR = 42,                  // "for"
-    TOK_IN = 43,                   // "in"
-    TOK_ZIP = 44,                  // "zip"
-    TOK_IDENTIFIER = 45,           // IDENTIFIER
-    TOK_INTEGER_LITERAL = 46,      // INTEGER_LITERAL
-    TOK_NEG = 47,                  // NEG
-    TOK_POSITIVE_IDENTITY = 48     // POSITIVE_IDENTITY
+    TOK_COLUMN = 35,               // ":"
+    TOK_PUBLIC = 36,               // "public"
+    TOK_PRIVATE = 37,              // "private"
+    TOK_CONFIG = 38,               // "config"
+    TOK_EXTERN = 39,               // "extern"
+    TOK_EXPORT = 40,               // "export"
+    TOK_PARAM = 41,                // "param"
+    TOK_REF = 42,                  // "ref"
+    TOK_VOID = 43,                 // "void"
+    TOK_NOTHING = 44,              // "nothing"
+    TOK_BOOL = 45,                 // "bool"
+    TOK_INT = 46,                  // "int"
+    TOK_UINT = 47,                 // "uint"
+    TOK_REAL = 48,                 // "real"
+    TOK_IMAG = 49,                 // "imag"
+    TOK_COMPLEX = 50,              // "complex"
+    TOK_STRING = 51,               // "string"
+    TOK_BYTES = 52,                // "bytes"
+    TOK_ENUM = 53,                 // "enum"
+    TOK_RECORD = 54,               // "record"
+    TOK_CLASS = 55,                // "class"
+    TOK_OWNED = 56,                // "owned"
+    TOK_SHARED = 57,               // "shared"
+    TOK_UNMANAGED = 58,            // "unmanaged"
+    TOK_BORROWED = 59,             // "borrowed"
+    TOK_IF = 60,                   // "if"
+    TOK_THEN = 61,                 // "then"
+    TOK_ELSE = 62,                 // "else"
+    TOK_VAR = 63,                  // "var"
+    TOK_CONST = 64,                // "const"
+    TOK_WHILE = 65,                // "while"
+    TOK_DO = 66,                   // "do"
+    TOK_FOR = 67,                  // "for"
+    TOK_IN = 68,                   // "in"
+    TOK_ZIP = 69,                  // "zip"
+    TOK_IDENTIFIER = 70,           // IDENTIFIER
+    TOK_INTEGER_LITERAL = 71,      // INTEGER_LITERAL
+    TOK_NEG = 72,                  // NEG
+    TOK_POSITIVE_IDENTITY = 73     // POSITIVE_IDENTITY
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -599,7 +660,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 49, ///< Number of tokens.
+        YYNTOKENS = 74, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -636,52 +697,88 @@ namespace yy {
         S_HALF_OPEN_RANGE_SPECIFIER = 32,        // "..<"
         S_MEMBER_ACCESS = 33,                    // "."
         S_VARIABLE_ARGUMENT_LISTS = 34,          // "..."
-        S_IF = 35,                               // "if"
-        S_THEN = 36,                             // "then"
-        S_ELSE = 37,                             // "else"
-        S_VAR = 38,                              // "var"
-        S_CONST = 39,                            // "const"
-        S_WHILE = 40,                            // "while"
-        S_DO = 41,                               // "do"
-        S_FOR = 42,                              // "for"
-        S_IN = 43,                               // "in"
-        S_ZIP = 44,                              // "zip"
-        S_IDENTIFIER = 45,                       // IDENTIFIER
-        S_INTEGER_LITERAL = 46,                  // INTEGER_LITERAL
-        S_NEG = 47,                              // NEG
-        S_POSITIVE_IDENTITY = 48,                // POSITIVE_IDENTITY
-        S_YYACCEPT = 49,                         // $accept
-        S_unit = 50,                             // unit
-        S_statements_opt = 51,                   // statements_opt
-        S_statement = 52,                        // statement
-        S_block_statement = 53,                  // block_statement
-        S_expression_statement = 54,             // expression_statement
-        S_assignment_statement = 55,             // assignment_statement
-        S_conditional_statement = 56,            // conditional_statement
-        S_else_part_opt = 57,                    // else_part_opt
-        S_ctrl_decl = 58,                        // ctrl_decl
-        S_while_do_statement = 59,               // while_do_statement
-        S_do_while_statement = 60,               // do_while_statement
-        S_for_statement = 61,                    // for_statement
-        S_index_var_decl = 62,                   // index_var_decl
-        S_tuple_grouped_identifier_list = 63,    // tuple_grouped_identifier_list
-        S_identifier_list = 64,                  // identifier_list
-        S_iterable_expression = 65,              // iterable_expression
-        S_expression_list = 66,                  // expression_list
-        S_expression = 67,                       // expression
-        S_literal_expression = 68,               // literal_expression
-        S_range_literal = 69,                    // range_literal
-        S_variable_expression = 70,              // variable_expression
-        S_parenthesized_expression = 71,         // parenthesized_expression
-        S_lvalue_expression = 72,                // lvalue_expression
-        S_unary_expression = 73,                 // unary_expression
-        S_binary_expression = 74,                // binary_expression
-        S_method_call_expression = 75,           // method_call_expression
-        S_call_expression = 76,                  // call_expression
-        S_named_expression_list = 77,            // named_expression_list
-        S_named_expression = 78,                 // named_expression
-        S_member_access_expression = 79,         // member_access_expression
-        S_field_access_expression = 80           // field_access_expression
+        S_COLUMN = 35,                           // ":"
+        S_PUBLIC = 36,                           // "public"
+        S_PRIVATE = 37,                          // "private"
+        S_CONFIG = 38,                           // "config"
+        S_EXTERN = 39,                           // "extern"
+        S_EXPORT = 40,                           // "export"
+        S_PARAM = 41,                            // "param"
+        S_REF = 42,                              // "ref"
+        S_VOID = 43,                             // "void"
+        S_NOTHING = 44,                          // "nothing"
+        S_BOOL = 45,                             // "bool"
+        S_INT = 46,                              // "int"
+        S_UINT = 47,                             // "uint"
+        S_REAL = 48,                             // "real"
+        S_IMAG = 49,                             // "imag"
+        S_COMPLEX = 50,                          // "complex"
+        S_STRING = 51,                           // "string"
+        S_BYTES = 52,                            // "bytes"
+        S_ENUM = 53,                             // "enum"
+        S_RECORD = 54,                           // "record"
+        S_CLASS = 55,                            // "class"
+        S_OWNED = 56,                            // "owned"
+        S_SHARED = 57,                           // "shared"
+        S_UNMANAGED = 58,                        // "unmanaged"
+        S_BORROWED = 59,                         // "borrowed"
+        S_IF = 60,                               // "if"
+        S_THEN = 61,                             // "then"
+        S_ELSE = 62,                             // "else"
+        S_VAR = 63,                              // "var"
+        S_CONST = 64,                            // "const"
+        S_WHILE = 65,                            // "while"
+        S_DO = 66,                               // "do"
+        S_FOR = 67,                              // "for"
+        S_IN = 68,                               // "in"
+        S_ZIP = 69,                              // "zip"
+        S_IDENTIFIER = 70,                       // IDENTIFIER
+        S_INTEGER_LITERAL = 71,                  // INTEGER_LITERAL
+        S_NEG = 72,                              // NEG
+        S_POSITIVE_IDENTITY = 73,                // POSITIVE_IDENTITY
+        S_YYACCEPT = 74,                         // $accept
+        S_unit = 75,                             // unit
+        S_statements_opt = 76,                   // statements_opt
+        S_statement = 77,                        // statement
+        S_block_statement = 78,                  // block_statement
+        S_expression_statement = 79,             // expression_statement
+        S_assignment_statement = 80,             // assignment_statement
+        S_conditional_statement = 81,            // conditional_statement
+        S_else_part_opt = 82,                    // else_part_opt
+        S_ctrl_decl = 83,                        // ctrl_decl
+        S_while_do_statement = 84,               // while_do_statement
+        S_do_while_statement = 85,               // do_while_statement
+        S_for_statement = 86,                    // for_statement
+        S_index_var_decl = 87,                   // index_var_decl
+        S_tuple_grouped_identifier_list = 88,    // tuple_grouped_identifier_list
+        S_identifier_list = 89,                  // identifier_list
+        S_iterable_expression = 90,              // iterable_expression
+        S_expression_list = 91,                  // expression_list
+        S_variable_declaration_statement = 92,   // variable_declaration_statement
+        S_privacy_specifier_opt = 93,            // privacy_specifier_opt
+        S_config_extern_or_export_opt = 94,      // config_extern_or_export_opt
+        S_variable_kind = 95,                    // variable_kind
+        S_variable_declaration_list = 96,        // variable_declaration_list
+        S_variable_declaration = 97,             // variable_declaration
+        S_type_part_opt = 98,                    // type_part_opt
+        S_type_expression = 99,                  // type_expression
+        S_primitive_type = 100,                  // primitive_type
+        S_primitive_type_parameter_part_opt = 101, // primitive_type_parameter_part_opt
+        S_initialization_part_opt = 102,         // initialization_part_opt
+        S_expression = 103,                      // expression
+        S_literal_expression = 104,              // literal_expression
+        S_range_literal = 105,                   // range_literal
+        S_variable_expression = 106,             // variable_expression
+        S_parenthesized_expression = 107,        // parenthesized_expression
+        S_lvalue_expression = 108,               // lvalue_expression
+        S_unary_expression = 109,                // unary_expression
+        S_binary_expression = 110,               // binary_expression
+        S_method_call_expression = 111,          // method_call_expression
+        S_call_expression = 112,                 // call_expression
+        S_named_expression_list = 113,           // named_expression_list
+        S_named_expression = 114,                // named_expression
+        S_member_access_expression = 115,        // member_access_expression
+        S_field_access_expression = 116          // field_access_expression
       };
     };
 
@@ -750,6 +847,31 @@ namespace yy {
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
       case symbol_kind::S_MEMBER_ACCESS: // "."
       case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
+      case symbol_kind::S_COLUMN: // ":"
+      case symbol_kind::S_PUBLIC: // "public"
+      case symbol_kind::S_PRIVATE: // "private"
+      case symbol_kind::S_CONFIG: // "config"
+      case symbol_kind::S_EXTERN: // "extern"
+      case symbol_kind::S_EXPORT: // "export"
+      case symbol_kind::S_PARAM: // "param"
+      case symbol_kind::S_REF: // "ref"
+      case symbol_kind::S_VOID: // "void"
+      case symbol_kind::S_NOTHING: // "nothing"
+      case symbol_kind::S_BOOL: // "bool"
+      case symbol_kind::S_INT: // "int"
+      case symbol_kind::S_UINT: // "uint"
+      case symbol_kind::S_REAL: // "real"
+      case symbol_kind::S_IMAG: // "imag"
+      case symbol_kind::S_COMPLEX: // "complex"
+      case symbol_kind::S_STRING: // "string"
+      case symbol_kind::S_BYTES: // "bytes"
+      case symbol_kind::S_ENUM: // "enum"
+      case symbol_kind::S_RECORD: // "record"
+      case symbol_kind::S_CLASS: // "class"
+      case symbol_kind::S_OWNED: // "owned"
+      case symbol_kind::S_SHARED: // "shared"
+      case symbol_kind::S_UNMANAGED: // "unmanaged"
+      case symbol_kind::S_BORROWED: // "borrowed"
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -778,6 +900,17 @@ namespace yy {
       case symbol_kind::S_identifier_list: // identifier_list
       case symbol_kind::S_iterable_expression: // iterable_expression
       case symbol_kind::S_expression_list: // expression_list
+      case symbol_kind::S_variable_declaration_statement: // variable_declaration_statement
+      case symbol_kind::S_privacy_specifier_opt: // privacy_specifier_opt
+      case symbol_kind::S_config_extern_or_export_opt: // config_extern_or_export_opt
+      case symbol_kind::S_variable_kind: // variable_kind
+      case symbol_kind::S_variable_declaration_list: // variable_declaration_list
+      case symbol_kind::S_variable_declaration: // variable_declaration
+      case symbol_kind::S_type_part_opt: // type_part_opt
+      case symbol_kind::S_type_expression: // type_expression
+      case symbol_kind::S_primitive_type: // primitive_type
+      case symbol_kind::S_primitive_type_parameter_part_opt: // primitive_type_parameter_part_opt
+      case symbol_kind::S_initialization_part_opt: // initialization_part_opt
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_range_literal: // range_literal
@@ -886,6 +1019,31 @@ switch (yykind)
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
       case symbol_kind::S_MEMBER_ACCESS: // "."
       case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
+      case symbol_kind::S_COLUMN: // ":"
+      case symbol_kind::S_PUBLIC: // "public"
+      case symbol_kind::S_PRIVATE: // "private"
+      case symbol_kind::S_CONFIG: // "config"
+      case symbol_kind::S_EXTERN: // "extern"
+      case symbol_kind::S_EXPORT: // "export"
+      case symbol_kind::S_PARAM: // "param"
+      case symbol_kind::S_REF: // "ref"
+      case symbol_kind::S_VOID: // "void"
+      case symbol_kind::S_NOTHING: // "nothing"
+      case symbol_kind::S_BOOL: // "bool"
+      case symbol_kind::S_INT: // "int"
+      case symbol_kind::S_UINT: // "uint"
+      case symbol_kind::S_REAL: // "real"
+      case symbol_kind::S_IMAG: // "imag"
+      case symbol_kind::S_COMPLEX: // "complex"
+      case symbol_kind::S_STRING: // "string"
+      case symbol_kind::S_BYTES: // "bytes"
+      case symbol_kind::S_ENUM: // "enum"
+      case symbol_kind::S_RECORD: // "record"
+      case symbol_kind::S_CLASS: // "class"
+      case symbol_kind::S_OWNED: // "owned"
+      case symbol_kind::S_SHARED: // "shared"
+      case symbol_kind::S_UNMANAGED: // "unmanaged"
+      case symbol_kind::S_BORROWED: // "borrowed"
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -914,6 +1072,17 @@ switch (yykind)
       case symbol_kind::S_identifier_list: // identifier_list
       case symbol_kind::S_iterable_expression: // iterable_expression
       case symbol_kind::S_expression_list: // expression_list
+      case symbol_kind::S_variable_declaration_statement: // variable_declaration_statement
+      case symbol_kind::S_privacy_specifier_opt: // privacy_specifier_opt
+      case symbol_kind::S_config_extern_or_export_opt: // config_extern_or_export_opt
+      case symbol_kind::S_variable_kind: // variable_kind
+      case symbol_kind::S_variable_declaration_list: // variable_declaration_list
+      case symbol_kind::S_variable_declaration: // variable_declaration
+      case symbol_kind::S_type_part_opt: // type_part_opt
+      case symbol_kind::S_type_expression: // type_expression
+      case symbol_kind::S_primitive_type: // primitive_type
+      case symbol_kind::S_primitive_type_parameter_part_opt: // primitive_type_parameter_part_opt
+      case symbol_kind::S_initialization_part_opt: // initialization_part_opt
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_range_literal: // range_literal
@@ -1619,6 +1788,381 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_COLUMN (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_COLUMN, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COLUMN (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_COLUMN, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PUBLIC (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_PUBLIC, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_PUBLIC (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_PUBLIC, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PRIVATE (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_PRIVATE, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_PRIVATE (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_PRIVATE, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONFIG (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_CONFIG, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CONFIG (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_CONFIG, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXTERN (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_EXTERN, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EXTERN (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_EXTERN, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXPORT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_EXPORT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EXPORT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_EXPORT, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_PARAM (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_PARAM, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_PARAM (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_PARAM, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REF (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_REF, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_REF (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_REF, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VOID (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_VOID, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_VOID (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_VOID, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NOTHING (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_NOTHING, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_NOTHING (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_NOTHING, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BOOL (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BOOL, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BOOL (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BOOL, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_INT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_INT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_INT, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UINT (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_UINT, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_UINT (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_UINT, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_REAL (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_REAL, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_REAL (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_REAL, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IMAG (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_IMAG, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IMAG (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_IMAG, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMPLEX (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_COMPLEX, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COMPLEX (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_COMPLEX, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STRING (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_STRING, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STRING (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_STRING, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BYTES (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BYTES, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BYTES (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BYTES, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ENUM (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_ENUM, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ENUM (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_ENUM, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RECORD (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_RECORD, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RECORD (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_RECORD, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CLASS (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_CLASS, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CLASS (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_CLASS, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OWNED (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_OWNED, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OWNED (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_OWNED, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SHARED (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_SHARED, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SHARED (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_SHARED, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNMANAGED (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_UNMANAGED, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_UNMANAGED (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_UNMANAGED, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BORROWED (ASTNode* v, location_type l)
+      {
+        return symbol_type (token::TOK_BORROWED, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BORROWED (const ASTNode*& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_BORROWED, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IF (ASTNode* v, location_type l)
       {
         return symbol_type (token::TOK_IF, std::move (v), std::move (l));
@@ -1906,7 +2450,7 @@ switch (yykind)
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
     // means the default is an error.
-    static const signed char yydefact_[];
+    static const unsigned char yydefact_[];
 
     // YYPGOTO[NTERM-NUM].
     static const short yypgoto_[];
@@ -2170,8 +2714,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 743,     ///< Last index in yytable_.
-      yynnts_ = 32,  ///< Number of nonterminal symbols.
+      yylast_ = 839,     ///< Last index in yytable_.
+      yynnts_ = 43,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -2229,6 +2773,31 @@ switch (yykind)
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
       case symbol_kind::S_MEMBER_ACCESS: // "."
       case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
+      case symbol_kind::S_COLUMN: // ":"
+      case symbol_kind::S_PUBLIC: // "public"
+      case symbol_kind::S_PRIVATE: // "private"
+      case symbol_kind::S_CONFIG: // "config"
+      case symbol_kind::S_EXTERN: // "extern"
+      case symbol_kind::S_EXPORT: // "export"
+      case symbol_kind::S_PARAM: // "param"
+      case symbol_kind::S_REF: // "ref"
+      case symbol_kind::S_VOID: // "void"
+      case symbol_kind::S_NOTHING: // "nothing"
+      case symbol_kind::S_BOOL: // "bool"
+      case symbol_kind::S_INT: // "int"
+      case symbol_kind::S_UINT: // "uint"
+      case symbol_kind::S_REAL: // "real"
+      case symbol_kind::S_IMAG: // "imag"
+      case symbol_kind::S_COMPLEX: // "complex"
+      case symbol_kind::S_STRING: // "string"
+      case symbol_kind::S_BYTES: // "bytes"
+      case symbol_kind::S_ENUM: // "enum"
+      case symbol_kind::S_RECORD: // "record"
+      case symbol_kind::S_CLASS: // "class"
+      case symbol_kind::S_OWNED: // "owned"
+      case symbol_kind::S_SHARED: // "shared"
+      case symbol_kind::S_UNMANAGED: // "unmanaged"
+      case symbol_kind::S_BORROWED: // "borrowed"
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -2257,6 +2826,17 @@ switch (yykind)
       case symbol_kind::S_identifier_list: // identifier_list
       case symbol_kind::S_iterable_expression: // iterable_expression
       case symbol_kind::S_expression_list: // expression_list
+      case symbol_kind::S_variable_declaration_statement: // variable_declaration_statement
+      case symbol_kind::S_privacy_specifier_opt: // privacy_specifier_opt
+      case symbol_kind::S_config_extern_or_export_opt: // config_extern_or_export_opt
+      case symbol_kind::S_variable_kind: // variable_kind
+      case symbol_kind::S_variable_declaration_list: // variable_declaration_list
+      case symbol_kind::S_variable_declaration: // variable_declaration
+      case symbol_kind::S_type_part_opt: // type_part_opt
+      case symbol_kind::S_type_expression: // type_expression
+      case symbol_kind::S_primitive_type: // primitive_type
+      case symbol_kind::S_primitive_type_parameter_part_opt: // primitive_type_parameter_part_opt
+      case symbol_kind::S_initialization_part_opt: // initialization_part_opt
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_range_literal: // range_literal
@@ -2335,6 +2915,31 @@ switch (yykind)
       case symbol_kind::S_HALF_OPEN_RANGE_SPECIFIER: // "..<"
       case symbol_kind::S_MEMBER_ACCESS: // "."
       case symbol_kind::S_VARIABLE_ARGUMENT_LISTS: // "..."
+      case symbol_kind::S_COLUMN: // ":"
+      case symbol_kind::S_PUBLIC: // "public"
+      case symbol_kind::S_PRIVATE: // "private"
+      case symbol_kind::S_CONFIG: // "config"
+      case symbol_kind::S_EXTERN: // "extern"
+      case symbol_kind::S_EXPORT: // "export"
+      case symbol_kind::S_PARAM: // "param"
+      case symbol_kind::S_REF: // "ref"
+      case symbol_kind::S_VOID: // "void"
+      case symbol_kind::S_NOTHING: // "nothing"
+      case symbol_kind::S_BOOL: // "bool"
+      case symbol_kind::S_INT: // "int"
+      case symbol_kind::S_UINT: // "uint"
+      case symbol_kind::S_REAL: // "real"
+      case symbol_kind::S_IMAG: // "imag"
+      case symbol_kind::S_COMPLEX: // "complex"
+      case symbol_kind::S_STRING: // "string"
+      case symbol_kind::S_BYTES: // "bytes"
+      case symbol_kind::S_ENUM: // "enum"
+      case symbol_kind::S_RECORD: // "record"
+      case symbol_kind::S_CLASS: // "class"
+      case symbol_kind::S_OWNED: // "owned"
+      case symbol_kind::S_SHARED: // "shared"
+      case symbol_kind::S_UNMANAGED: // "unmanaged"
+      case symbol_kind::S_BORROWED: // "borrowed"
       case symbol_kind::S_IF: // "if"
       case symbol_kind::S_THEN: // "then"
       case symbol_kind::S_ELSE: // "else"
@@ -2363,6 +2968,17 @@ switch (yykind)
       case symbol_kind::S_identifier_list: // identifier_list
       case symbol_kind::S_iterable_expression: // iterable_expression
       case symbol_kind::S_expression_list: // expression_list
+      case symbol_kind::S_variable_declaration_statement: // variable_declaration_statement
+      case symbol_kind::S_privacy_specifier_opt: // privacy_specifier_opt
+      case symbol_kind::S_config_extern_or_export_opt: // config_extern_or_export_opt
+      case symbol_kind::S_variable_kind: // variable_kind
+      case symbol_kind::S_variable_declaration_list: // variable_declaration_list
+      case symbol_kind::S_variable_declaration: // variable_declaration
+      case symbol_kind::S_type_part_opt: // type_part_opt
+      case symbol_kind::S_type_expression: // type_expression
+      case symbol_kind::S_primitive_type: // primitive_type
+      case symbol_kind::S_primitive_type_parameter_part_opt: // primitive_type_parameter_part_opt
+      case symbol_kind::S_initialization_part_opt: // initialization_part_opt
       case symbol_kind::S_expression: // expression
       case symbol_kind::S_literal_expression: // literal_expression
       case symbol_kind::S_range_literal: // range_literal
@@ -2442,7 +3058,7 @@ switch (yykind)
   }
 
 } // yy
-#line 2446 "parser.tab.hh"
+#line 3062 "parser.tab.hh"
 
 
 

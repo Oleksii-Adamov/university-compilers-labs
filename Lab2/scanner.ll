@@ -67,8 +67,7 @@
 
 %{
   // A number symbol corresponding to the value in S.
-  yy::parser::symbol_type
-  make_NUMBER (const std::string &s, const yy::parser::location_type& loc);
+  // yy::parser::symbol_type make_NUMBER (const std::string &s, const yy::parser::location_type& loc);
 %}
 
 white_space [ \t\r\f]
@@ -123,6 +122,7 @@ integer_literal  {digits}
 ".." return yy::parser::make_RANGE_SPECIFIER (new ASTNode(ASTNodeType::RangeSpecifier), loc);
 "..<" return yy::parser::make_HALF_OPEN_RANGE_SPECIFIER (new ASTNode(ASTNodeType::HalfOpenRangeSpecifier), loc);
 "." return yy::parser::make_MEMBER_ACCESS (new ASTNode(ASTNodeType::MemberAccess), loc);
+":" return yy::parser::make_COLUMN (new ASTNode(ASTNodeType::Column), loc);
 "if" return yy::parser::make_IF (new ASTNode(ASTNodeType::If), loc);
 "then" return yy::parser::make_THEN (new ASTNode(ASTNodeType::Then), loc);
 "else" return yy::parser::make_ELSE (new ASTNode(ASTNodeType::Else), loc);
@@ -133,6 +133,30 @@ integer_literal  {digits}
 "for" return yy::parser::make_FOR (new ASTNode(ASTNodeType::For), loc);
 "in" return yy::parser::make_IN (new ASTNode(ASTNodeType::In), loc);
 "zip" return yy::parser::make_ZIP (new ASTNode(ASTNodeType::Zip), loc);
+"public" return yy::parser::make_PUBLIC (new ASTNode(ASTNodeType::Public), loc);
+"private" return yy::parser::make_PRIVATE (new ASTNode(ASTNodeType::Private), loc);
+"config" return yy::parser::make_CONFIG (new ASTNode(ASTNodeType::Config), loc);
+"extern" return yy::parser::make_EXTERN (new ASTNode(ASTNodeType::Extern), loc);
+"export" return yy::parser::make_EXPORT (new ASTNode(ASTNodeType::Export), loc);
+"param" return yy::parser::make_PARAM (new ASTNode(ASTNodeType::Param), loc);
+"ref" return yy::parser::make_REF (new ASTNode(ASTNodeType::Ref), loc);
+"void" return yy::parser::make_VOID (new ASTNode(ASTNodeType::Void), loc);
+"nothing" return yy::parser::make_NOTHING (new ASTNode(ASTNodeType::Nothing), loc);
+"bool" return yy::parser::make_BOOL (new ASTNode(ASTNodeType::Bool), loc);
+"int" return yy::parser::make_INT (new ASTNode(ASTNodeType::Int), loc);
+"uint" return yy::parser::make_UINT (new ASTNode(ASTNodeType::Uint), loc);
+"real" return yy::parser::make_REAL (new ASTNode(ASTNodeType::Real), loc);
+"imag" return yy::parser::make_IMAG (new ASTNode(ASTNodeType::Imag), loc);
+"complex" return yy::parser::make_COMPLEX (new ASTNode(ASTNodeType::Complex), loc);
+"string" return yy::parser::make_STRING (new ASTNode(ASTNodeType::String), loc);
+"bytes" return yy::parser::make_BYTES (new ASTNode(ASTNodeType::Bytes), loc);
+"enum" return yy::parser::make_ENUM (new ASTNode(ASTNodeType::Enum), loc);
+"record" return yy::parser::make_RECORD (new ASTNode(ASTNodeType::Record), loc);
+"class" return yy::parser::make_CLASS (new ASTNode(ASTNodeType::Class), loc);
+"owned" return yy::parser::make_OWNED (new ASTNode(ASTNodeType::Owned), loc);
+"shared" return yy::parser::make_SHARED (new ASTNode(ASTNodeType::Shared), loc);
+"unmanaged" return yy::parser::make_UNMANAGED (new ASTNode(ASTNodeType::Unmanaged), loc);
+"borrowed" return yy::parser::make_BORROWED (new ASTNode(ASTNodeType::Borrowed), loc);
 
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
