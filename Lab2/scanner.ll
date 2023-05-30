@@ -73,11 +73,18 @@
 white_space [ \t\r\f]
 identifier [a-zA-Z_][a-zA-Z_0-9$]*
 digits [0-9][0-9_]*
+digits_opt [0-9_]*
 hexadecimal_digits [0-9A-Fa-f][0-9A-Fa-f_]*
+hexadecimal_digits_opt [0-9A-Fa-f_]*
 octal_digits [0-7][0-7_]*
 binary_digits [0-1][0-1_]*
 integer_literal  {digits}|("0"[xX]{hexadecimal_digits})|("0"[oO]{octal_digits})|("0"[bB]{binary_digits})
-
+exponent_part [eE]([+-]{0,1}){digits}
+exponent_part_opt {exponent_part}{0,1}
+p_exponent_part [pP]([+-]{0,1}){digits}
+p_exponent_part_opt {p_exponent_part}{0,1}
+real_literal ({digits_opt}"."{digits}{exponent_part_opt})|({digits}("."{0,1}){exponent_part})|("0"[xX]{hexadecimal_digits_opt}"."{hexadecimal_digits}{p_exponent_part_opt})|("0"[xX]{hexadecimal_digits}("."{0,1}){p_exponent_part})
+imaginary_literal ({integer_literal}"i")|({real_literal}"i")
 
 %{
   // Code run each time a pattern is matched.
@@ -170,7 +177,8 @@ integer_literal  {digits}|("0"[xX]{hexadecimal_digits})|("0"[oO]{octal_digits})|
 
 "true"|"false" return yy::parser::make_BOOL_LITERAL (new ASTNode(ASTNodeType::BoolLiteral, yytext), loc);
 {integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
-
+{real_literal} return yy::parser::make_REAL_LITERAL (new ASTNode(ASTNodeType::RealLiteral, yytext), loc);
+{imaginary_literal} return yy::parser::make_IMAGINARY_LITERAL (new ASTNode(ASTNodeType::ImaginaryLiteral, yytext), loc);
 {identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
 
