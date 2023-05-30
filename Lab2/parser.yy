@@ -150,6 +150,7 @@
 %precedence "then";
 %precedence "else";
 %left "in";
+%right "public" "private" "config" "extern" "export" ":";
 %left "by" "#";
 %left "||";
 %left "&&";
@@ -227,7 +228,7 @@ identifier_list:
   IDENTIFIER { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1});}
 | IDENTIFIER "," identifier_list { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1, $3}); delete $2;}
 | tuple_grouped_identifier_list
-| tuple_grouped_identifier_list "," identifier_list { $$ = new ASTNode(ASTNodeType::TupleGroupedIdentifierList, {$1, $3}); delete $2;}
+| tuple_grouped_identifier_list "," identifier_list { $$ = new ASTNode(ASTNodeType::IdentifierList, {$1, $3}); delete $2;};
 
 iterable_expression:
   expression
@@ -240,12 +241,12 @@ expression_list:
 variable_declaration_statement: privacy_specifier_opt config_extern_or_export_opt variable_kind variable_declaration_list ";" { $$ = new ASTNode(ASTNodeType::VariableDeclarationStatement, {$1, $2, $3, $4});};
 
 privacy_specifier_opt:
-  %empty {$$ = nullptr;}
+  %empty %prec "in" {$$ = nullptr;}
 | "public" | "private";
 
 config_extern_or_export_opt:
-  %empty {$$ = nullptr;}
-| "config" | "extern" | "export";
+  %empty %prec "in" {$$ = nullptr;}
+| "config" | "extern" | "export" ;
 
 variable_kind:
   "param" { $$ = new ASTNode(ASTNodeType::VariableKind, {$1});}
@@ -261,7 +262,7 @@ variable_declaration_list:
 variable_declaration: identifier_list type_part_opt initialization_part_opt { $$ = new ASTNode(ASTNodeType::VariableDeclaration, {$1, $2, $3});};
 
 type_part_opt:
-  %empty {$$ = nullptr;}
+  %empty %prec "in" {$$ = nullptr;}
 | ":" type_expression {$$ = $2; delete $1;};
 
 type_expression: primitive_type | expression;
@@ -290,7 +291,7 @@ primitive_type_parameter_part_opt:
 | parenthesized_expression;
 
 initialization_part_opt:
-  %empty {$$ = nullptr;}
+  %empty %prec "in" {$$ = nullptr;}
 | "=" expression {$$ = $2; delete $1;};
 
 expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
