@@ -17,7 +17,8 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
         || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
         || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)
         || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList)
-        || (type == ASTNodeType::VariableDeclarationList && son->type == ASTNodeType::VariableDeclarationList))) {
+        || (type == ASTNodeType::VariableDeclarationList && son->type == ASTNodeType::VariableDeclarationList))
+        || (type == ASTNodeType::ClassStatementList && son->type == ASTNodeType::ClassStatementList)) {
             //std::cout << "getting rid of " << *son << "\n";
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;

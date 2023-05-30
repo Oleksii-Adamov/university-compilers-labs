@@ -151,6 +151,7 @@
 %printer { yyo << *$$; } <*>;
 
 %%
+%precedence LOWEST_PREC;
 %precedence ",";
 %precedence "for";
 %precedence "do";
@@ -248,11 +249,11 @@ expression_list:
 variable_declaration_statement: privacy_specifier_opt config_extern_or_export_opt variable_kind variable_declaration_list ";" { $$ = new ASTNode(ASTNodeType::VariableDeclarationStatement, {$1, $2, $3, $4});};
 
 privacy_specifier_opt:
-  %empty %prec "in" {$$ = nullptr;}
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
 | "public" | "private";
 
 config_extern_or_export_opt:
-  %empty %prec "in" {$$ = nullptr;}
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
 | "config" | "extern" | "export" ;
 
 variable_kind:
@@ -269,7 +270,7 @@ variable_declaration_list:
 variable_declaration: identifier_list type_part_opt initialization_part_opt { $$ = new ASTNode(ASTNodeType::VariableDeclaration, {$1, $2, $3});};
 
 type_part_opt:
-  %empty %prec "in" {$$ = nullptr;}
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
 | ":" type_expression {$$ = $2; delete $1;};
 
 type_expression: primitive_type | expression;
@@ -298,8 +299,94 @@ primitive_type_parameter_part_opt:
 | parenthesized_expression;
 
 initialization_part_opt:
-  %empty %prec "in" {$$ = nullptr;}
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
 | "=" expression {$$ = $2; delete $1;};
+
+class_declaration_statement: "class" IDENTIFIER class_inherit_opt "{" class_statement_list_opt "}" {$$ = new ASTNode(ASTNodeType::ClassDeclarationStatement, {$2, $3, $5}); delete $1; delete $4; delete $6;}
+
+class_inherit_opt:
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
+  ":" basic_class_type {$$ = $2; delete $1;};
+
+basic_class_type:
+  IDENTIFIER
+| IDENTIFIER "(" named_expression_list ")";
+
+class_statement_list_opt:
+  %empty {$$ = nullptr;}
+| class_statement_list;
+
+class_statement_list:
+  class_statement { $$ = new ASTNode(ASTNodeType::ClassStatementList, {$1});}
+| class_statement class_statement_list { $$ = new ASTNode(ASTNodeType::ClassStatementList, {$1, $2});};
+
+class_statement: variable_declaration_statement | method_declaration_statement | type_declaration_statement;
+
+method_declaration_statement: procedure_kind_opt proc_or_iter this_intent_opt type_binding_opt IDENTIFIER argument_list_opt return_intent_opt return_type_opt where_clause_opt function_body;
+
+procedure_kind_opt:
+  %empty {$$ = nullptr;}
+| "inline"
+| "export"
+| "extern"
+| "override";
+
+proc_or_iter: "proc" | "iter";
+
+this_intent_opt:
+%empty {$$ = nullptr;}
+| "param"  { $$ = new ASTNode(ASTNodeType::ThisIntent, {$1});}
+| "type" { $$ = new ASTNode(ASTNodeType::ThisIntent, {$1});}
+| "ref" { $$ = new ASTNode(ASTNodeType::ThisIntent, {$1});}
+| "const" "ref" { $$ = new ASTNode(ASTNodeType::ThisIntent, {$1, $2});}
+| "const" { $$ = new ASTNode(ASTNodeType::ThisIntent, {$1});};
+
+argument-list:
+  ( formals[OPT] )
+
+formals:
+  formal
+  formal , formals
+
+formal:
+  formal_intent_opt IDENTIFIER type_part_opt default_expression_opt
+  formal_intent_opt IDENTIFIER type_part_opt variable_argument_expression
+  formal_intent_opt tuple_grouped_identifier_list type_part_opt default_expression_opt
+  formal_intent_opt tuple_grouped_identifier_list type_part_opt variable_argument_expression
+
+formal_intent_opt:
+%empty {$$ = nullptr;}
+| "const"  { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "const" "in" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "const" "ref" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "in" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1, $2});}
+| "out" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "inout" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "ref" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "param" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});}
+| "type" { $$ = new ASTNode(ASTNodeType::FormalIntent, {$1});};
+
+default_expression_opt:
+  %empty %prec LOWEST_PREC {$$ = nullptr;}
+| "=" expression
+
+variable_argument_expression:
+  "..." expression {$$ = new ASTNode(ASTNodeType::VariableArgumentExpression, {$2}); delete $1;}
+| "..." {$$ = new ASTNode(ASTNodeType::VariableArgumentExpression, {nullptr}); delete $1;};
+
+return_intent_opt:
+%empty {$$ = nullptr;}
+| "param"  { $$ = new ASTNode(ASTNodeType::ReturnIntent, {$1});}
+| "type" { $$ = new ASTNode(ASTNodeType::ReturnIntent, {$1});}
+| "ref" { $$ = new ASTNode(ASTNodeType::ReturnIntent, {$1});}
+| "const" "ref" { $$ = new ASTNode(ASTNodeType::ReturnIntent, {$1, $2});}
+| "const" { $$ = new ASTNode(ASTNodeType::ReturnIntent, {$1});};
+
+type_binding:
+IDENTIFIER "."
+| parenthesized_expression ".";
+
+type_declaration_statement: class_declaration_statement;
 
 expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
 
