@@ -57,6 +57,7 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Do: s = "Do"; break;
         case ASTNodeType::For: s = "For"; break;
         case ASTNodeType::In: s = "In"; break;
+        case ASTNodeType::Zip: s = "Zip"; break;
         case ASTNodeType::Public: s = "Public"; break;
         case ASTNodeType::Private: s = "Private"; break;
         case ASTNodeType::Config: s = "Config"; break;
@@ -81,6 +82,14 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::Shared: s = "Shared"; break;
         case ASTNodeType::Unmanaged: s = "Unmanaged"; break;
         case ASTNodeType::Borrowed: s = "Borrowed"; break;
+        case ASTNodeType::Out: s = "Out"; break;
+        case ASTNodeType::Inout: s = "Inout"; break;
+        case ASTNodeType::Type: s = "Type"; break;
+        case ASTNodeType::Inline: s = "Inline"; break;
+        case ASTNodeType::Override: s = "Override"; break;
+        case ASTNodeType::Proc: s = "Proc"; break;
+        case ASTNodeType::Iter: s = "Iter"; break;
+        case ASTNodeType::Where: s = "Where"; break;
         case ASTNodeType::RangeLiteral: s = "RangeLiteral"; break;
         case ASTNodeType::UnaryExpression: s = "UnaryExpression"; break;
         case ASTNodeType::BinaryExpression: s = "BinaryExpression"; break;
@@ -104,6 +113,16 @@ std::ostream& operator<<(std::ostream& out, const ASTNodeType& astNodeType) {
         case ASTNodeType::VariableDeclarationList: s = "VariableDeclarationList"; break;
         case ASTNodeType::VariableDeclaration: s = "VariableDeclaration"; break;
         case ASTNodeType::PrimitiveType: s = "PrimitiveType"; break;
+        case ASTNodeType::ClassDeclarationStatement: s = "ClassDeclarationStatement"; break;
+        case ASTNodeType::ClassStatementList: s = "ClassStatementList"; break;
+        case ASTNodeType::MethodDeclarationStatement: s = "MethodDeclarationStatement"; break;
+        case ASTNodeType::Intent: s = "Intent"; break;
+        case ASTNodeType::Formal: s = "Formal"; break;
+        case ASTNodeType::DefaultExpression: s = "DefaultExpression"; break;
+        case ASTNodeType::VariableArgumentExpression: s = "VariableArgumentExpression"; break;
+        case ASTNodeType::TypeBinding: s = "TypeBinding"; break;
+        case ASTNodeType::WhereClause: s = "WhereClause"; break;
+        case ASTNodeType::ClassType: s = "ClassType"; break;
         case ASTNodeType::Statements: s = "Statements"; break;
     }
 

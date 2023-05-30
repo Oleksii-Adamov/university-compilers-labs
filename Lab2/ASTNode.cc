@@ -17,19 +17,15 @@ ASTNode::ASTNode(ASTNodeType type_, std::initializer_list<ASTNode*> sons_) {
         || (type == ASTNodeType::IdentifierList && son->type == ASTNodeType::IdentifierList)
         || (type == ASTNodeType::ExpressionList && son->type == ASTNodeType::ExpressionList)
         || (type == ASTNodeType::NamedExpressionList && son->type == ASTNodeType::NamedExpressionList)
-        || (type == ASTNodeType::VariableDeclarationList && son->type == ASTNodeType::VariableDeclarationList))
-        || (type == ASTNodeType::ClassStatementList && son->type == ASTNodeType::ClassStatementList)) {
+        || (type == ASTNodeType::VariableDeclarationList && son->type == ASTNodeType::VariableDeclarationList)
+        || (type == ASTNodeType::ClassStatementList && son->type == ASTNodeType::ClassStatementList)
+        || (type == ASTNodeType::ArgumentList && son->type == ASTNodeType::ArgumentList))) {
             //std::cout << "getting rid of " << *son << "\n";
             sons.insert(sons.end(), son->sons.begin(), son->sons.end());
             delete son;
         } else {
-            if (son != nullptr) {
-                //std::cout << "pushing " << son << "\n";
-            }
-            else {
-                //std::cout << "pushing " << "nullptr" << "\n";
-            }
-            sons.push_back(son);
+            if (!(son == nullptr && type == ASTNodeType::Statements))
+                sons.push_back(son);
         }
     }
 }

@@ -11,7 +11,7 @@ int main (int argc, char *argv[])
     else if (argv[i] == std::string ("-s"))
       drv.trace_scanning = true;
     else if (!drv.parse (argv[i])) {
-        drv.result->print(std::cout, "", true);
+        if (drv.result != nullptr) drv.result->print(std::cout, "", true);
     }
     else
       res = 1;

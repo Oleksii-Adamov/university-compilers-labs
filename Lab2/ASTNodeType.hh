@@ -87,6 +87,14 @@ enum class ASTNodeType {
     Shared,
     Unmanaged,
     Borrowed,
+    Out,
+    Inout,
+    Type,
+    Inline,
+    Override,
+    Proc,
+    Iter,
+    Where,
     RangeLiteral,
     UnaryExpression,
     BinaryExpression,
@@ -110,8 +118,18 @@ enum class ASTNodeType {
     VariableDeclarationList,
     VariableDeclaration,
     PrimitiveType,
-    Statements,
-
+    ClassDeclarationStatement,
+    ClassStatementList,
+    MethodDeclarationStatement,
+    Intent,
+    ArgumentList,
+    Formal,
+    DefaultExpression,
+    VariableArgumentExpression,
+    TypeBinding,
+    WhereClause,
+    ClassType,
+    Statements
 };
 
 std::ostream& operator<<(std::ostream& out, const ASTNodeType& node);
