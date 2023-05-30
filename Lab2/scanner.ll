@@ -94,7 +94,8 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
   # define YY_USER_ACTION  loc.columns (yyleng);
 %}
 %x comment
-%x uninterpreted_string_literal
+%x uninterpreted_string_literal_dq
+%x uninterpreted_string_literal_sq
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -104,17 +105,27 @@ interpreted_string_literal ("\""({string_character}|"'")*"\"")|("'"({string_char
 %}
 {white_space}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
+
 "/*"         BEGIN(comment);
 <comment>[^*\n]*        /* eat anything that's not a '*' */
 <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
 <comment>\n             loc.lines();
 <comment>"*"+"/"        BEGIN(INITIAL);
+
 "//"[^\n]*              /*skip one line comments till the end of line*/
-"\"\"\"" {/*ECHO;std::cout << " rule 1 \n";*/ BEGIN(uninterpreted_string_literal); yymore();}
-<uninterpreted_string_literal>\n    {/*ECHO;std::cout << " rule 2 \n";*/ loc.lines(); yymore();}
-<uninterpreted_string_literal>[^\"\n]* {/*ECHO; std::cout << " rule 3 \n";*/ yymore(); /* remember anything that's not a '"'*/}
-<uninterpreted_string_literal>"\""{1,2}[^\"\n]* {/*ECHO; std::cout << " rule 4 \n";*/ yymore(); /* remember anything that's not a three '"' in a row*/}
-<uninterpreted_string_literal>"\"\"\""  {/*ECHO; std::cout << " rule 5 \n";*/ BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::UninterpretedStringLiteral, yytext), loc);}
+
+"\"\"\"" {BEGIN(uninterpreted_string_literal_dq); yymore();}
+<uninterpreted_string_literal_dq>\n    {loc.lines(); yymore();}
+<uninterpreted_string_literal_dq>[^\"\n]* {yymore(); /* remember anything that's not a '"'*/}
+<uninterpreted_string_literal_dq>"\""{1,2}[^\"\n]* {yymore(); /* remember anything that's not a three '"' in a row*/}
+<uninterpreted_string_literal_dq>"\"\"\""  {BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::UninterpretedStringLiteral, yytext), loc);}
+
+
+"'''"  {BEGIN(uninterpreted_string_literal_sq); yymore();}
+<uninterpreted_string_literal_sq>\n    {loc.lines(); yymore();}
+<uninterpreted_string_literal_sq>[^'\n]* {yymore(); /* remember anything that's not a "'"*/}
+<uninterpreted_string_literal_sq>"'"{1,2}[^'\n]* {yymore(); /* remember anything that's not a three "'" in a row*/}
+<uninterpreted_string_literal_sq>"'''"  {BEGIN(INITIAL); return yy::parser::make_UNINTERPRETED_STRING_LITERAL (new ASTNode(ASTNodeType::UninterpretedStringLiteral, yytext), loc);}
 
 "+" return yy::parser::make_PLUS (new ASTNode(ASTNodeType::Plus), loc);
 "-" return yy::parser::make_MINUS (new ASTNode(ASTNodeType::Minus), loc);

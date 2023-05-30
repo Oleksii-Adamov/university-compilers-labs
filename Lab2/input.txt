@@ -1,9 +1,14 @@
+s = 'abc';
+s = 'ab"c"';
+s = '''abc''';
+s = '''a'b'c''';
+
 s = """a""b""c""";
 //s = """a""b""c""";
 s = """abc""";
 s = """abc\n""";
-//s = """abc
-//asd""";
+s = """abc
+asd""";
 s = "a'b'c";
 s = "abc\n";
 s = "ab\"c";
