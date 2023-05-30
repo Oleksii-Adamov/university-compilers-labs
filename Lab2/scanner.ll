@@ -73,7 +73,10 @@
 white_space [ \t\r\f]
 identifier [a-zA-Z_][a-zA-Z_0-9$]*
 digits [0-9][0-9_]*
-integer_literal  {digits}
+hexadecimal_digits [0-9A-Fa-f][0-9A-Fa-f_]*
+octal_digits [0-7][0-7_]*
+binary_digits [0-1][0-1_]*
+integer_literal  {digits}|("0"[xX]{hexadecimal_digits})|("0"[oO]{octal_digits})|("0"[bB]{binary_digits})
 
 
 %{
@@ -165,9 +168,10 @@ integer_literal  {digits}
 "unmanaged" return yy::parser::make_UNMANAGED (new ASTNode(ASTNodeType::Unmanaged), loc);
 "borrowed" return yy::parser::make_BORROWED (new ASTNode(ASTNodeType::Borrowed), loc);
 
-{identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
-
+"true"|"false" return yy::parser::make_BOOL_LITERAL (new ASTNode(ASTNodeType::BoolLiteral, yytext), loc);
 {integer_literal} return yy::parser::make_INTEGER_LITERAL (new ASTNode(ASTNodeType::IntegerLiteral, yytext), loc);
+
+{identifier} return yy::parser::make_IDENTIFIER (new ASTNode(ASTNodeType::Identifier, yytext), loc);
 
 
 

@@ -98,6 +98,13 @@
 %token <ASTNode*> ZIP "zip"
 %token <ASTNode*> IDENTIFIER
 %token <ASTNode*> INTEGER_LITERAL
+%token <ASTNode*> BOOL_LITERAL
+%token <ASTNode*> REAL_LITERAL
+%token <ASTNode*> IMAGINARY_LITERAL
+%token <ASTNode*> INTERPRETED_STRING_LITERAL
+%token <ASTNode*> UNINTERPRETED_STRING_LITERAL
+%token <ASTNode*> INTERPRETED_BYTES_LITERAL
+%token <ASTNode*> UNINTERPRETED_BYTES_LITERAL
 
 %nterm <ASTNode*> literal_expression
 %nterm <ASTNode*> range_literal
@@ -296,7 +303,8 @@ initialization_part_opt:
 
 expression: literal_expression | lvalue_expression | unary_expression | binary_expression;
 
-literal_expression: INTEGER_LITERAL | range_literal;
+literal_expression: INTEGER_LITERAL | range_literal | BOOL_LITERAL | REAL_LITERAL | IMAGINARY_LITERAL | INTERPRETED_STRING_LITERAL | UNINTERPRETED_STRING_LITERAL
+| INTERPRETED_BYTES_LITERAL | UNINTERPRETED_BYTES_LITERAL;
 
 range_literal:
   expression ".." expression { $$ = new ASTNode(ASTNodeType::RangeLiteral, {$1, $2, $3});}
