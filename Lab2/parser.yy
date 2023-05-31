@@ -232,8 +232,8 @@ expression_statement: variable_expression ";" { $$ = new ASTNode(ASTNodeType::Ex
 | new_expression ";" { $$ = new ASTNode(ASTNodeType::ExpressionStatement, {$1}); delete $2;};
 
 assignment_statement:
-  lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});}
-| lvalue_expression COMPOUND_ASSIGNMENT expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});};
+  lvalue_expression "=" expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3}); delete $4;}
+| lvalue_expression COMPOUND_ASSIGNMENT expression ";" { $$ = new ASTNode(ASTNodeType::AssignmentStatement, {$1, $2, $3});  delete $4;};
 
 conditional_statement:
   "if" expression "then" statement else_part_opt { $$ = new ASTNode(ASTNodeType::ConditionalStatement, {$2, $4, $5}); delete $1; delete $3;}
@@ -392,7 +392,7 @@ argument_list_opt:
 %empty {$$ = nullptr;}
 | argument_list;
 
-argument_list: "(" formals_opt ")" { $$ = new ASTNode(ASTNodeType::ArgumentList, {$2}); delete $1; delete $3;}
+argument_list: "(" formals_opt ")" { $$ = new ASTNode(ASTNodeType::ArgumentList, {$2}); delete $1; delete $3;};
 
 formals_opt:
 %empty {$$ = nullptr;}
