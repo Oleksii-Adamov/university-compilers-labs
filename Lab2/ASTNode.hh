@@ -11,7 +11,7 @@ private:
     std::vector<ASTNode*> sons;
     ASTNodeType type;
     // value (for tokens)
-    std::string val = "";
+    std::string val;
 public:
     ASTNode();
     ASTNode(ASTNodeType type_, std::string val_ = "");
